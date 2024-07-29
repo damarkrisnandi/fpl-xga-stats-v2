@@ -41,6 +41,21 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         }
         return '';
     }
+
+    const convertColorPoint = (point) => {
+        if (point > 7) {
+            return 'bg-green-500 text-white'
+        } else if (point > 6) {
+            return 'bg-green-200 text-green-700'
+        } else if (point > 4) {
+            return 'bg-lime-100 text-lime-700'
+        } else if (point > 3) {
+            return 'bg-yellow-100 text-orange-500'
+        } else {
+            return 'bg-red-100 text-red-600'
+        }
+        return '';
+    }
   return (
     <Card className='w-11/12 md:w-1/4 lg:w-1/5 shadow-lg'>
         {/* <CardHeader>
@@ -67,7 +82,7 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
                 
 
                 <div className="flex">
-                    <div className='h-10 w-10 p-3 rounded-full flex justify-center items-center font-semibold text-xs bg-gray-200'>
+                    <div className={`h-10 w-10 p-3 rounded-full flex justify-center items-center font-semibold text-xs ${convertColorPoint(props.point)}`}>
                         {props.point?.toFixed(2) || 0}
                     </div>
                 </div>
