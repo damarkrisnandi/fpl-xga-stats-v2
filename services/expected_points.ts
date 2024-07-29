@@ -2,7 +2,7 @@ export default function expectedPoints(historyElements: any, element: any): numb
     if (historyElements && historyElements.map((el: any) => el.code).includes(element.code)) {
         const elData = historyElements.find((el:any) => el.code == element.code);
 
-        return (xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type) - xpFromxGC(elData, element.element_type)) * multiplier(elData) ;
+        return (xpFromMinutes(elData, element.element_type) + xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type) - xpFromxGC(elData, element.element_type)) * multiplier(elData) ;
     }
     return 0;
 
@@ -32,6 +32,9 @@ function xpFromxA(elementDataHistory: any, position: number): number {
 }
 
 function xpFromCS(elementDataHistory: any, position: number): number {
+    const xMinutes = elementDataHistory.minutes / (38 * 90);
+    if (xMinutes < (60/90)) return 0;
+    
     switch (position) {
         case 1:
             return elementDataHistory.clean_sheets_per_90 * 4
@@ -88,5 +91,15 @@ function xpFromxGC(elementDataHistory: any, position: number): number {
             return 0
         default:
             return 0;
+    }
+}
+
+function xpFromMinutes(elementDataHistory: any, position: number): number {
+    const xMinutes = elementDataHistory.minutes / (38 * 90);
+
+    if (xMinutes >= (60/90)) {
+        return 2;
+    } else {
+        return 1;
     }
 }
