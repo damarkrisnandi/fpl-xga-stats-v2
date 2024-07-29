@@ -83,7 +83,7 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
 
                 <div className="flex">
                     <div className={`h-10 w-10 p-3 rounded-full flex justify-center items-center font-semibold text-xs ${convertColorPoint(props.point)}`}>
-                        {props.point?.toFixed(2) || 0}
+                        {props.point?.toFixed(1) || 0}
                     </div>
                 </div>
             </div>
