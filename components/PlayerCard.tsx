@@ -19,7 +19,7 @@ interface PlayerCardProps {
   nextMatches?: string[];
   nextMatchesDiff: number[];
   price?: number | string;
-  point?: number;
+  point: number;
 
 }
 
@@ -42,7 +42,7 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         return '';
     }
 
-    const convertColorPoint = (point: number | undefined): string => {
+    const convertColorPoint = (point: number): string => {
         if (point > 7) {
             return 'bg-green-500 text-white'
         } else if (point > 6) {
