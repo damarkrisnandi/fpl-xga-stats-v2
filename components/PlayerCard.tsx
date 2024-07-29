@@ -79,7 +79,10 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
             </div>
             <div className='flex items-center justify-between w-full'>
                 {props.nextMatches?.map((match: string, index) => (
-                    <div className={`w-full flex flex-row justify-center p-1 text-xs ${convertColorDifficulty(props.nextMatchesDiff[index])}`} key={index}>{match.split(' ')[0]} {match.split(' ')[1]}</div>
+                    <div className={`w-full flex flex-col justify-center items-center p-2 text-xs ${convertColorDifficulty(props.nextMatchesDiff[index])}`} key={index}>
+                        <p>{match.split(' ')[0]}</p>
+                        <p>{match.split(' ')[1]}</p>
+                    </div>
                 ))}
             </div>
         </CardContent>
