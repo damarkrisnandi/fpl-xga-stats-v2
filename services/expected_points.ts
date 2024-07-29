@@ -9,7 +9,7 @@ export default function expectedPoints(historyElements: any, element: any): numb
 }
 
 function multiplier(elDataHist: any) {
-    const minutesIndex = minutes / (90 * 38);
+    const minutesIndex = elDataHist.minutes / (90 * 38);
     return minutesIndex;
 }
 function xpFromxG(elementDataHistory: any, position: number): number {
