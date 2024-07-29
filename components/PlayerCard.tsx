@@ -42,7 +42,7 @@ const PlayerCard: React.FC<PlayerCardProps> = (props) => {
         return '';
     }
 
-    const convertColorPoint = (point) => {
+    const convertColorPoint = (point: number): string => {
         if (point > 7) {
             return 'bg-green-500 text-white'
         } else if (point > 6) {
