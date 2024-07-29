@@ -8,9 +8,9 @@ export default function expectedPoints(historyElements: any, element: any): numb
 
 }
 
-function multipler(elDataHist: any) {
+function multiplier(elDataHist: any) {
     const minutesIndex = minutes / (90 * 38);
-    return minutesIndex::
+    return minutesIndex;
 }
 function xpFromxG(elementDataHistory: any, position: number): number {
     switch (position) {
