@@ -2,12 +2,16 @@ export default function expectedPoints(historyElements: any, element: any): numb
     if (historyElements && historyElements.map((el: any) => el.code).includes(element.code)) {
         const elData = historyElements.find((el:any) => el.code == element.code);
 
-        return xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type) - xpFromxGC(elData, element.element_type);
+        return (xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type) - xpFromxGC(elData, element.element_type)) * multiplier(elData) ;
     }
     return 0;
 
 }
 
+function multipler(elDataHist: any) {
+    const minutesIndex = minutes / (90 * 38);
+    return minutesIndex::
+}
 function xpFromxG(elementDataHistory: any, position: number): number {
     switch (position) {
         case 1:
