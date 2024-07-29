@@ -2,7 +2,7 @@ export default function expectedPoints(historyElements: any, element: any): numb
     if (historyElements && historyElements.map((el: any) => el.code).includes(element.code)) {
         const elData = historyElements.find((el:any) => el.code == element.code);
 
-        return xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type);
+        return xpFromxG(elData, element.element_type) + xpFromxA(elData, element.element_type) + xpFromCS(elData, element.element_type) + xpFromSaves(elData, element.element_type) + xpFromBonus(elData, element.element_type) - xpFromxGC(elData, element.element_type);
     }
     return 0;
 
@@ -67,6 +67,21 @@ function xpFromBonus(elementDataHistory: any, position: number): number {
             return 3
         case 4:
             return 3
+        default:
+            return 0;
+    }
+}
+
+function xpFromxGC(elementDataHistory: any, position: number): number {
+    switch (position) {
+        case 1:
+            return Math.floor(elementDataHistory.expected_goals_conceded_per_90 / 2)
+        case 2:
+            return Math.floor(elementDataHistory.expected_goals_conceded_per_90 / 2)
+        case 3:
+            return 0
+        case 4:
+            return 0
         default:
             return 0;
     }
