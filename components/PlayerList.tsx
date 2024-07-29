@@ -88,7 +88,7 @@ const PlayerList = () => {
       <div className='flex flex-wrap justify-center w-11/12 space-x-1 space-y-1'>
         {
             boostrap?.elements?.toSorted(
-                (a: any, b: any) => b.selected_by_percent - a.selected_by_percent
+                (a: any, b: any) => expectedPoints(history?.elements, b) - expectedPoints(history?.elements, a)
             )
             .map((element: any) => (
                 <PlayerCard 
