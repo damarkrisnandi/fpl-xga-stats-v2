@@ -5,7 +5,7 @@ function AppFooter() {
     return ( 
         <Fragment >
             <div className="text-black text-xs flex flex-col justify-center items-center h-20 p-7">
-                <p> &copy;2024 dmrkr X fplmgm</p>
+                <p> &copy;2024 damarkrisnandi</p>
             </div>
         </Fragment>
      );
