@@ -73,3 +73,22 @@ export function getPlayerPhotoUrl(photo: string): string {
 export function getTeamLogoUrl(id: number): string {
   return `https://resources.premierleague.com/premierleague/badges/70/t${id}.png`
 }
+
+export function difficultyBgColor(code: number): string {
+        switch (code) {
+            case 1:
+                return 'bg-green-500 text-white'
+            case 2:
+                return 'bg-green-500 text-white'
+            case 3:
+                return 'bg-gray-200'
+            case 4:
+                return 'bg-red-500 text-white'
+            case 5:
+                return 'bg-red-900 text-white'
+            default:
+                return '';
+        }
+        return '';
+    }
+

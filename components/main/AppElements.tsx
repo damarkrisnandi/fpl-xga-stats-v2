@@ -1,6 +1,6 @@
 "use client";
 
-import { getBootstrapFromStorage } from "@/services";
+import { getBootstrapFromStorage, getFixtures } from "@/services";
 import {
   Card,
   CardContent,
@@ -32,6 +32,7 @@ const AppElements = (props: any) => {
   const [bootstrap, setBootstrap] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
+  const [fixtures, setFixtures] = useState<any>([]);
 
   useEffect(() => {
     if (!bootstrap) {
@@ -46,7 +47,18 @@ const AppElements = (props: any) => {
             )
             .at(-1)
         );
+
+        setNextEvent(
+          data.events.filter(
+            (event: any) =>
+              new Date(event.deadline_time).getTime() > new Date().getTime()
+          )[0]
+        );
       });
+    }
+
+    if (bootstrap && fixtures.length == 0) {
+      getFixtures().then((data) => setFixtures(data));
     }
   });
 
@@ -146,40 +158,91 @@ const PlayerCardStats = (props: any) => {
             </div>
           </div>
         </div>
-        <div className="w-full flex">
-          <StatItem
-            label={`GW${currentEvent.id}`}
-            value={element.event_points}
-          />
-          <StatItem label={"COST"} value={(element.now_cost / 10).toFixed(2)} />
-          <StatItem label={"%TSB"} value={`${element.selected_by_percent}%`} />
-        </div>
-        <div className="w-full flex">
-          <StatItem label={`xG`} value={element.expected_goals} />
-          <StatItem label={`xG90`} value={element.expected_goals_per_90} />
-          <StatItem label={"Goals"} value={element.goals_scored} />
-          <StatItem
-            label={"(xG-G)"}
-            value={(element.goals_scored - element.expected_goals).toFixed(2)}
-            className={`
-            ${(element.goals_scored - element.expected_goals) > 0 ? 'bg-green-200 text-green-700' : ''}
-            ${(element.goals_scored - element.expected_goals) < 0 ? 'bg-red-200 text-red-700' : ''}
+        <div className="flex justify-center flex-col">
+          <div className="w-full flex justify-center">
+            <StatItem
+              label={`GW${currentEvent.id}`}
+              value={element.event_points}
+            />
+            <StatItem
+              label={"COST"}
+              value={`${(element.now_cost / 10).toFixed(1)}`}
+            />
+            <StatItem
+              label={"%TSB"}
+              value={`${element.selected_by_percent}%`}
+            />
+            <StatItem label={"Mins"} value={element.minutes} />
+          </div>
+          {showExpected('xG', element.element_type) && (<div className="w-full flex justify-center">
+            <StatItem label={`xG`} value={element.expected_goals} />
+            <StatItem label={`xG90`} value={element.expected_goals_per_90} />
+            <StatItem label={"Goals"} value={element.goals_scored} />
+            <StatItem
+              label={"xG-G"}
+              value={(element.goals_scored - element.expected_goals).toFixed(2)}
+              className={`
+            ${
+              element.goals_scored - element.expected_goals > 0
+                ? "bg-green-200 text-green-700"
+                : ""
+            }
+            ${
+              element.goals_scored - element.expected_goals < 0
+                ? "bg-red-200 text-red-700"
+                : ""
+            }
 
             `}
-          />
-        </div>
-        <div className="w-full flex">
-          <StatItem label={`xA`} value={element.expected_assists} />
-          <StatItem label={`xA90`} value={element.expected_assists_per_90} />
-          <StatItem label={"Assists"} value={element.assists} />
-          <StatItem
-            label={"(xA-A)"}
-            value={(element.assists - element.expected_assists).toFixed(2)}
-            className={`
-            ${(element.assists - element.expected_assists) > 0 ? 'bg-green-200 text-green-700' : ''}
-            ${(element.assists - element.expected_assists) < 0 ? 'bg-red-200 text-red-700' : ''}
+            />
+          </div>)}
+          {showExpected('xA', element.element_type) && (<div className="w-full flex justify-center">
+            <StatItem label={`xA`} value={element.expected_assists} />
+            <StatItem label={`xA90`} value={element.expected_assists_per_90} />
+            <StatItem label={"Assists"} value={element.assists} />
+            <StatItem
+              label={"xA-A"}
+              value={(element.assists - element.expected_assists).toFixed(2)}
+              className={`
+            ${
+              element.assists - element.expected_assists > 0
+                ? "bg-green-200 text-green-700"
+                : ""
+            }
+            ${
+              element.assists - element.expected_assists < 0
+                ? "bg-red-200 text-red-700"
+                : ""
+            }
             `}
-          />
+            />
+          </div>)}
+          {showExpected('xGC', element.element_type) && (<div className="w-full flex justify-center">
+            <StatItem label={`xGC`} value={element.expected_goals_conceded} />
+            <StatItem
+              label={`xGC90`}
+              value={element.expected_goals_conceded_per_90}
+            />
+            <StatItem label={"GC"} value={element.goals_conceded} />
+            <StatItem
+              label={"xGC-GC"}
+              value={(
+                element.expected_goals_conceded - element.goals_conceded
+              ).toFixed(2)}
+              className={`
+            ${
+              element.expected_goals_conceded - element.goals_conceded > 0
+                ? "bg-green-200 text-green-700"
+                : ""
+            }
+            ${
+              element.expected_goals_conceded - element.goals_conceded < 0
+                ? "bg-red-200 text-red-700"
+                : ""
+            }
+            `}
+            />
+          </div>)}
         </div>
       </div>
       <Separator className="w-full" />
@@ -190,9 +253,23 @@ const PlayerCardStats = (props: any) => {
 const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
-    <div className={`w-14 h-14 p-2 bg-slate-200 flex flex-col justify-center items-center ${className || ''}`}>
+    <div
+      className={`w-14 h-14 p-1 flex flex-col justify-center items-center ${
+        className || ""
+      } bg-slate-200`}
+    >
       <p className="text-xs">{label}</p>
       <p className="text-sm font-semibold">{value}</p>
     </div>
   );
 };
+
+function showExpected(props: string, position: number) {
+    const allowance: any = {
+        "xG": [2, 3, 4],
+        "xA": [2, 3, 4],
+        "xGC": [1, 2],
+        "xP": [1, 2, 3, 4]
+    }
+    return allowance[props]?.includes(position)
+}
