@@ -6,7 +6,7 @@ const nextConfig = {
             protocol: 'https',
             hostname: 'resources.premierleague.com',
             port: '',
-            pathname: '/premierleague/photos/**',
+            pathname: '/premierleague/**',
           },
         ],
       },
