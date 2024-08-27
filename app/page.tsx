@@ -27,17 +27,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center pt-24">
       <AppTransferDeadline bootstrap={bootstrap} />
       <AppFixtures teams={bootstrap?.teams} events={bootstrap?.events} elements={bootstrap?.elements} element_stats={bootstrap?.element_stats}/>
-      {/* {currentLeagues.map((league: any) => ( */}
-      {/*   <AppLeagueSummary */}
-      {/*     season="" */}
-      {/*     leagueAlias="FPLMGM#5" */}
-      {/*     leagueId={league.id} */}
-      {/*     leagueTitle={league.name} */}
-      {/*     motwExist={league.motwExist} */}
-      {/*     phases={bootstrap?.phases} */}
-      {/*     events={bootstrap?.events} */}
-      {/*   /> */}
-      {/* ))} */}
+      
     </main>
   );
 }

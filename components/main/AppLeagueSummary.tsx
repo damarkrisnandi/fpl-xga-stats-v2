@@ -115,7 +115,7 @@ const AppLeagueSummary = async (props: any) => {
               )
               
               .map((team: any) => (
-                <div className="w-full">
+                <div className="w-full" key={team.entry}>
                   <AppTopStandings entry={team} value={'event_total'}/>   
                   <TotalTransfer entry={team} />               
                 </div>
@@ -130,7 +130,7 @@ const AppLeagueSummary = async (props: any) => {
                 {leagueByPhase?.standings?.results
                   ?.filter((result: any) => result.rank === 1)
                   .map((team: any) => (
-                    <AppTopStandings key={team.id} entry={team} value={'total'}/>
+                    <AppTopStandings key={team.entry} entry={team} value={'total'}/>
                   ))}
               </div>
             )}
@@ -139,7 +139,7 @@ const AppLeagueSummary = async (props: any) => {
             {league?.standings?.results
               ?.filter((result: any) => result.rank === 1)
               .map((team: any) => (
-                <AppTopStandings key={team.id} entry={team} value={'total'}/>
+                <AppTopStandings key={team.entry} entry={team} value={'total'}/>
               ))}
           </TabsContent>
         </Tabs>

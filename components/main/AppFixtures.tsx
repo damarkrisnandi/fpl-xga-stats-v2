@@ -212,7 +212,7 @@ const AppFixtures = (props: any) => {
             {fixtures
               .filter((fixture: any) => fixture.event == nextEvent?.id)
               .map((fixture) => (
-                <div className="flex justify-center items-center space-x-2">
+                <div className="flex justify-center items-center space-x-2" key={fixture.id}>
                   <div className="flex justify-end items-center">
                     <p className="w-10 text-right text-sm font-semibold mr-3">
                       {getTeamShort(fixture.team_h)}
