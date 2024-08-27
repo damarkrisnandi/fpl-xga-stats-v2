@@ -183,7 +183,7 @@ const PlayerCardStats = (props: any) => {
             <StatItem label={`xG90`} value={element.expected_goals_per_90} />
             <StatItem label={"Goals"} value={element.goals_scored} />
             <StatItem
-              label={"xG-G"}
+              label={"G-xG"}
               value={(element.goals_scored - element.expected_goals).toFixed(2)}
               className={`
             ${
@@ -205,7 +205,7 @@ const PlayerCardStats = (props: any) => {
             <StatItem label={`xA90`} value={element.expected_assists_per_90} />
             <StatItem label={"Assists"} value={element.assists} />
             <StatItem
-              label={"xA-A"}
+              label={"A-xA"}
               value={(element.assists - element.expected_assists).toFixed(2)}
               className={`
             ${
