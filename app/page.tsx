@@ -16,12 +16,12 @@ const AppFixtures = dynamic(() => import("@/components/main/AppFixtures"));
 
 export default async function Home() {
   const bootstrap = await getBootstrap();
-  const currentLeagues = leaguesData
-    .filter((league) => league.current)[0]
-    .children.filter((child: any) => child.league)
-    .map((l: any) => {
-      return { ...l, motwExist: l.name == "League B" ? false : true };
-    });
+  // const currentLeagues = leaguesData
+  //   .filter((league) => league.current)[0]
+  //   .children.filter((child: any) => child.league)
+  //   .map((l: any) => {
+  //     return { ...l, motwExist: l.name == "League B" ? false : true };
+  //   });
 
   return (
     <main className="flex min-h-screen flex-col items-center pt-24">

@@ -25,9 +25,9 @@ const AppTransferDeadline = (props: any) => {
   const { bootstrap } = props;
   const [event, setEvent] = useState<any>(null);
   const [deadline, setDeadline] = useState<any>(null);
-  if (!bootstrap) {
-    return null;
-  }
+  // if (!bootstrap) {
+  //   return null;
+  // }
   const nextEvent = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime())[0];
   useEffect(() => {
     if (!event) {
@@ -84,7 +84,7 @@ const AppTransferDeadline = (props: any) => {
       <CardContent className="flex justify-center items-center">
         {deadline && (
           <div className="flex space-x-1">
-            <TimerContainer time={deadline.days} unit="days" />
+            <TimerContainer time={deadline.days} unit="days"  />
             <TimerContainer time={deadline.hours} unit="hours" />
             <TimerContainer time={deadline.minutes} unit="minutes" />
             <TimerContainer time={deadline.seconds} unit="seconds" />
