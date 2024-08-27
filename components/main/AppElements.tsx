@@ -83,7 +83,7 @@ const SelectTeam = (props: any) => {
         <SelectGroup>
           <SelectLabel>Teams</SelectLabel>
           {props.teams.map((team: any) => (
-            <SelectItem value={team.name}>{team.name}</SelectItem>
+            <SelectItem value={team.name} key={key.id}>{team.name}</SelectItem>
           ))}
         </SelectGroup>
       </SelectContent>
