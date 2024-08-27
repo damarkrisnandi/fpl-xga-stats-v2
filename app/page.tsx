@@ -1,6 +1,7 @@
 // import AppFixtures from "@/components/main/AppFixtures";
 // import AppLeagueSummary from "@/components/main/AppLeagueSummary";
 // import AppTransferDeadline from "@/components/main/AppTransferDeadline";
+import AppElements from "@/components/main/AppElements";
 import { getBootstrap } from "@/services";
 import { leaguesData } from "@/utils";
 import dynamic from "next/dynamic";
@@ -27,7 +28,7 @@ export default async function Home() {
     <main className="flex min-h-screen flex-col items-center pt-24">
       <AppTransferDeadline bootstrap={bootstrap} />
       <AppFixtures teams={bootstrap?.teams} events={bootstrap?.events} elements={bootstrap?.elements} element_stats={bootstrap?.element_stats}/>
-      
-    </main>
+      <AppElements className="w-full"/>
+    </main> 
   );
 }

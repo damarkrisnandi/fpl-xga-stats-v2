@@ -7,6 +7,10 @@ export async function getBootstrap() {
   );
 }
 
+export function getBootstrapFromStorage() {
+  return fromStorage("boostrap-static", `${API_URL}/bootstrap-static`, 7);
+}
+
 export function getFixtures() {
   return fromStorage("fixtures", `${API_URL}/fixtures`);
   //   return fetch(`${API_URL}/fixtures`).then((res) => res.json());
@@ -50,9 +54,9 @@ export function getArchivedLeague(
   ).then((res) => res.json());
 }
 
-async function fromStorage(key: string, urlFetch: string) {
+async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
   // storageSizeCheck();
-  clearStorage(key);
+  clearStorage(key, holdTime);
   if (localStorage.getItem(key)) {
     return JSON.parse(localStorage.getItem(key) as string);
   } else {
@@ -70,7 +74,7 @@ async function fromStorage(key: string, urlFetch: string) {
   return JSON.parse(localStorage.getItem(key) as string);
 }
 
-function clearStorage(key: string) {
+function clearStorage(key: string, holdTime?: number) {
   if (checkExpired(key) && localStorage.getItem(key)) {
     localStorage.removeItem(key);
     localStorage.removeItem(`expired_data_storage:${key}`);
@@ -79,7 +83,7 @@ function clearStorage(key: string) {
   if (!localStorage.getItem(`expired_data_storage:${key}`)) {
     localStorage.setItem(
       `expired_data_storage:${key}`,
-      (new Date().getTime() + 1000 * 60 * 3).toString()
+      (new Date().getTime() + 1000 * 60 * (holdTime || 3)).toString()
     );
   }
 }
