@@ -90,5 +90,15 @@ export function difficultyBgColor(code: number): string {
                 return '';
         }
         return '';
+}
+
+export function positionMapping(code: number): string {
+    const position: any = {    
+        1:'GKP',
+        2: 'DEF',
+        3: 'MID',
+        4: 'FWD'
     }
 
+    return position[code] || '';
+}

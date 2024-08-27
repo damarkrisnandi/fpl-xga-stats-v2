@@ -24,9 +24,11 @@ import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
 import { CirclePercent, Euro, PoundSterling } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { getPlayerPhotoUrl, getTeamLogoUrl } from "@/utils";
+import { getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const AppElements = (props: any) => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -151,14 +153,16 @@ const PlayerCardStats = (props: any) => {
             />
 
             <div className="p-2">
-              <p className="text-xl font-semibold">{element.web_name}</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm font-semibold">{element.web_name} | {positionMapping(element.element_type)}</p>
+              <p className="text-xs text-gray-500">
                 {element.first_name} {element.second_name}
               </p>
+              
             </div>
+            
           </div>
         </div>
-        <div className="flex justify-center flex-col">
+        <div className="flex justify-center flex-col mb-2">
           <div className="w-full flex justify-center">
             <StatItem
               label={`GW${currentEvent.id}`}
@@ -243,7 +247,18 @@ const PlayerCardStats = (props: any) => {
             `}
             />
           </div>)}
+          {showExpected('CS', element.element_type) && (<div className="w-full flex justify-center">
+            <StatItem label={`CS`} value={element.clean_sheets} />
+            <StatItem
+              label={`CS90`}
+              value={element.clean_sheets_per_90}
+            />
+            
+          </div>)}
         </div>
+        <Button asChild variant={"outline"} className="w-full">
+          <Link href={`player/${element.id}`} className="font-semibold">Show Player Details</Link>
+        </Button>
       </div>
       <Separator className="w-full" />
     </div>
@@ -269,7 +284,8 @@ function showExpected(props: string, position: number) {
         "xG": [2, 3, 4],
         "xA": [2, 3, 4],
         "xGC": [1, 2],
-        "xP": [1, 2, 3, 4]
+        "xP": [1, 2, 3, 4],
+        "CS": [1, 2],
     }
     return allowance[props]?.includes(position)
 }
