@@ -91,8 +91,8 @@ const AppElements = (props: any) => {
           {bootstrap.elements
             .toSorted(
               (a: any, b: any) =>
-                parseFloat(b.selected_by_percent) -
-                parseFloat(a.selected_by_percent)
+                b.total_points -
+                a.total_points
             )
             .map((el: any) => (
               <div
