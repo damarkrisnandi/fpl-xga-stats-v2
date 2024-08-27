@@ -1,14 +1,43 @@
-import PlayerCard from "@/components/PlayerCard";
-import PlayerList from "@/components/PlayerList";
+// import AppFixtures from "@/components/main/AppFixtures";
+// import AppLeagueSummary from "@/components/main/AppLeagueSummary";
+// import AppTransferDeadline from "@/components/main/AppTransferDeadline";
+import { getBootstrap } from "@/services";
+import { leaguesData } from "@/utils";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 
-export default function Home() {
+const AppTransferDeadline = dynamic(
+  () => import("@/components/main/AppTransferDeadline")
+);
+const AppLeagueSummary = dynamic(
+  () => import("@/components/main/AppLeagueSummary")
+);
+const AppFixtures = dynamic(() => import("@/components/main/AppFixtures"));
+
+export default async function Home() {
+  const bootstrap = await getBootstrap();
+  const currentLeagues = leaguesData
+    .filter((league) => league.current)[0]
+    .children.filter((child: any) => child.league)
+    .map((l: any) => {
+      return { ...l, motwExist: l.name == "League B" ? false : true };
+    });
+
   return (
     <main className="flex min-h-screen flex-col items-center pt-24">
-      <div className="align-center">
-        {/* <PlayerCard name="Haaland" firstLastName="Erling Haaland" image="https://resources.premierleague.com/premierleague/photos/players/250x250/p223094.png" position="FWD" team="MCI" tsb={15.8} price={15.0} nextMatches={['CHE', 'IPS', 'MUN', 'TOT', 'CRY']} /> */}
-        <PlayerList />
-      </div>
+      <AppTransferDeadline bootstrap={bootstrap} />
+      <AppFixtures teams={bootstrap?.teams} events={bootstrap?.events} elements={bootstrap?.elements} element_stats={bootstrap?.element_stats}/>
+      {/* {currentLeagues.map((league: any) => ( */}
+      {/*   <AppLeagueSummary */}
+      {/*     season="" */}
+      {/*     leagueAlias="FPLMGM#5" */}
+      {/*     leagueId={league.id} */}
+      {/*     leagueTitle={league.name} */}
+      {/*     motwExist={league.motwExist} */}
+      {/*     phases={bootstrap?.phases} */}
+      {/*     events={bootstrap?.events} */}
+      {/*   /> */}
+      {/* ))} */}
     </main>
   );
 }
