@@ -22,6 +22,7 @@ import { statsMapping } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import AppSpinner from "./AppSpinner";
 
 const AppLiveEvent = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -73,7 +74,7 @@ const AppLiveEvent = () => {
   if (!bootstrap) {
     return (
       <div className="pt-24">
-        <p>Please wait...</p>
+        <AppSpinner />
       </div>
     );
   }
@@ -84,7 +85,7 @@ const AppLiveEvent = () => {
   if (fixtures.length === 0) {
     return (
       <div className="pt-24">
-        <p>Please wait...</p>
+        <AppSpinner />
       </div>
     );
   }
@@ -96,7 +97,7 @@ const AppLiveEvent = () => {
   if (!liveEvent) {
     return (
       <div className="pt-24">
-        <p>Please wait...</p>
+        <AppSpinner />
       </div>
     );
   }
@@ -116,7 +117,7 @@ const AppLiveEvent = () => {
         <CardTitle>
           <span className="flex items-center space-x-2">
             <p className="text-lg">
-              Live Event {currentEvent ? ": Gameweek " + currentEvent.id : ""}
+              Live Event {currentEvent ? ": GW" + currentEvent.id : ""}
             </p>
             <Clock />
           </span>
