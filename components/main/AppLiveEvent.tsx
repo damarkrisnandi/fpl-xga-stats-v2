@@ -55,7 +55,7 @@ const AppLiveEvent = () => {
         });
       }
 
-      if (fixtures.length && !fixtures.error && currentEvent) {
+      if (fixtures.length && !fixtures.error && currentEvent && !liveEvent) {
         getLiveEventData(currentEvent?.id).then((live: any) => {
           setLiveEvent(live);
         });
@@ -120,12 +120,14 @@ const AppLiveEvent = () => {
                 key={fixture.id}
               >
                 <div className="flex justify-end items-center">
-                  <p className="w-10 text-right text-sm font-semibold mr-3">
+                  <p className="w-10 text-right text-sm font-semibold mr-3">  
                     {getTeamShort(fixture.team_h)}
                   </p>
+                  <AppScoreBoard score={fixture.team_h_score} />
                 </div>
-                <AppScoreBoard score={"v"} />
+                
                 <div className="flex justify-start items-center">
+                  <AppScoreBoard score={fixture.team_a_score} />
                   <p className="w-10 text-left text-sm font-semibold ml-3">
                     {getTeamShort(fixture.team_a)}
                   </p>
@@ -171,11 +173,10 @@ const AppLiveEvent = () => {
                         })
                         .map((el: any) => (
                           <div className="flex justify-start" key={el.id}>
-                            <p className="mr-3">{el.web_name}</p>
+                            <p className="mr-2">{el.web_name}</p>
                             {el.live_stats.map((stat: any, i: number) => (
-                              <p className="mr-2" key={i}>
-                                {statsMapping(stat.identifier)}
-                                {stat.value} ({stat.points})
+                              <p className="mr-1" key={i}>
+                                {statsMapping(stat.identifier)}{stat.value} 
                               </p>
                             ))}
                           </div>
@@ -214,12 +215,11 @@ const AppLiveEvent = () => {
                         .map((el: any) => (
                           <div className="flex justify-end" key={el.id}>
                             {el.live_stats.map((stat: any, i: number) => (
-                              <p className="mr-2" key={i}>
-                                {statsMapping(stat.identifier)}
-                                {stat.value} ({stat.points})
+                              <p className="ml-1" key={i}>
+                                {statsMapping(stat.identifier)}{stat.value}
                               </p>
                             ))}
-                            <p className="ml-3">{el.web_name}</p>
+                            <p className="ml-2">{el.web_name}</p>
                           </div>
                         ))}
                     </div>

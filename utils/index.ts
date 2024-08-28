@@ -105,18 +105,18 @@ export function positionMapping(code: number): string {
 
 export function statsMapping(code: string): string {
     const stats: any = {
-        minutes: "MP",
-        goals_scored: "GS",
-        assists: "A",
-        clean_sheets: "CS",
-        goals_conceded: "GC",
+        minutes: "🕑",
+        goals_scored: "⚽️",
+        assists: "🅰️",
+        clean_sheets: "🔰",
+        goals_conceded: "❌",
         own_goals: "OG",
         penalties_saved: "PS",
         penalties_missed: "PM",
-        yellow_cards: "YC",
-        red_cards: "RC",
-        saves: "S",
-        bonus: "B",
+        yellow_cards: "🟨",
+        red_cards: "🟥",
+        saves: "🧤",
+        bonus: "🅱️",
         bps: "BPS"
     };
     return stats[code] || '';
