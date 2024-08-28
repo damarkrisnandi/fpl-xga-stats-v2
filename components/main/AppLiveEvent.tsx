@@ -32,6 +32,13 @@ const AppLiveEvent = () => {
     );
   };
 
+  const getTeamName = (code: number) => {
+    return (
+      bootstrap?.teams.find((team: any) => team.id === code)?.name || ""
+    );
+  };
+
+
   useEffect(() => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((data: any) => {
@@ -136,11 +143,11 @@ const AppLiveEvent = () => {
               <Tabs defaultValue="home" className="w-full">
                 <TabsList className="w-full">
                   <TabsTrigger value={"home"} className="w-full">
-                    {getTeamShort(fixture.team_h)}
+                    {getTeamName(fixture.team_h)}
                   </TabsTrigger>
 
                   <TabsTrigger value={"away"} className="w-full">
-                    {getTeamShort(fixture.team_a)}
+                    {getTeamName(fixture.team_a)}
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="home" className="py-7">
