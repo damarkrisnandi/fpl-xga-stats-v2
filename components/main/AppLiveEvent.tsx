@@ -114,7 +114,7 @@ const AppLiveEvent = () => {
         {fixtures
           .filter((fixture: any) => fixture.event == currentEvent?.id)
           .map((fixture: any) => (
-            <div>
+            <div key={fixture.id}>
               <div
                 className="flex justify-center items-center space-x-2 mb-2"
                 key={fixture.id}
@@ -170,7 +170,7 @@ const AppLiveEvent = () => {
                           };
                         })
                         .map((el: any) => (
-                          <div className="flex justify-start">
+                          <div className="flex justify-start" key={el.id}>
                             <p className="mr-3">{el.web_name}</p>
                             {el.live_stats.map((stat: any) => (
                               <p className="mr-2">
@@ -212,7 +212,7 @@ const AppLiveEvent = () => {
                           };
                         })
                         .map((el: any) => (
-                          <div className="flex justify-end">
+                          <div className="flex justify-end" key={el.id}>
                             {el.live_stats.map((stat: any) => (
                               <p className="mr-2">
                                 {statsMapping(stat.identifier)}
