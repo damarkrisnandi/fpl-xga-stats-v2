@@ -175,6 +175,7 @@ const AppLiveEvent = () => {
                                 )?.value > 0
                           )
                         )
+                        .toSorted((a: any, b: any) => a.element_type - b.element_type)
                         .map((el: any) => {
                           return {
                             ...el,
@@ -258,6 +259,7 @@ const AppLiveEvent = () => {
                                 )?.value > 0
                           )
                         )
+                        .toSorted((a: any, b: any) => a.element_type - b.element_type)
                         .map((el: any) => {
                           return {
                             ...el,
