@@ -33,11 +33,8 @@ const AppLiveEvent = () => {
   };
 
   const getTeamName = (code: number) => {
-    return (
-      bootstrap?.teams.find((team: any) => team.id === code)?.name || ""
-    );
+    return bootstrap?.teams.find((team: any) => team.id === code)?.name || "";
   };
-
 
   useEffect(() => {
     if (!bootstrap) {
@@ -108,8 +105,8 @@ const AppLiveEvent = () => {
     <Card className="w-11/12 md:w-5/12 mb-2">
       <CardHeader>
         <CardTitle>
-          <span className="flex items-center space-x-10">
-            <p className="mr-1">
+          <span className="flex items-center space-x-2">
+            <p className="">
               Live Event {currentEvent ? ": Gameweek " + currentEvent.id : ""}
             </p>
             <Clock />
@@ -127,12 +124,12 @@ const AppLiveEvent = () => {
                 key={fixture.id}
               >
                 <div className="flex justify-end items-center">
-                  <p className="w-10 text-right text-sm font-semibold mr-3">  
+                  <p className="w-10 text-right text-sm font-semibold mr-3">
                     {getTeamShort(fixture.team_h)}
                   </p>
                   <AppScoreBoard score={fixture.team_h_score} />
                 </div>
-                
+
                 <div className="flex justify-start items-center">
                   <AppScoreBoard score={fixture.team_a_score} />
                   <p className="w-10 text-left text-sm font-semibold ml-3">
@@ -182,21 +179,21 @@ const AppLiveEvent = () => {
                           <div className="flex justify-start" key={el.id}>
                             <p className="mr-2">{el.web_name}</p>
                             {el.live_stats
-                            .filter((stat: any) => stat.identifier !== "minutes")
-                            .map((stat: any, i: number) => (
-                              <span className="flex items-center" key={i}>
-                                {
-                                Array.from({length: stat.value}, (_, index) => index + 1)
-                                .map((val: number) => (
-                                  <p className="" key={val}>
-                                  {statsMapping(stat.identifier)} 
-                                </p>                                  
-                                ))
-                                }
-                                
-                              </span>
-                              
-                            ))}
+                              .filter(
+                                (stat: any) => stat.identifier !== "minutes"
+                              )
+                              .map((stat: any, i: number) => (
+                                <span className="flex items-center" key={i}>
+                                  {Array.from(
+                                    { length: stat.value },
+                                    (_, index) => index + 1
+                                  ).map((val: number) => (
+                                    <p className="" key={val}>
+                                      {statsMapping(stat.identifier)}
+                                    </p>
+                                  ))}
+                                </span>
+                              ))}
                           </div>
                         ))}
                     </div>
@@ -233,21 +230,21 @@ const AppLiveEvent = () => {
                         .map((el: any) => (
                           <div className="flex justify-end" key={el.id}>
                             {el.live_stats
-                            .filter((stat: any) => stat.identifier !== "minutes")
-                            .map((stat: any, i: number) => (
-                              <span className="flex items-center" key={i}>
-                                {
-                                Array.from({length: stat.value}, (_, index) => index + 1)
-                                .map((val: number) => (
-                                  <p className="" key={val}>
-                                  {statsMapping(stat.identifier)} 
-                                </p>                                  
-                                ))
-                                }
-                                
-                              </span>
-                              
-                            ))}
+                              .filter(
+                                (stat: any) => stat.identifier !== "minutes"
+                              )
+                              .map((stat: any, i: number) => (
+                                <span className="flex items-center" key={i}>
+                                  {Array.from(
+                                    { length: stat.value },
+                                    (_, index) => index + 1
+                                  ).map((val: number) => (
+                                    <p className="" key={val}>
+                                      {statsMapping(stat.identifier)}
+                                    </p>
+                                  ))}
+                                </span>
+                              ))}
 
                             <p className="ml-2">{el.web_name}</p>
                           </div>
