@@ -116,7 +116,7 @@ export function statsMapping(code: string): string {
         yellow_cards: "🟨",
         red_cards: "🟥",
         saves: "🧤",
-        bonus: "➕",
+        bonus: "⭐",
         bps: "BPS"
     };
     return stats[code] || '';
