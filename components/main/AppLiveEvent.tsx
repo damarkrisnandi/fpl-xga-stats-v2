@@ -270,9 +270,24 @@ const AppLiveEvent = () => {
                         })
                         .map((el: any) => (
                           <div className="flex justify-end" key={el.id}>
+                            <span
+                              className={`bg-blue-200 flex items-center px-1`}
+                            >
+                              <Clock className="h-3 w-3" />
+                              <p>
+                                {
+                                  el.live_stats.find(
+                                    (stat: any) => stat.identifier == "minutes"
+                                  )?.value
+                                }
+                                &apos;
+                              </p>
+                            </span>
                             {el.live_stats
                               .filter(
-                                (stat: any) => stat.identifier !== "minutes"
+                                (stat: any) =>
+                                  stat.identifier !== "minutes" &&
+                                  stat.identifier !== "bonus"
                               )
                               .map((stat: any, i: number) => (
                                 <span className="flex items-center" key={i}>
@@ -286,7 +301,22 @@ const AppLiveEvent = () => {
                                   ))}
                                 </span>
                               ))}
-
+                            {el.live_stats.find(
+                              (stat: any) => stat.identifier == "bonus"
+                            ) && (
+                              <span
+                                className={`bg-green-300 flex items-center px-1`}
+                              >
+                                <Sparkles className="text-yellow-500 w-3 h-3" />
+                                <p>
+                                  {
+                                    el.live_stats.find(
+                                      (stat: any) => stat.identifier == "bonus"
+                                    )?.value
+                                  }
+                                </p>
+                              </span>
+                            )}
                             <p className="ml-2">{el.web_name}</p>
                           </div>
                         ))}
