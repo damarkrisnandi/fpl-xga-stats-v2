@@ -21,6 +21,7 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import Link from "next/link";
 
 const AppFixtures = (props: any) => {
   const { teams, events, elements, element_stats } = props;
@@ -198,6 +199,11 @@ const AppFixtures = (props: any) => {
                   </AccordionItem>
                 ))}
             </Accordion>
+            <Button asChild variant={'outline'} className="w-full">
+                <Link href={`/live-event`}>
+                    Live Event <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span>
+                </Link>
+            </Button>
           </CardContent>
           <CardFooter></CardFooter>
         </Card>

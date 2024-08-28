@@ -36,6 +36,16 @@ export function getManagerData(id: number) {
   // );
 }
 
+export function getLiveEventData(event: number) {
+  return fromStorage(
+    `live-event/${event}`,
+    `${API_URL}/live-event/${event}`
+  );
+  // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
+  //   res.json()
+  // );
+}
+
 export function getArchivedBootstrap(season: string) {
   return fetch(`${ARCHIVED_API_URL}/${season}/bootstrap-static.json`).then(
     (res) => res.json()

@@ -102,3 +102,22 @@ export function positionMapping(code: number): string {
 
     return position[code] || '';
 }
+
+export function statsMapping(code: string): string {
+    const stats: any = {
+        minutes: "MP",
+        goals_scored: "GS",
+        assists: "A",
+        clean_sheets: "CS",
+        goals_conceded: "GC",
+        own_goals: "OG",
+        penalties_saved: "PS",
+        penalties_missed: "PM",
+        yellow_cards: "YC",
+        red_cards: "RC",
+        saves: "S",
+        bonus: "B",
+        bps: "BPS"
+    };
+    return stats[code] || '';
+}
