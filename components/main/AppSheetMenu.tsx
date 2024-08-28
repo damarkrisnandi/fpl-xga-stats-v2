@@ -25,7 +25,7 @@ const AppSheetMenu = () => {
                             <Accordion type="single" collapsible className="w-full">
                                 {
                                     menu.children.map((submenu: any) => (
-                                        <SheetClose asChild>
+                                        <SheetClose asChild key={submenu.id}>
                                             <Button asChild variant={'ghost'} className="w-full">
                                                 <Link href={'/' + submenu.id} passHref={false}>
                                                     {submenu.name}

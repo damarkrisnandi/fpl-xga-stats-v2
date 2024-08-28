@@ -109,10 +109,10 @@ const AppLiveEvent = () => {
     <Card className="w-11/12 md:w-5/12 mb-2">
       <CardHeader>
         <Button asChild variant={"outline"} className="mb-7">
-            <Link href={`/`}>
-              <ChevronLeft /> Back to Home
-            </Link>
-          </Button>
+          <Link href={`/`}>
+            <ChevronLeft /> Back to Home
+          </Link>
+        </Button>
 
         <CardTitle>
           <span className="flex items-center space-x-2">
@@ -188,10 +188,24 @@ const AppLiveEvent = () => {
                         .map((el: any) => (
                           <div className="flex justify-start" key={el.id}>
                             <p className="mr-2">{el.web_name}</p>
-                            <span className={`bg-blue-200 flex items-center px-1`}><Clock className="h-3 w-3" /><p>{el.live_stats.find((stat: any) => stat.identifier == "minutes")?.value}'</p></span>
+                            <span
+                              className={`bg-blue-200 flex items-center px-1`}
+                            >
+                              <Clock className="h-3 w-3" />
+                              <p>
+                                {
+                                  el.live_stats.find(
+                                    (stat: any) => stat.identifier == "minutes"
+                                  )?.value
+                                }
+                                &apos;
+                              </p>
+                            </span>
                             {el.live_stats
                               .filter(
-                                (stat: any) => stat.identifier !== "minutes" && stat.identifier !== "bonus"
+                                (stat: any) =>
+                                  stat.identifier !== "minutes" &&
+                                  stat.identifier !== "bonus"
                               )
                               .map((stat: any, i: number) => (
                                 <span className="flex items-center" key={i}>
@@ -205,10 +219,23 @@ const AppLiveEvent = () => {
                                   ))}
                                 </span>
                               ))}
-                              { el.live_stats.find((stat: any) => stat.identifier == "bonus") && (
-                                <span className={`bg-green-300 flex items-center px-1`}><Sparkles className="text-yellow-500 w-3 h-3"/><p>{el.live_stats.find((stat: any) => stat.identifier == "bonus")?.value}</p></span>
-                              )}
-                                                                                      </div>
+                            {el.live_stats.find(
+                              (stat: any) => stat.identifier == "bonus"
+                            ) && (
+                              <span
+                                className={`bg-green-300 flex items-center px-1`}
+                              >
+                                <Sparkles className="text-yellow-500 w-3 h-3" />
+                                <p>
+                                  {
+                                    el.live_stats.find(
+                                      (stat: any) => stat.identifier == "bonus"
+                                    )?.value
+                                  }
+                                </p>
+                              </span>
+                            )}
+                          </div>
                         ))}
                     </div>
                   </div>
@@ -274,10 +301,10 @@ const AppLiveEvent = () => {
       </CardContent>
       <CardFooter>
         <Button asChild variant={"outline"} className="w-full">
-            <Link href={`/`}>
-              <ChevronLeft /> Back to Home
-            </Link>
-          </Button>
+          <Link href={`/`}>
+            <ChevronLeft /> Back to Home
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   );
