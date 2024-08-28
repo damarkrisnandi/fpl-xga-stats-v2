@@ -1,5 +1,5 @@
 "use client";
-import { BadgePlus, Clock } from "lucide-react";
+import { BadgePlus, Clock, Sparkles } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -181,7 +181,7 @@ const AppLiveEvent = () => {
                             <span className={`bg-blue-200 flex items-center px-1`}><Clock className="h-3 w-3" /><p>{el.live_stats.find((stat: any) => stat.identifier == "minutes")?.value}'</p></span>
                             {el.live_stats
                               .filter(
-                                (stat: any) => stat.identifier !== "minutes"
+                                (stat: any) => stat.identifier !== "minutes" && stat.identifier !== "bonus"
                               )
                               .map((stat: any, i: number) => (
                                 <span className="flex items-center" key={i}>
@@ -196,7 +196,7 @@ const AppLiveEvent = () => {
                                 </span>
                               ))}
                               { el.live_stats.find((stat: any) => stat.identifier == "bonus") && (
-                                <span className={`bg-green-300 flex items-center px-1`}><BadgePlus className="w-3 h-3"/><p>{el.live_stats.find((stat: any) => stat.identifier == "bonus")?.value}</p></span>
+                                <span className={`bg-green-300 flex items-center px-1`}><Sparkles className="text-yellow-500 w-3 h-3"/><p>{el.live_stats.find((stat: any) => stat.identifier == "bonus")?.value}</p></span>
                               )}
                                                                                       </div>
                         ))}
