@@ -1,11 +1,12 @@
 "use client";
-import { BadgePlus, Clock, Sparkles } from "lucide-react";
+import { BadgePlus, ChevronLeft, Clock, Sparkles } from "lucide-react";
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
   CardContent,
+  CardFooter,
 } from "../ui/card";
 import { useEffect, useState } from "react";
 import {
@@ -19,6 +20,8 @@ import AppFailedToFetch from "./AppFailedToFetch";
 import { Separator } from "@radix-ui/react-select";
 import { statsMapping } from "@/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Button } from "../ui/button";
+import Link from "next/link";
 
 const AppLiveEvent = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -104,9 +107,15 @@ const AppLiveEvent = () => {
   return (
     <Card className="w-11/12 md:w-5/12 mb-2">
       <CardHeader>
+        <Button asChild variant={"outline"} className="mb-7">
+            <Link href={`/`}>
+              <ChevronLeft /> Back to Home
+            </Link>
+          </Button>
+
         <CardTitle>
           <span className="flex items-center space-x-2">
-            <p className="">
+            <p className="text-lg">
               Live Event {currentEvent ? ": Gameweek " + currentEvent.id : ""}
             </p>
             <Clock />
@@ -262,6 +271,13 @@ const AppLiveEvent = () => {
             </div>
           ))}
       </CardContent>
+      <CardFooter>
+        <Button asChild variant={"outline"} className="w-full">
+            <Link href={`/`}>
+              <ChevronLeft /> Back to Home
+            </Link>
+          </Button>
+      </CardFooter>
     </Card>
   );
 };

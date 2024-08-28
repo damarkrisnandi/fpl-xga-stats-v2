@@ -63,6 +63,23 @@ export const leaguesData = [
   // },
 ];
 
+export const menuTree = [
+  {
+      name: 'Main',
+      current: true,
+      children: [
+          {
+              name: 'Home',
+              id: ''
+          },
+          {
+              name: 'Live Event',
+              id: 'live-event',
+          },
+      ]
+  },
+];
+
 export const currentSeason = "2024-2025";
 
 export function getPlayerPhotoUrl(photo: string): string {
