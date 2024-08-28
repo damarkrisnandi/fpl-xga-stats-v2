@@ -107,7 +107,7 @@ export function statsMapping(code: string): string {
     const stats: any = {
         minutes: "🕑",
         goals_scored: "⚽️",
-        assists: "🅰️",
+        assists: "👟",
         clean_sheets: "🔰",
         goals_conceded: "❌",
         own_goals: "OG",
@@ -116,7 +116,7 @@ export function statsMapping(code: string): string {
         yellow_cards: "🟨",
         red_cards: "🟥",
         saves: "🧤",
-        bonus: "🅱️",
+        bonus: "➕",
         bps: "BPS"
     };
     return stats[code] || '';

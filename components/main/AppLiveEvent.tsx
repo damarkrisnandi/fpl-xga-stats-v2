@@ -181,10 +181,21 @@ const AppLiveEvent = () => {
                         .map((el: any) => (
                           <div className="flex justify-start" key={el.id}>
                             <p className="mr-2">{el.web_name}</p>
-                            {el.live_stats.map((stat: any, i: number) => (
-                              <p className="mr-1" key={i}>
-                                {statsMapping(stat.identifier)}{stat.value} 
-                              </p>
+                            {el.live_stats
+                            .filter((stat: any) => stat.identifier !== "minutes")
+                            .map((stat: any, i: number) => (
+                              <span className="flex items-center" key={i}>
+                                {
+                                Array.from({length: stat.value}, (_, index) => index + 1)
+                                .map((val: number) => (
+                                  <p className="" key={val}>
+                                  {statsMapping(stat.identifier)} 
+                                </p>                                  
+                                ))
+                                }
+                                
+                              </span>
+                              
                             ))}
                           </div>
                         ))}
@@ -221,11 +232,23 @@ const AppLiveEvent = () => {
                         })
                         .map((el: any) => (
                           <div className="flex justify-end" key={el.id}>
-                            {el.live_stats.map((stat: any, i: number) => (
-                              <p className="ml-1" key={i}>
-                                {statsMapping(stat.identifier)}{stat.value}
-                              </p>
+                            {el.live_stats
+                            .filter((stat: any) => stat.identifier !== "minutes")
+                            .map((stat: any, i: number) => (
+                              <span className="flex items-center" key={i}>
+                                {
+                                Array.from({length: stat.value}, (_, index) => index + 1)
+                                .map((val: number) => (
+                                  <p className="" key={val}>
+                                  {statsMapping(stat.identifier)} 
+                                </p>                                  
+                                ))
+                                }
+                                
+                              </span>
+                              
                             ))}
+
                             <p className="ml-2">{el.web_name}</p>
                           </div>
                         ))}
