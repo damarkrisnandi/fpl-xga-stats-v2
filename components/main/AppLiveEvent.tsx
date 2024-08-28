@@ -1,5 +1,5 @@
 "use client";
-import { Clock } from "lucide-react";
+import { BadgePlus, Clock } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -127,11 +127,11 @@ const AppLiveEvent = () => {
                   <p className="w-10 text-right text-sm font-semibold mr-3">
                     {getTeamShort(fixture.team_h)}
                   </p>
-                  <AppScoreBoard score={fixture.team_h_score} />
+                  <AppScoreBoard score={fixture.team_h_score || 0} />
                 </div>
 
                 <div className="flex justify-start items-center">
-                  <AppScoreBoard score={fixture.team_a_score} />
+                  <AppScoreBoard score={fixture.team_a_score || 0} />
                   <p className="w-10 text-left text-sm font-semibold ml-3">
                     {getTeamShort(fixture.team_a)}
                   </p>
@@ -178,6 +178,7 @@ const AppLiveEvent = () => {
                         .map((el: any) => (
                           <div className="flex justify-start" key={el.id}>
                             <p className="mr-2">{el.web_name}</p>
+                            <span className={`bg-blue-200 flex items-center px-1`}><Clock className="h-3 w-3" /><p>{el.live_stats.find((stat: any) => stat.identifier == "minutes")?.value}'</p></span>
                             {el.live_stats
                               .filter(
                                 (stat: any) => stat.identifier !== "minutes"
@@ -194,7 +195,10 @@ const AppLiveEvent = () => {
                                   ))}
                                 </span>
                               ))}
-                          </div>
+                              { el.live_stats.find((stat: any) => stat.identifier == "bonus") && (
+                                <span className={`bg-green-300 flex items-center px-1`}><BadgePlus className="w-3 h-3"/><p>{el.live_stats.find((stat: any) => stat.identifier == "bonus")?.value}</p></span>
+                              )}
+                                                                                      </div>
                         ))}
                     </div>
                   </div>
