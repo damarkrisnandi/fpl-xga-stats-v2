@@ -176,11 +176,9 @@ const PlayerCardStats = (props: any) => {
           </div>
         </div>
         <div className="flex justify-center flex-col mb-2">
-          {element.news && element.news.length && <div className="w-full flex">
-            <TriangleAlert className="w-3 h-3" />
-            <p className="text-xs">{ element.news }</p>
-          </div> }
+          
           <div className="w-full flex justify-center">
+            {element.news && element.news.length && <NewsContainer news={element.news}/> }
             <StatItem
               label={`GW${currentEvent.id}`}
               value={element.event_points}
@@ -339,6 +337,17 @@ const NextFixturesItem = (props: any) => {
     </div>
   );
 };
+
+const NewsContainer = (props: any) => {
+  const { news } = props;
+  return (
+    <div
+      className={`w-56 h-14 md:w-96 md:h-28 p-1 md:p-3 flex justify-center items-center bg-yellow-200`}
+    >
+      <p className="text-xs md:text-sm">{news}</p>
+    </div>
+  )
+}
 
 function showExpected(props: string, position: number) {
     const allowance: any = {
