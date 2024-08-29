@@ -176,7 +176,11 @@ const PlayerCardStats = (props: any) => {
           </div>
         </div>
         <div className="flex justify-center flex-col mb-2">
-          
+          {element.news && element.news.length && (
+      <div className="w-full flex justify-center">
+        <NewsContainer news={element.news} />
+      </div>
+          )}
           <div className="w-full flex justify-center">
             <StatItem
               label={`GW${currentEvent.id}`}
