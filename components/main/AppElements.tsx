@@ -328,7 +328,7 @@ const NextFixturesItem = (props: any) => {
         {
         nextFixtures
         .map((nextf: any, index: number) => (
-            <div className={`text-xs md:text-xl font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
+            <div className={`text-xs md:text-xl font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
         ))
         }
       </div>
