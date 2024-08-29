@@ -101,7 +101,7 @@ const AppElements = (props: any) => {
                 key={el.id}
                 className="flex flex-col items-center justify-center space-y-2"
               >
-                <PlayerCardStats element={el} currentEvent={currentEvent} fixtures={fixtures} />
+                <PlayerCardStats element={el} currentEvent={currentEvent} fixtures={fixtures} teams={bootstrap?.teams}/>
               </div>
             ))}
         </ScrollArea>
@@ -138,8 +138,14 @@ const SelectTeam = (props: any) => {
 };
 
 const PlayerCardStats = (props: any) => {
-  const { className, element, currentEvent, fixtures } = props;
+  const { className, element, currentEvent, fixtures, teams } = props;
 
+  const getTeamShort = (code: number) => {
+    return teams.find((team: any) => team.id === code)?.short_name || "";
+  };
+
+  const nextFixtures = fixtures.filter((fix: any) => fix.event == currentEvent.id + 1 && (fix.team_h == element.team || fix.team_a == element.team) );
+  const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
       <div className="w-full p-2">
@@ -280,7 +286,7 @@ const PlayerCardStats = (props: any) => {
             `}
             />
             <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
-            
+            <StatItem label={`Next`} value={mappingFixtures} />
           </div>
         </div>
         <Button asChild variant={"outline"} className="w-full">
@@ -312,7 +318,7 @@ function showExpected(props: string, position: number) {
         "xA": [2, 3, 4],
         "xGC": [1, 2],
         "xP": [1, 2, 3, 4],
-        "CS": [1, 2],
+        "CS": [],
     }
     return allowance[props]?.includes(position)
 }
