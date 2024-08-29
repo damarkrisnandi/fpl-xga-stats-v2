@@ -24,7 +24,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
 import { CirclePercent, Euro, PoundSterling } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
+import { getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -99,7 +99,7 @@ const AppElements = (props: any) => {
                 key={el.id}
                 className="flex flex-col items-center justify-center space-y-2"
               >
-                <PlayerCardStats element={el} currentEvent={currentEvent} />
+                <PlayerCardStats element={el} currentEvent={currentEvent} fixtures={fixtures} />
               </div>
             ))}
         </ScrollArea>
@@ -131,7 +131,7 @@ const SelectTeam = (props: any) => {
 };
 
 const PlayerCardStats = (props: any) => {
-  const { className, element, currentEvent } = props;
+  const { className, element, currentEvent, fixtures } = props;
 
   return (
     <div className={`w-full ${className}`}>
@@ -255,6 +255,26 @@ const PlayerCardStats = (props: any) => {
             />
             
           </div>)}
+          <div className="w-full flex justify-center">
+            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
+            <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
+            value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)).toFixed(2)} 
+            className={`
+            ${
+              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) > 0
+                ? "bg-green-200 text-green-700"
+                : ""
+            }
+            ${
+              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) < 0
+                ? "bg-red-200 text-red-700"
+                : ""
+            }
+            `}
+            />
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
+            
+          </div>
         </div>
         <Button asChild variant={"outline"} className="w-full">
           <Link href={`player/${element.id}`} className="font-semibold">Show Player Details</Link>
@@ -269,12 +289,12 @@ const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
     <div
-      className={`w-14 h-14 p-1 flex flex-col justify-center items-center ${
+      className={`w-14 h-14 md:w-28 md:h-28 p-1 md:p-3 flex flex-col justify-center items-center ${
         className || ""
       } bg-slate-200`}
     >
-      <p className="text-xs">{label}</p>
-      <p className="text-sm font-semibold">{value}</p>
+      <p className="text-xs md:text-sm">{label}</p>
+      <p className="text-sm md:text-xl font-semibold">{value}</p>
     </div>
   );
 };
