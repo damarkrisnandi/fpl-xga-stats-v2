@@ -201,10 +201,10 @@ export const getExpectedPoints = (
 
   const diffRef: any = {
     1: 1,
-    2: 0.88,
-    3: 0.66,
-    4: 0.54,
-    5: 0.4,
+    2: 0.92,
+    3: 0.88,
+    4: 0.84,
+    5: 0.8,
   };
   let diffIndex = 1;
   const filteredfixturesByGameweek = fixtures.filter(
