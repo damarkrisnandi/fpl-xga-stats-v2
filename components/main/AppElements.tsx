@@ -22,7 +22,7 @@ import {
 } from "../ui/select";
 import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
-import { CirclePercent, Euro, PoundSterling } from "lucide-react";
+import { CirclePercent, Euro, PoundSterling, RefreshCw } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
@@ -35,6 +35,7 @@ const AppElements = (props: any) => {
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
+  const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
 
   useEffect(() => {
     if (!bootstrap) {
@@ -86,7 +87,7 @@ const AppElements = (props: any) => {
         <CardDescription>Statistics Results and Expectations</CardDescription>
       </CardHeader>
       <CardContent>
-        <SelectTeam teams={bootstrap?.teams} className="mb-2" />
+        <SelectTeam teams={bootstrap?.teams}  onValueChangeTeam={(value: any) => { setFilterByTeam(value ? Number(value) : null)}} className="mb-2" />
         <ScrollArea className="h-[600px] w-full rounded-md border p-4">
           {bootstrap.elements
             .toSorted(
@@ -94,6 +95,7 @@ const AppElements = (props: any) => {
                 b.total_points -
                 a.total_points
             )
+            .filter((el: any) => filterByTeam ? el.team == filterByTeam : el)
             .map((el: any) => (
               <div
                 key={el.id}
@@ -111,16 +113,21 @@ const AppElements = (props: any) => {
 export default AppElements;
 
 const SelectTeam = (props: any) => {
+    const handleOnSelect = (value: any) => {
+        console.log(value)
+        props.onValueChangeTeam(value)
+    }
   return (
-    <Select>
+    <Select onValueChange={handleOnSelect}>
       <SelectTrigger className={`w-full ${props.className}`}>
         <SelectValue placeholder="Filter Players by Team" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Teams</SelectLabel>
+          <SelectItem value={'0'} key={0} >All</SelectItem>
           {props.teams.map((team: any) => (
-            <SelectItem value={team.name} key={team.id}>
+            <SelectItem value={`${team.id}`} key={team.id} >
               {team.name}
             </SelectItem>
           ))}

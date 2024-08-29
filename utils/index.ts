@@ -162,6 +162,7 @@ export const getExpectedPoints = (
     clean_sheets_per_90,
     own_goals,
     expected_goals_conceded_per_90,
+    saves,
     minutes,
   } = element;
   if (element_type === 4) {
@@ -182,28 +183,29 @@ export const getExpectedPoints = (
   if (element_type === 2) {
     const xPG = expected_goals_per_90 * 6;
     const xPA = expected_assists_per_90 * 3;
-    const xCS = clean_sheets_per_90 * 4;
+    const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 4 : 0;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    const xGC = expected_goals_conceded_per_90 >= 2 ? -1 : 0;
+    const xGC = Math.floor(expected_goals_conceded_per_90/2);
     xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC;
   }
 
   if (element_type === 1) {
     const xPG = expected_goals_per_90 * 6;
     const xPA = expected_assists_per_90 * 3;
-    const xCS = clean_sheets_per_90 * 5;
+    const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 5 : 0;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    const xGC = expected_goals_conceded_per_90 >= 2 ? -1 : 0;
-    xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC;
+    const xGC = Math.floor(expected_goals_conceded_per_90 / 2);
+    const xSaves = Math.floor((saves / filteredFixtures.length) / 3)
+    xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC + xSaves;
   }
 
   const diffRef: any = {
     1: 1,
-    2: 0.92,
-    3: 0.88,
-    4: 0.84,
+    2: 0.95,
+    3: 0.90,
+    4: 0.85,
     5: 0.8,
   };
   let diffIndex = 1;
