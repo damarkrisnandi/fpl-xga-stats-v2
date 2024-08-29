@@ -177,8 +177,8 @@ const PlayerCardStats = (props: any) => {
         </div>
         <div className="flex justify-center flex-col mb-2">
           {element.news && element.news.length && <div className="w-full flex">
-            <TriangleAlert />
-            <p>{ element.news }</p>
+            <TriangleAlert className="w-3 h-3" />
+            <p className="text-xs">{ element.news }</p>
           </div> }
           <div className="w-full flex justify-center">
             <StatItem
