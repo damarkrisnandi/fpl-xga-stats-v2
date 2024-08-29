@@ -22,7 +22,7 @@ import {
 } from "../ui/select";
 import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
-import { CirclePercent, Euro, PoundSterling, RefreshCw } from "lucide-react";
+import { CirclePercent, Euro, PoundSterling, RefreshCw, TriangleAlert } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { difficultyColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
@@ -176,6 +176,10 @@ const PlayerCardStats = (props: any) => {
           </div>
         </div>
         <div className="flex justify-center flex-col mb-2">
+          {element.news && element.news.length && <div className="w-full flex">
+            <TriangleAlert />
+            <p>{ element.news }</p>
+          </div> }
           <div className="w-full flex justify-center">
             <StatItem
               label={`GW${currentEvent.id}`}
