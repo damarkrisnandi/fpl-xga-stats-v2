@@ -94,15 +94,15 @@ export function getTeamLogoUrl(id: number): string {
 export function difficultyColor(code: number): string {
   switch (code) {
     case 1:
-      return "text-green-500";
+      return "bg-green-500 text-white";
     case 2:
-      return "text-lime-500";
+      return "bg-green-500 text-white";
     case 3:
       return "";
     case 4:
-      return "text-red-500";
+      return "bg-red-500 text-white";
     case 5:
-      return "text-red-900";
+      return "bg-red-900 text-white";
     default:
       return "";
   }

@@ -24,7 +24,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
 import { CirclePercent, Euro, PoundSterling, RefreshCw } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
+import { difficultyColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -269,7 +269,7 @@ const PlayerCardStats = (props: any) => {
             
           </div>)}
           <div className="w-full flex justify-center">
-            <StatItem label={`Next`} value={mappingFixtures} />
+            <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
             <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} /> 
             <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
@@ -308,6 +308,30 @@ const StatItem = (props: any) => {
     >
       <p className="text-xs md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>
+    </div>
+  );
+};
+const NextFixturesItem = (props: any) => {
+  const { className, teams, element, nextFixtures } = props;
+  const getTeamShort = (code: number) => {
+    return teams.find((team: any) => team.id === code)?.short_name || "";
+  };
+
+  return (
+    <div
+      className={`w-14 h-14 md:w-28 md:h-28 flex flex-col justify-center items-center ${
+        className || ""
+      } bg-slate-200`}
+    >
+      <p className="text-xs md:text-sm">Next</p>
+      <div>
+        {
+        nextFixtures
+        .map((nextf: any, index: number) => (
+            <div className={`text-xs md:text-xl font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
+        ))
+        }
+      </div>
     </div>
   );
 };
