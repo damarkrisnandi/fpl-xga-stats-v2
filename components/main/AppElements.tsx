@@ -269,6 +269,8 @@ const PlayerCardStats = (props: any) => {
             
           </div>)}
           <div className="w-full flex justify-center">
+            <StatItem label={`Next`} value={mappingFixtures} />
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} /> 
             <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
             value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)).toFixed(2)} 
@@ -285,8 +287,6 @@ const PlayerCardStats = (props: any) => {
             }
             `}
             />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
-            <StatItem label={`Next`} value={mappingFixtures} />
           </div>
         </div>
         <Button asChild variant={"outline"} className="w-full">
