@@ -183,8 +183,8 @@ const PlayerCardStats = (props: any) => {
           )}
           <div className="w-full flex justify-center">
             <StatItem
-              label={`GW${currentEvent.id}`}
-              value={element.event_points}
+              label={`Total`}
+              value={element.total_points}
             />
             <StatItem
               label={"COST"}
@@ -267,16 +267,15 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {showExpected('CS', element.element_type) && (<div className="w-full flex justify-center">
             <StatItem label={`CS`} value={element.clean_sheets} />
-            <StatItem
-              label={`CS90`}
-              value={element.clean_sheets_per_90}
-            />
+            <StatItem label={`CS90`} value={element.clean_sheets_per_90} />
             
           </div>)}
           <div className="w-full flex justify-center">
-            <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} /> 
+            {/* <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} /> */}
+            {/* <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} /> */}
+            <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
             <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
+            <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
             value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)).toFixed(2)} 
             className={`
@@ -286,12 +285,19 @@ const PlayerCardStats = (props: any) => {
                 : ""
             }
             ${
-              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) < 0
+              element.event_points == 0 || (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) < 0
                 ? "bg-red-200 text-red-700"
                 : ""
             }
             `}
             />
+          </div>
+          <div className="w-full flex justify-center">
+            <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
+            <StatItem label={' '} value={' '} />
+            <StatItem label={' '} value={' '} />
+ 
           </div>
         </div>
         <Button asChild variant={"outline"} className="w-full">
@@ -307,7 +313,7 @@ const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
     <div
-      className={`w-14 h-14 md:w-28 md:h-28 p-1 md:p-3 flex flex-col justify-center items-center ${
+      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${
         className || ""
       } bg-slate-200`}
     >
@@ -324,7 +330,7 @@ const NextFixturesItem = (props: any) => {
 
   return (
     <div
-      className={`w-14 h-14 md:w-28 md:h-28 flex flex-col justify-center items-center ${
+      className={`w-14 h-14 md:w-24 md:h-24 flex flex-col justify-center items-center ${
         className || ""
       } bg-slate-200`}
     >
@@ -333,7 +339,7 @@ const NextFixturesItem = (props: any) => {
         {
         nextFixtures
         .map((nextf: any, index: number) => (
-            <div className={`text-xs md:text-xl font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
+            <div className={`text-xs md:text-lg font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
         ))
         }
       </div>
@@ -345,8 +351,9 @@ const NewsContainer = (props: any) => {
   const { news } = props;
   return (
     <div
-      className={`w-56 h-14 md:w-96 md:h-28 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200`}
+      className={`w-56 h-14 md:w-96 md:h-20 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200`}
     >
+      <TriangleAlert className="w-3 h-3"/>
       <p className="text-xs md:text-sm">{news}</p>
     </div>
   )
