@@ -149,25 +149,27 @@ const PlayerCardStats = (props: any) => {
   return (
     <div className={`w-full ${className}`}>
       <div className="w-full p-2">
-        <div className="flex justify-stretch w-full items-center">
+        <div className="flex justify-stretch w-full items-center mb-1">
           <div className="flex items-center">
-            <Avatar>
+            {/* <Avatar>
               <AvatarImage
                 src={getPlayerPhotoUrl(element.photo)}
                 alt={element.web_name}
               />
-              {/* <AvatarFallback>CN</AvatarFallback> */}
-            </Avatar>
+            </Avatar> */}
+            <div className="relative w-8 h-8 md:w-20 md:h-20">
             <Image
               src={getTeamLogoUrl(element.team_code)}
-              height={32}
-              width={32}
+              fill={true}
+              className="w-8 h-8 md:w-20 md:h-20"
+              sizes="20"
               alt={`t${element.team_code}`}
             />
+            </div>
 
             <div className="p-2">
-              <p className="text-sm font-semibold">{element.web_name} | {positionMapping(element.element_type)}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-sm md:text-xl font-semibold">{element.web_name} | {positionMapping(element.element_type)}</p>
+              <p className="text-xs md:text-md text-gray-500">
                 {element.first_name} {element.second_name}
               </p>
               
@@ -270,9 +272,7 @@ const PlayerCardStats = (props: any) => {
             <StatItem label={`CS90`} value={element.clean_sheets_per_90} />
             
           </div>)}
-          <div className="w-full flex justify-center">
-            {/* <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} /> */}
-            {/* <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} /> */}
+          {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
             <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
             <StatItem label={' '} value={' '} />
@@ -291,14 +291,14 @@ const PlayerCardStats = (props: any) => {
             }
             `}
             />
-          </div>
-          <div className="w-full flex justify-center">
+          </div>}
+          {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
             <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
-          </div>
+          </div>}
         </div>
         <Button asChild variant={"outline"} className="w-full">
           <Link href={`player/${element.id}`} className="font-semibold">Show Player Details</Link>
@@ -351,9 +351,9 @@ const NewsContainer = (props: any) => {
   const { news } = props;
   return (
     <div
-      className={`w-56 h-14 md:w-96 md:h-20 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200 space-x-1`}
+      className={`w-56 h-14 md:w-96 md:h-20 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200`}
     >
-      <TriangleAlert className="w-5 h-5 font-semibold"/>
+      <TriangleAlert className="w-3 h-3"/>
       <p className="text-xs md:text-sm">{news}</p>
     </div>
   )

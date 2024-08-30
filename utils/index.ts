@@ -202,10 +202,10 @@ export const getExpectedPoints = (
   }
 
   const diffRef: any = {
-    1: 1,
-    2: 0.95,
-    3: 0.90,
-    4: 0.85,
+    1: 1.2,
+    2: 1.04,
+    3: 0.96,
+    4: 0.88,
     5: 0.8,
   };
   let diffIndex = 1;
