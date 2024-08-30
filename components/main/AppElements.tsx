@@ -31,41 +31,37 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 
 const AppElements = (props: any) => {
-  const [bootstrap, setBootstrap] = useState<any>(null);
+  const { bootstrap } = props;
+  // const [bootstrap, setBootstrap] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((data) => {
-        setBootstrap(data);
+      
+    setCurrentEvent(
+      bootstrap.events
+        .filter(
+          (event: any) =>
+            new Date(event.deadline_time).getTime() <= new Date().getTime()
+        )
+        .at(-1)
+    );
 
-        setCurrentEvent(
-          data.events
-            .filter(
-              (event: any) =>
-                new Date(event.deadline_time).getTime() <= new Date().getTime()
-            )
-            .at(-1)
-        );
+    setNextEvent(
+      bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() > new Date().getTime()
+      )[0]
+    );
 
-        setNextEvent(
-          data.events.filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() > new Date().getTime()
-          )[0]
-        );
-      });
-    }
-
-    if (bootstrap && fixtures.length == 0) {
+    if (fixtures.length == 0) {
       getFixtures().then((data) => setFixtures(data));
     }
   });
 
-  if (!bootstrap) {
+  if (fixtures.length == 0) {
     return (
       <Card className="w-11/12 md:w-5/12">
         <CardHeader>
@@ -77,7 +73,7 @@ const AppElements = (props: any) => {
     );
   }
 
-  if (bootstrap && bootstrap.error) {
+  if (fixtures.length && fixtures[0].error) {
     return <AppFailedToFetch />;
   }
   return (

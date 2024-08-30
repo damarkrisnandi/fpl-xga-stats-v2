@@ -40,7 +40,7 @@ const MainPage = () => {
         elements={bootstrap?.elements}
         element_stats={bootstrap?.element_stats}
       />
-      <AppElements className="w-full" />
+      <AppElements className="w-full" bootstrap={bootstrap}/>
     </div>
   );
 };

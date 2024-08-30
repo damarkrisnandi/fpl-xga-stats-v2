@@ -9,7 +9,7 @@ const NotFoundPage = () => {
                 <div className="w-10 h-10 bg-slate-200 flex justify-center items-center rounded-lg">
                 <Construction />
                 </div>
-                <p className="text-xs">under construction</p>
+                <p className="text-xs">Oops..</p>
                 <Button asChild variant={'outline'} className="w-full">
                     <Link href={`/`}>
                         Back to Home
