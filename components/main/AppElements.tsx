@@ -347,9 +347,9 @@ const NewsContainer = (props: any) => {
   const { news } = props;
   return (
     <div
-      className={`w-56 h-14 md:w-96 md:h-20 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200`}
+      className={`w-56 h-14 md:w-96 md:h-20 py-1 px-3 md:py-3 md:px-5 flex justify-center items-center bg-yellow-200 space-x-2`}
     >
-      <TriangleAlert className="w-3 h-3"/>
+      <TriangleAlert className="w-6 h-6"/>
       <p className="text-xs md:text-sm">{news}</p>
     </div>
   )
