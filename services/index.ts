@@ -1,4 +1,4 @@
-const API_URL = "https://fpl-fetch2.netlify.app/api";
+const API_URL = "https://fantasy-pl-vercel-proxy.vercel.app";
 const ARCHIVED_API_URL = "https://fpl-static-data.vercel.app";
 
 export async function getBootstrap() {
