@@ -129,7 +129,7 @@ export function xPColor(value: number): string {
   else if (value < 6) { return 'text-lime-700' }
   else if (value < 9) { return 'text-green-600' }
   
-  return 'text-green-800' 
+  return 'text-green-700' 
   
 }
 export function positionMapping(code: number): string {
