@@ -109,6 +109,15 @@ export function difficultyColor(code: number): string {
   return "";
 }
 
+export function xPColor(value: number): string {
+  if (value < 3) { return 'text-red-700' }
+  else if (value < 4) { return 'text-yellow-500' }
+  else if (value < 6) { return 'text-lime-700' }
+  else if (value < 9) { return 'text-green-600' }
+  
+  return 'text-green-700' 
+  
+}
 export function positionMapping(code: number): string {
   const position: any = {
     1: "GKP",
@@ -147,6 +156,14 @@ export const getExpectedPoints = (
   teams: any
 ) => {
   let gameWeek = currentGameWeek + deltaEvent;
+  
+  if (gameWeek > 38) {
+    return 0;
+  } else if (gameWeek < 1) {
+    // bisa pake history data bootstrap static
+    return 0;
+  }
+  
   let xP = 0;
   const filteredFixtures = fixtures.filter(
     (fix: any) =>
@@ -200,6 +217,13 @@ export const getExpectedPoints = (
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2);
     const xSaves = Math.floor((saves / filteredFixtures.length) / 3)
     xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC + xSaves;
+  }
+
+  const elementStatusIndex: any = {
+    "a": 1,
+    "d": (element.chance_of_playing_next_round / 100), 
+    "i": (element.chance_of_playing_next_round / 100),
+    "u": 0
   }
 
   const diffRef: any = {
@@ -285,7 +309,7 @@ export const getExpectedPoints = (
       diffIndex = diffRef[fixture.team_a_difficulty] + getHomeAwayIndex(element, teams.find((t: any) => t.id == fixture.team_a), teams.find((t: any) => t.id == fixture.team_h), false);
     }
 
-    xP = xP * starts_per_90 * diffIndex;
+    xP = xP * starts_per_90 * diffIndex * elementStatusIndex[element.status];
 
     totalXP += xP;
   }

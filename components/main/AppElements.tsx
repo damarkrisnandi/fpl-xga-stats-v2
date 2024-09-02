@@ -24,7 +24,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import PlayerCard from "../PlayerCard";
 import { CirclePercent, Euro, PoundSterling, RefreshCw, TriangleAlert } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { difficultyColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
+import { difficultyColor, xPColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -270,7 +270,7 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
-            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures, teams).toFixed(2)} />
+            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures, teams).toFixed(2)} className={`${xPColor(getExpectedPoints(element, currentEvent.id, -1, fixtures, teams))}`}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
             value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)).toFixed(2)} 
@@ -290,7 +290,7 @@ const PlayerCardStats = (props: any) => {
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} />
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} className={`${xPColor(getExpectedPoints(element, currentEvent.id, 0, fixtures, teams))}`}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
