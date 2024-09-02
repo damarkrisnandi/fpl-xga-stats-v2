@@ -163,7 +163,7 @@ export const getExpectedPoints = (
     // bisa pake history data bootstrap static
     return 0;
   }
-  
+
   let xP = 0;
   const filteredFixtures = fixtures.filter(
     (fix: any) =>
@@ -241,7 +241,7 @@ export const getExpectedPoints = (
   );
   let totalXP = 0;
 
-  const getTeamDataByCode = (code: number) => teams.find((team) => team.code == code);
+  const getTeamDataByCode = (code: number) => teams.find((team: any) => team.code == code);
   const getHomeAwayIndex = (element: any, teamData: any, opponentData: any, isHome: boolean) => {
     let haIdxValue = 1;
 
