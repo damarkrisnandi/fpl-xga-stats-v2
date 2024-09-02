@@ -110,12 +110,12 @@ export function difficultyColor(code: number): string {
 }
 
 export function xPColor(value: number): string {
-  if (value < 3) { return 'text-red-700' }
-  else if (value < 4) { return 'text-yellow-500' }
-  else if (value < 6) { return 'text-lime-700' }
-  else if (value < 9) { return 'text-green-600' }
+  // if (value < 3) { return 'text-red-700' }
+  // else if (value < 4) { return 'text-yellow-500' }
+  // else if (value < 6) { return 'text-lime-700' }
+  // else if (value < 9) { return 'text-green-600' }
   
-  return 'text-green-700' 
+  return '' 
   
 }
 export function positionMapping(code: number): string {
