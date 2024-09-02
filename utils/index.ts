@@ -143,7 +143,8 @@ export const getExpectedPoints = (
   element: any,
   currentGameWeek: number,
   deltaEvent: number,
-  fixtures: any
+  fixtures: any,
+  teams: any
 ) => {
   let gameWeek = currentGameWeek + deltaEvent;
   let xP = 0;
@@ -216,13 +217,72 @@ export const getExpectedPoints = (
   );
   let totalXP = 0;
 
+  const getTeamDataByCode = (code: number) => teams.find((team) => team.code == code);
+  const getHomeAwayIndex = (element: any, teamData: any, opponentData: any, isHome: boolean) => {
+    let haIdxValue = 1;
+
+    const homeOff = teamData.strength_attack_home;
+    const homeDef = teamData.strength_defence_home;
+    const awayOff = teamData.strength_attack_away;
+    const awayDef = teamData.strength_defence_away;
+
+    const homeOvr = teamData.strength_overall_home;
+    const awayOvr = teamData.strength_overall_away;
+
+    const homeOffOpp = opponentData.strength_attack_home;
+    const homeDefOpp = opponentData.strength_defence_home;
+    const awayOffOpp = opponentData.strength_attack_away;
+    const awayDefOpp = opponentData.strength_defence_away;
+
+    const homeOvrOpp = opponentData.strength_overall_home;
+    const awayOvrOpp = opponentData.strength_overall_away;
+
+    if (isHome) {
+      switch (element.element_type) {
+        case 4:
+          haIdxValue = ((1 * (homeOff - awayDefOpp)/ awayOvrOpp) + (0 * (homeDef - awayOffOpp) / awayOvrOpp))
+          break;
+        case 3:
+          haIdxValue = (((8/9) * (homeOff - awayDefOpp) / awayOvrOpp) + ((1/9) * (homeDef - awayOffOpp) / awayOvrOpp))
+          break;
+        case 2:
+          haIdxValue = (((9/15) * (homeOff - awayDefOpp) / awayOvrOpp) + ((6/15) * (homeDef - awayOffOpp) / awayOvrOpp))
+          break;
+        case 1:
+          haIdxValue = ((0 * (homeOff - awayDefOpp) / awayOvrOpp) + (1 * (homeDef - awayOffOpp) / awayOvrOpp))
+          break;      
+        default:
+          break;
+      }
+    } else {
+      switch (element.element_type) {
+        case 4:
+          haIdxValue = ((1 * (awayOff - homeDefOpp)/ homeOvrOpp) + (0 * (awayDef - homeOffOpp) / homeOvrOpp))
+          break;
+        case 3:
+          haIdxValue = (((8/9) * (awayOff - homeDefOpp) / homeOvrOpp) + ((1/9) * (awayDef - homeOffOpp) / homeOvrOpp))
+          break;
+        case 2:
+          haIdxValue = (((9/15) * (awayOff - homeDefOpp) / homeOvrOpp) + ((6/15) * (awayDef - homeOffOpp) / homeOvrOpp))
+          break;
+        case 1:
+          haIdxValue = ((0 * (awayOff - homeDefOpp) / homeOvrOpp) + (1 * (awayDef - homeOffOpp) / homeOvrOpp))
+          break;      
+        default:
+          break;
+      }
+
+    }
+
+    return haIdxValue
+  }
 
   for (let fixture of filteredfixturesByGameweek) {
   
     if (element.team == fixture.team_h) {
-      diffIndex = diffRef[fixture.team_h_difficulty];
+      diffIndex = diffRef[fixture.team_h_difficulty] + getHomeAwayIndex(element, teams.find((t: any) => t.id == fixture.team_h), teams.find((t: any) => t.id == fixture.team_a), true);
     } else if (element.team == fixture.team_a) {
-      diffIndex = diffRef[fixture.team_a_difficulty];
+      diffIndex = diffRef[fixture.team_a_difficulty] + getHomeAwayIndex(element, teams.find((t: any) => t.id == fixture.team_a), teams.find((t: any) => t.id == fixture.team_h), false);
     }
 
     xP = xP * starts_per_90 * diffIndex;

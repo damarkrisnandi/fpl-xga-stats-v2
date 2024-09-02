@@ -270,18 +270,18 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
-            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures).toFixed(2)} />
+            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures, teams).toFixed(2)} />
             <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
-            value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)).toFixed(2)} 
+            value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)).toFixed(2)} 
             className={`
             ${
-              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) > 0
+              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)) > 0
                 ? "bg-green-200 text-green-700"
                 : ""
             }
             ${
-              element.event_points == 0 || (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures)) < 0
+              element.event_points == 0 || (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)) < 0
                 ? "bg-red-200 text-red-700"
                 : ""
             }
@@ -290,7 +290,7 @@ const PlayerCardStats = (props: any) => {
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures).toFixed(2)} />
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} />
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
