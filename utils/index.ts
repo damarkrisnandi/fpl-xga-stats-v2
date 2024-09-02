@@ -92,21 +92,35 @@ export function getTeamLogoUrl(id: number): string {
 }
 
 export function difficultyColor(code: number): string {
+  let className = '';
+  const classArr = [
+    '',
+    "bg-green-700 text-white",
+    "bg-green-500 text-white",
+    '',
+    "bg-red-500 text-white",
+    "bg-red-900 text-white"
+  ]
   switch (code) {
     case 1:
-      return "bg-green-700 text-white";
+      className = "bg-green-700 text-white";
+      break;
     case 2:
-      return "bg-green-500 text-white";
+      className = "bg-green-500 text-white";
+      break;
     case 3:
-      return "";
+      break
     case 4:
-      return "bg-red-500 text-white";
+      className = "bg-red-500 text-white";
+      break;
     case 5:
-      return "bg-red-900 text-white";
+      className = "bg-red-900 text-white";
+      break;
     default:
-      return "";
+      break;
   }
-  return "";
+
+  return classArr[code];
 }
 
 export function xPColor(value: number): string {
