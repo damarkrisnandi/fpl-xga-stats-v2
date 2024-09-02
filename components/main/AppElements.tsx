@@ -289,7 +289,7 @@ const PlayerCardStats = (props: any) => {
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} className={`${xPColor(getExpectedPoints(element, currentEvent.id, 0, fixtures, teams))}`}/>
+            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} />
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
