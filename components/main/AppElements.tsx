@@ -21,7 +21,6 @@ import {
   SelectValue,
 } from "../ui/select";
 import { ScrollArea } from "../ui/scroll-area";
-import PlayerCard from "../PlayerCard";
 import { CirclePercent, Euro, PoundSterling, RefreshCw, TriangleAlert } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { difficultyColor, xPColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
