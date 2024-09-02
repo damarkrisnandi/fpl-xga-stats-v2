@@ -318,23 +318,31 @@ const StatItem = (props: any) => {
   );
 };
 const NextFixturesItem = (props: any) => {
-  const { className, teams, element, nextFixtures } = props;
+  const { teams, element, nextFixtures } = props;
   const getTeamShort = (code: number) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
   };
 
+  const [diffStyle, setDiffStyle] = useState<any>([]);
+
+  useEffect(() => {
+    if (diffStyle.length == 0) {
+      setDiffStyle(nextFixtures.map((nextf:any) => {
+        return { id: nextf.id , difficultyColor: difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}
+      }))
+    }
+  })
+
   return (
     <div
-      className={`w-14 h-14 md:w-24 md:h-24 flex flex-col justify-center items-center ${
-        className || ""
-      } bg-slate-200`}
+      className={`w-14 h-14 md:w-24 md:h-24 flex flex-col justify-center items-center bg-slate-200`}
     >
       <p className="text-xs md:text-sm">Next</p>
       <div>
-        {
+        {diffStyle.length &&
         nextFixtures
         .map((nextf: any, index: number) => (
-            <div className={`text-xs md:text-lg font-semibold ${difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
+            <div className={`text-xs md:text-lg font-semibold ${diffStyle[index].difficultyColor}`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
         ))
         }
       </div>
