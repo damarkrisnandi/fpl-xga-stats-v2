@@ -1,4 +1,4 @@
-const API_URL = "https://fpl-fetch2.netlify.app/api"//"https://fantasy-pl-vercel-proxy.vercel.app";
+const API_URL = "https://fantasy-pl-vercel-proxy.vercel.app";
 // const API_URL = "http://localhost:3001"
 const ARCHIVED_API_URL = "https://fpl-static-data.vercel.app";
 
