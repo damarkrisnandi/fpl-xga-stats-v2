@@ -110,8 +110,8 @@ const AppMyTeam = () => {
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
       <div className="flex space-x-1 w-full">
-       <Button className="text-xs" variant={'outline'} onClick={() => {setDataView(optimizedPicks)}}><Sparkle/> Optimize</Button>
-       <Button className="text-xs" variant={'outline'} onClick={() => {setDataView(picks.picks)}}><RefreshCcw/></Button> 
+       <Button className="text-xs" variant={'outline'} onClick={(event: any) => {setDataView(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks))}}><Sparkle/> Optimize</Button>
+       <Button className="text-xs" variant={'outline'} onClick={(event: any) => {setDataView(picks.picks)}}><RefreshCcw/></Button> 
       </div>
       {dataView.length &&
         dataView.map((player: any) => (
