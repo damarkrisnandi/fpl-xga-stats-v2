@@ -76,6 +76,11 @@ export const menuTree = [
         name: "Live Event",
         id: "live-event",
       },
+      {
+        name: "My Team",
+        id: "my-team",
+
+      }
     ],
   },
 ];

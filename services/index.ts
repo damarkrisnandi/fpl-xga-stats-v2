@@ -27,7 +27,7 @@ export function getLeagueData(league: string, page: number, phase?: number) {
   // );
 }
 
-export function getManagerData(id: number) {
+export function getManagerData(id: number | string) {
   return fromStorage(
     `manager/${id}`,
     `${API_URL}/manager/${id}`

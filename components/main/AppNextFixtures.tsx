@@ -68,7 +68,7 @@ const Difficulty2 = (props: any) => {
 const Difficulty3 = (props: any) => {
     const { team } = props;
     return (
-        <div className={`text-xs md:text-lg font-semibold `}>{ team }</div>
+        <div className={`text-xs md:text-lg font-semibold border-1 border-black`}>{ team }</div>
     )
 }
 
