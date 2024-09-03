@@ -65,15 +65,15 @@ const AppMyTeam = () => {
   }, [bootstrap, fixtures, manager, picks]);
   if (!bootstrap || (!picks || optimizedPicks.length == 0)) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
       </div>
     );
   }
 
-  if (bootstrap && bootstrap.error) {
+  if ((bootstrap && bootstrap.error) || (picks && picks.error)) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
       </div>
     );
