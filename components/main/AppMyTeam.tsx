@@ -8,16 +8,24 @@ import AppNextFixtures from "./AppNextFixtures"
 import {
   getBootstrapFromStorage,
   getFixtures,
+  getManagerData,
   getPicksData,
 } from "@/services/index";
 
-import { positionMapping, getExpectedPoints } from "@/utils/index";
+import { positionMapping, getExpectedPoints, optimizationProcess } from "@/utils/index";
+import { Button } from "../ui/button";
+import { RefreshCcw, Sparkle } from "lucide-react";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [picks, setPicks] = useState<any>(null);
+  const [optimizedPicks, setOptimizedPicks] = useState<any>([]);
+  const [manager, setManager] = useState<any>(null);
+
+  const [isOptimize, setIsOptimize] = useState<boolean>(false);
+
   useEffect(() => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
@@ -46,10 +54,15 @@ const AppMyTeam = () => {
         !currentEvent.error &&
         localStorage.getItem("manager_id_stored")
       ) {
+        getManagerData(localStorage.getItem('manager_id_stored') || 0).then((value: any) =>{ setManager(value) })
         setDataPicks();
       }
+
+      if (bootstrap && !bootstrap.error && fixtures.length && !fixtures[0].error && manager && !manager.error && picks && !picks.error && optimizedPicks.length) {
+        setOptimizedPicks(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks));
+      }
     }
-  });
+  }, [bootstrap, fixtures, manager, picks]);
   if (!bootstrap) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -88,8 +101,12 @@ const AppMyTeam = () => {
   return (
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
-      {picks &&
-        picks.picks.map((player: any) => (
+      <div className="flex space-x-1 w-full">
+       <Button className="text-xs" variant={'outline'} onClick={() => setIsOptimize(true)}><Sparkle/> Optimize</Button>
+       <Button className="text-xs" variant={'outline'} onClick={() => setIsOptimize(false)}><RefreshCcw/></Button> 
+      </div>
+      {picks && optimizedPicks.length &&
+        (isOptimize ? optimizedPicks : picks.picks).map((player: any) => (
           <div className="w-full flex justify-between bg-slate-200" key={player.element}>
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}

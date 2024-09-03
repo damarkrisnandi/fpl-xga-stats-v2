@@ -1,3 +1,5 @@
+import { solve } from "yalps";
+
 export const leaguesData = [
   // {
   //     name: 'FPLMGM#5',
@@ -260,7 +262,6 @@ export const getExpectedPoints = (
   );
   let totalXP = 0;
 
-  const getTeamDataByCode = (code: number) => teams.find((team: any) => team.code == code);
   const getHomeAwayIndex = (element: any, teamData: any, opponentData: any, isHome: boolean) => {
     let haIdxValue = 1;
 
@@ -335,3 +336,128 @@ export const getExpectedPoints = (
 
   return totalXP;
 };
+
+
+
+export const optimizationProcess = (elements: any, fixtures: any, teams: any, currentEvent: any, deltaEvent: number, managerInfo: any, picksData: any) => {
+            try {
+                elements.sort((a: any, b: any) => a.element_type - b.element_type)
+                const elements1 = elements.filter((el: any) => picksData.picks.map((a: any) => a.element).includes(el.id));
+                elements1.sort((a: any, b: any) => {
+                    return b['xp'] - a['xp']
+                })
+                
+
+                
+                // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
+                const teamConstaints = Object.fromEntries(elements1.map((e: any) => [`team_${e.team_code}`, {"max": 3}]))
+                
+                // only integers
+                const fplInts = Object.fromEntries(elements1.map((e: any) => [e.web_name, 1]))
+                
+
+
+                //#region pick optimization
+                // variables
+                const fplVariables2 = createVariables(elements1, fixtures, teams, '', (v: any) => { return v }, [], currentEvent.id + deltaEvent);
+                // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
+                
+                // constraints
+                const maxPick2 = Object.fromEntries(elements1.map((e: any) => [e.web_name, {"max": 1, "min": 0}]));
+                const posConstraints2 = {
+                    "gkp": {"min": 1, "max": 1},
+                    "def": {"min": 3, "max": 5},
+                    "mid": {"min": 2, "max": 5},
+                    "fwd": {"min": 1, "max": 3}
+                };
+                // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
+                const captaincyConstraints = Object.fromEntries(elements1.map((e: any) => [`capt_check`, {"max": 1}]))
+                
+                // pick optimization model
+                let model: any = {
+                  direction: 'maximize' as const,
+                    objective: 'xp',
+                    constraints: {
+                        ...maxPick2,
+                        // "now_cost": {"max": money},
+                        ...posConstraints2,
+                        // ...playerConstraints2,
+                        ...teamConstaints,
+                        ...captaincyConstraints,
+                        "max_pick": {"max": 11}
+                    },
+                    variables: {
+                        ...fplVariables2,
+                        // ...fplCaptaincyVariables2
+                    },
+                    integers: [
+                        ...Object.keys(fplInts)
+                    ]
+                }
+
+                const solution2 = solve(model);
+
+                console.log(solution2)
+
+                const benched = picksData.picks
+                .map((p: any) => { return { ...p, multiplier: 0, web_name: elements.find((el:any) => el.id == p.element) }})
+                .filter((p: any) => !solution2.variables.map((v: any) => v[0]).includes(p.web_name))
+
+                 return [
+                    ...solution2.variables.map((v: any, idx: number) => { 
+                    return { 
+                      element: elements1.find((e: any) => e.web_name == v[0]).id, 
+                      position: idx + 1,
+                      is_captain: false,
+                      is_vice_captain: false,
+                      multiplier: 1
+                    }
+                  }),
+                  ...benched
+                ]
+
+            } catch (error) {
+                console.log(error);
+                // willReplace += 1;
+                // console.log(`replace + 1 = ${willReplace}`)
+                
+            }
+        }
+
+        /**
+     * create variable models
+     * @param {string} suffix 
+     * @param {function} filterCat 
+     * @param {Array} addEntries 
+     * @returns 
+     */
+    const createVariables = (elements: any, fixtures: any, teams: any, suffix: any, filterCat: any, addEntries: any, inputGw?: any) => Object.fromEntries(elements.map((e: any) => {
+        const picksData = { picks: [
+            {
+                element: parseInt(e.id),
+                multiplier: 1
+            }
+        ]}
+        
+        let entries = Object.fromEntries([
+            [`${e.web_name}${suffix}`, 1],
+            ...addEntries,
+            ['fwd', e.element_type == 4 ? 1 : 0],
+            ['mid', e.element_type == 3 ? 1 : 0],
+            ['def', e.element_type == 2 ? 1 : 0],
+            ['gkp', e.element_type == 1 ? 1 : 0],
+            ['xp', getExpectedPoints(e, inputGw, 0, fixtures, teams)],
+            ['surplus_point', e.event_points - getExpectedPoints(e, inputGw, 0, fixtures, teams)],
+            
+            [`team_${e.team_code}`, 1],
+            [`is_playing`, e.status === 'a' ? 1 : 0],
+        ]);
+
+        
+        return {
+            ...e, 
+            max_pick: 1, 
+            ...entries,
+        }})
+            .filter(filterCat)
+            .map((e: any) => [`${e.web_name}${suffix}`, e]));
