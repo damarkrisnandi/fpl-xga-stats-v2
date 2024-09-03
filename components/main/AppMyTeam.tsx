@@ -90,8 +90,8 @@ const AppMyTeam = () => {
   }
 
   const setDataPicks = () => {
-    const managerId = localStorage.getItem("manager_id_stored") || '0';
-    getPicksData(managerId, currentEvent.id).then((value) => setPicks(value));
+    const managerId = localStorage.getItem("manager_id_stored");
+    if (managerId) getPicksData((managerId || 0), currentEvent.id).then((value) => setPicks(value));
   };
 
   const elementMapping = (id: number) => bootstrap.elements.find((el: any) => el.id == id);
