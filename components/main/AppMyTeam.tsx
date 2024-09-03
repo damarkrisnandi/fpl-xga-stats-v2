@@ -63,7 +63,7 @@ const AppMyTeam = () => {
       }
     }
   }, [bootstrap, fixtures, manager, picks]);
-  if (!bootstrap) {
+  if (!bootstrap || (!picks || optimizedPicks.length == 0)) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppSpinner />
