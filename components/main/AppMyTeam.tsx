@@ -106,7 +106,7 @@ const AppMyTeam = () => {
        <Button className="text-xs" variant={'outline'} onClick={() => {setIsOptimize(false)}}><RefreshCcw/></Button> 
       </div>
       {picks && optimizedPicks.length &&
-        (isOptimize ? optimizedPicks : picks.picks).map((player: any) => (
+        (isOptimize ? [...optimizedPicks] : [...picks.picks]).map((player: any) => (
           <div className="w-full flex justify-between bg-slate-200" key={player.element}>
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
