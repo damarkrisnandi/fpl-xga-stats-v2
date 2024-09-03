@@ -34,7 +34,7 @@ const AppHeader = () => {
       </Sheet>
       <div className="flex justify-center items-center space-x-4">
  <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} />
-      <p className="text-sm font-bold text-white">FPLXGA-v2</p>
+      <p className="text-sm font-bold text-white">FantasyXGA</p>
        
       </div>
           </nav>

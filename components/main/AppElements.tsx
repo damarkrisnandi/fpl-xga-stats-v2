@@ -28,6 +28,8 @@ import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import AppNextFixtures from "./AppNextFixtures";
+import AppExpectedPts from "./AppExpectedPts";
 
 const AppElements = (props: any) => {
   const { bootstrap } = props;
@@ -269,7 +271,8 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
-            <StatItem label={`xP${currentEvent.id}`} value={getExpectedPoints(element, currentEvent.id, -1, fixtures, teams).toFixed(2)} className={`${xPColor(getExpectedPoints(element, currentEvent.id, -1, fixtures, teams))}`}/>
+            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams}/>
+            
             <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
             value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)).toFixed(2)} 
@@ -288,8 +291,8 @@ const PlayerCardStats = (props: any) => {
             />
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
-            <NextFixturesItem teams={teams} element={element} nextFixtures={nextFixtures} />
-            <StatItem label={`xP${currentEvent.id + 1}`} value={getExpectedPoints(element, currentEvent.id, 0, fixtures, teams).toFixed(2)} className={`${xPColor(getExpectedPoints(element, currentEvent.id, 0, fixtures, teams))}`}/>
+            <AppNextFixtures teams={teams} element={element} nextFixtures={nextFixtures} />
+            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
@@ -317,38 +320,7 @@ const StatItem = (props: any) => {
     </div>
   );
 };
-const NextFixturesItem = (props: any) => {
-  const { teams, element, nextFixtures } = props;
-  const getTeamShort = (code: number) => {
-    return teams.find((team: any) => team.id === code)?.short_name || "";
-  };
 
-  const [diffStyle, setDiffStyle] = useState<any>([]);
-
-  useEffect(() => {
-    if (diffStyle.length == 0) {
-      setDiffStyle(nextFixtures.map((nextf:any) => {
-        return { id: nextf.id , difficultyColor: difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}
-      }))
-    }
-  })
-
-  return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 flex flex-col justify-center items-center bg-slate-200`}
-    >
-      <p className="text-xs md:text-sm">Next</p>
-      <div>
-        {diffStyle.length &&
-        nextFixtures
-        .map((nextf: any, index: number) => (
-            <div className={`text-xs md:text-lg font-semibold`} key={nextf.id}>{element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`}</div> 
-        ))
-        }
-      </div>
-    </div>
-  );
-};
 
 const NewsContainer = (props: any) => {
   const { news } = props;
