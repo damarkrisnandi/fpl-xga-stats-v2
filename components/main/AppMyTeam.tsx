@@ -58,7 +58,7 @@ const AppMyTeam = () => {
         setDataPicks();
       }
 
-      if (bootstrap && !bootstrap.error && fixtures.length && !fixtures[0].error && manager && !manager.error && picks && !picks.error && optimizedPicks.length) {
+      if (bootstrap && !bootstrap.error && fixtures.length && !fixtures[0].error && manager && !manager.error && picks && !picks.error && optimizedPicks.length == 0) {
         setOptimizedPicks(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks));
       }
     }
