@@ -25,6 +25,7 @@ const AppMyTeam = () => {
   const [manager, setManager] = useState<any>(null);
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
+  const [dataView, setDataView] = useState<any>([]);
 
   useEffect(() => {
     if (!bootstrap) {
@@ -91,7 +92,13 @@ const AppMyTeam = () => {
 
   const setDataPicks = () => {
     const managerId = localStorage.getItem("manager_id_stored");
-    if (managerId) getPicksData((managerId || 0), currentEvent.id).then((value) => setPicks(value));
+    if (managerId) getPicksData((managerId || 0), currentEvent.id).then((value) => {
+      setPicks(value);
+
+      if (picks && !picks.error) {
+        setDataView(picks.picks)
+      }
+    });
   };
 
   const elementMapping = (id: number) => bootstrap.elements.find((el: any) => el.id == id);
@@ -102,11 +109,11 @@ const AppMyTeam = () => {
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
       <div className="flex space-x-1 w-full">
-       <Button className="text-xs" variant={'outline'} onClick={() => {setIsOptimize(true)}}><Sparkle/> Optimize</Button>
-       <Button className="text-xs" variant={'outline'} onClick={() => {setIsOptimize(false)}}><RefreshCcw/></Button> 
+       <Button className="text-xs" variant={'outline'} onClick={() => {setDataView(optimizedPicks)}}><Sparkle/> Optimize</Button>
+       <Button className="text-xs" variant={'outline'} onClick={() => {setDataView(picks.picks)}}><RefreshCcw/></Button> 
       </div>
-      {picks && optimizedPicks.length &&
-        (isOptimize ? [...optimizedPicks] : [...picks.picks]).map((player: any) => (
+      {dataView.length &&
+        dataView.map((player: any) => (
           <div className="w-full flex justify-between bg-slate-200" key={player.element}>
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
