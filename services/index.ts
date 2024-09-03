@@ -37,6 +37,17 @@ export function getManagerData(id: number | string) {
   // );
 }
 
+export function getPicksData(managerId: number | string, gameweek: number) {
+  return fromStorage(
+    `picks/${managerId}/${gameweek}`,
+    `${API_URL}/picks/${managerId}/${gameweek}`,
+    5
+  );
+  // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
+  //   res.json()
+  // );
+}
+
 export function getLiveEventData(event: number) {
   return fromStorage(
     `live-event/${event}`,
