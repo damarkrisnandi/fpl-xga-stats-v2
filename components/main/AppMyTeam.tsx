@@ -63,7 +63,7 @@ const AppMyTeam = () => {
       }
     }
   }, [bootstrap, fixtures, manager, picks]);
-  if (!bootstrap || (!picks || optimizedPicks.length == 0)) {
+  if (!bootstrap || !picks || optimizedPicks.length == 0) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -71,7 +71,7 @@ const AppMyTeam = () => {
     );
   }
 
-  if ((bootstrap && bootstrap.error) || (picks && picks.error)) {
+  if ((bootstrap && bootstrap.error)) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -102,8 +102,8 @@ const AppMyTeam = () => {
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
       <div className="flex space-x-1 w-full">
-       <Button className="text-xs" variant={'outline'} onClick={() => setIsOptimize(true)}><Sparkle/> Optimize</Button>
-       <Button className="text-xs" variant={'outline'} onClick={() => setIsOptimize(false)}><RefreshCcw/></Button> 
+       <Button className="text-xs" variant={'outline'} onClick={() => {setIsOptimize(true)}}><Sparkle/> Optimize</Button>
+       <Button className="text-xs" variant={'outline'} onClick={() => {setIsOptimize(false)}}><RefreshCcw/></Button> 
       </div>
       {picks && optimizedPicks.length &&
         (isOptimize ? optimizedPicks : picks.picks).map((player: any) => (
