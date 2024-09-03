@@ -12,7 +12,7 @@ const AppInputMyTeam = (props: any) => {
         if (!teamId && !manager && localStorage.getItem('manager_id_stored')) {
             setTeamId(localStorage.getItem('manager_id_stored'))
             setTimeout(() => { 
-                getManagerData(localStorage.getItem('manager_id_stored')).then((value: any) => setManager(value))
+                getManagerData(localStorage.getItem('manager_id_stored') || 0).then((value: any) => setManager(value))
             }, 300);
         }
     })
