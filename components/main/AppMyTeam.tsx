@@ -95,7 +95,7 @@ const AppMyTeam = () => {
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
             >
               <p className="text-xs md:text-sm font-semibold">
-                {elementMapping(player.element).web_name} |{" "}
+                {elementMapping(player.element).web_name} |
                 {positionMapping(elementMapping(player.element).element_type)}
               </p>
             </div>
