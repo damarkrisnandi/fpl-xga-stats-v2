@@ -60,11 +60,10 @@ const AppMyTeam = () => {
       }
 
       if (bootstrap && !bootstrap.error && fixtures.length && !fixtures[0].error && manager && !manager.error && picks && !picks.error && optimizedPicks.length == 0) {
-        setOptimizedPicks(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks));
       }
     }
   }, [bootstrap, fixtures, manager, picks]);
-  if (!bootstrap || !picks || optimizedPicks.length == 0) {
+  if (!bootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -97,6 +96,8 @@ const AppMyTeam = () => {
 
       if (picks && !picks.error) {
         setDataView(picks.picks)
+        setOptimizedPicks(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks));
+
       }
     });
   };
