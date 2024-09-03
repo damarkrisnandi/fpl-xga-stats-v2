@@ -422,6 +422,8 @@ export const optimizationProcess = (elements: any, fixtures: any, teams: any, cu
                 // console.log(`replace + 1 = ${willReplace}`)
                 
             }
+
+  return [];
         }
 
         /**
