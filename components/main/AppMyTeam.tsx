@@ -72,6 +72,10 @@ const AppMyTeam = () => {
     }, 300);
   };
 
+  const handleRemoveMyTeam = (event: any) => {
+    setPicks(null)
+  }
+
   const setDataPicks = () => {
     const managerId = localStorage.getItem("manager_id_stored") || '0';
     getPicksData(managerId, currentEvent.id).then((value) => setPicks(value));
@@ -83,7 +87,7 @@ const AppMyTeam = () => {
 
   return (
     <div className="w-11/12 md:w-5/12">
-      <AppInputMyTeam onFindMyTeam={handleFindMyTeam} />
+      <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
       {picks &&
         picks.picks.map((player: any) => (
           <div className="w-full flex justify-between bg-slate-200" key={player.element}>
@@ -112,14 +116,15 @@ const AppMyTeam = () => {
             }
             `}
             /> 
-              <AppExpectedPts
-                element={elementMapping(player.element)}
-                currentEvent={currentEvent}
-                deltaEvent={0}
-                fixtures={fixtures}
-                teams={bootstrap?.teams}
-              />
-              <AppNextFixtures teams={bootstrap?.teams} element={elementMapping(player.element)} nextFixtures={nextFixtures(elementMapping(player.element))}/>
+            <AppNextFixtures teams={bootstrap?.teams} element={elementMapping(player.element)} nextFixtures={nextFixtures(elementMapping(player.element))}/>
+
+            <AppExpectedPts
+            element={elementMapping(player.element)}
+            currentEvent={currentEvent}
+            deltaEvent={0}
+            fixtures={fixtures}
+            teams={bootstrap?.teams}
+            />
             </div>
           </div>
         ))}

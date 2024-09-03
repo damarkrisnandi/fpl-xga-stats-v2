@@ -32,11 +32,12 @@ const AppInputMyTeam = (props: any) => {
         localStorage.removeItem('manager_id_stored');
         setTeamId(null);
         setManager(null);
+        props.onRemoveMyTeam(true)
     }
     return (
         <div className="w-full">
             <div className="flex h-12 space-x-2">
-                <Input type="text" placeholder="Input My Team" onChange={handleOnChange}/>
+                <Input type="text" placeholder="Input My Team" onChange={handleOnChange} value={teamId || ''} />
                 <Button className="" disabled={!teamId || teamId.length == 0} onClick={handleOnSearch}><Search /></Button>
             </div>
             {
