@@ -350,7 +350,7 @@ const StatItem = (props: any) => {
         className || ""
       } bg-slate-200`}
     >
-      <p className="text-xs md:text-sm">{label}</p>
+      <p className="text-[0.6em] md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>
     </div>
   );
