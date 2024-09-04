@@ -215,7 +215,6 @@ const AppMyTeam = () => {
                   bootstrap.teams,
                   currentEvent,
                   0,
-                  manager,
                   picks
                 )
               );

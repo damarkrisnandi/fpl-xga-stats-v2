@@ -381,17 +381,84 @@ export const getExpectedPoints = (
   return totalXP;
 };
 
-export const optimizationProcess = (
+const wildcardOptimizationModel = (
+  elements: any,
+  fixtures: any,
+  teams: any,
+  currentEvent: any,
+  deltaEvent: number
+  ) => {
+    elements.sort((a: any, b: any) => a.element_type - b.element_type);
+    
+    elements.sort((a: any, b: any) => {
+      return b["xp"] - a["xp"];
+    });
+
+    // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
+    const teamConstaints = Object.fromEntries(
+      elements.map((e: any) => [`team_${e.team_code}`, { max: 3 }])
+    );
+
+    // only integers
+    const fplInts = Object.fromEntries(
+      elements.map((e: any) => [`player_${e.id}`, 1])
+    );
+
+    //#region pick optimization
+    // variables
+    const fplVariables2 = createVariables(
+      elements,
+      fixtures,
+      teams,
+      "",
+      (v: any) => {
+        return v;
+      },
+      [],
+      currentEvent.id + deltaEvent
+    );
+    // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
+
+    // constraints
+    const maxPick2 = Object.fromEntries(
+      elements.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }])
+    );
+    const posConstraints2 = {
+      gkp: { equal: 2 },
+      def: { equal: 5 },
+      mid: { equal: 5 },
+      fwd: { equal: 3 },
+    };
+    // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
+
+    // pick optimization model
+    return {
+      direction: "maximize" as const,
+      objective: "xp",
+      constraints: {
+        ...maxPick2,
+        now_cost: {max: 1000},
+        ...posConstraints2,
+        ...teamConstaints,
+        max_pick: { equal: 15 },
+      },
+      variables: {
+        ...fplVariables2,
+        // ...fplCaptaincyVariables2
+      },
+      integers: [...Object.keys(fplInts)],
+    };
+}
+
+const picksOptimizationModel = (
   elements: any,
   fixtures: any,
   teams: any,
   currentEvent: any,
   deltaEvent: number,
-  managerInfo: any,
   picksData: any
-) => {
-  try {
-    elements.sort((a: any, b: any) => a.element_type - b.element_type);
+  ) => {
+  elements.sort((a: any, b: any) => a.element_type - b.element_type);
     const elements1 = elements.filter((el: any) =>
       picksData.picks.map((a: any) => a.element).includes(el.id)
     );
@@ -406,7 +473,7 @@ export const optimizationProcess = (
 
     // only integers
     const fplInts = Object.fromEntries(
-      elements1.map((e: any) => [e.web_name, 1])
+      elements1.map((e: any) => [`player_${e.id}`, 1])
     );
 
     //#region pick optimization
@@ -426,7 +493,7 @@ export const optimizationProcess = (
 
     // constraints
     const maxPick2 = Object.fromEntries(
-      elements1.map((e: any) => [e.web_name, { max: 1, min: 0 }])
+      elements1.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }])
     );
     const posConstraints2 = {
       gkp: { min: 1, max: 1 },
@@ -435,12 +502,9 @@ export const optimizationProcess = (
       fwd: { min: 1, max: 3 },
     };
     // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
-    const captaincyConstraints = Object.fromEntries(
-      elements1.map((e: any) => [`capt_check`, { max: 1 }])
-    );
 
     // pick optimization model
-    let model: any = {
+    return {
       direction: "maximize" as const,
       objective: "xp",
       constraints: {
@@ -449,7 +513,6 @@ export const optimizationProcess = (
         ...posConstraints2,
         // ...playerConstraints2,
         ...teamConstaints,
-        ...captaincyConstraints,
         max_pick: { max: 11 },
       },
       variables: {
@@ -458,17 +521,41 @@ export const optimizationProcess = (
       },
       integers: [...Object.keys(fplInts)],
     };
+}
+
+export const optimizationProcess = (
+  elements: any,
+  fixtures: any,
+  teams: any,
+  currentEvent: any,
+  deltaEvent: number,
+  picksData?: any
+) => {
+  try {
+    let picksData1;
+    if (!picksData) {
+      picksData1 = { picks: elements.map((el: any) => { return { element: el.id }})}
+    } else {
+      picksData1 = picksData;
+    }
+   let model: any = picksOptimizationModel(elements, fixtures, teams, currentEvent, deltaEvent, picksData1);
+   if (!picksData) {
+    model = wildcardOptimizationModel(elements, fixtures, teams, currentEvent, deltaEvent);
+   }
 
     const solution2 = solve(model);
-
-    const benched = picksData.picks
+    if (!picksData) {
+      picksData1 = {picks: solution2.variables.map((sol: any) => { return { element: elements.find((e: any) => e.id == Number(sol[0].split('_')[1])).id }})}
+    }
+    
+    const benched = picksData ? picksData1.picks
       .map((p: any, index: number) => {
         return {
           ...p,
           multiplier: 0,
           web_name: elements.find((el: any) => el.id == p.element).web_name,
           xp: getExpectedPoints(
-            elements1.find((e: any) => e.id == p.element),
+            elements.find((e: any) => e.id == p.element),
             currentEvent.id,
             deltaEvent,
             fixtures,
@@ -478,19 +565,19 @@ export const optimizationProcess = (
       })
       .filter(
         (p: any) =>
-          !solution2.variables.map((v: any) => v[0]).includes(p.web_name)
-      );
+          !solution2.variables.map((v: any) => Number(v[0].split('_')[1])).includes(p.element)
+      ) : [];
 
     const solutionAsObject: any[] = [
       ...solution2.variables.map((v: any, idx: number) => {
         return {
-          element: elements1.find((e: any) => e.web_name == v[0]).id,
+          element: elements.find((e: any) => e.id == Number(v[0].split('_')[1])).id,
           position: idx + 1,
           is_captain: false,
           is_vice_captain: false,
           multiplier: 1,
           xp: getExpectedPoints(
-            elements1.find((e: any) => e.web_name == v[0]),
+            elements.find((e: any) => e.id == Number(v[0].split('_')[1])),
             currentEvent.id,
             deltaEvent,
             fixtures,
@@ -552,7 +639,7 @@ const createVariables = (
         };
 
         let entries = Object.fromEntries([
-          [`${e.web_name}${suffix}`, 1],
+          [`player_${e.id}`, 1],
           ...addEntries,
           ["fwd", e.element_type == 4 ? 1 : 0],
           ["mid", e.element_type == 3 ? 1 : 0],
@@ -575,5 +662,5 @@ const createVariables = (
         };
       })
       .filter(filterCat)
-      .map((e: any) => [`${e.web_name}${suffix}`, e])
+      .map((e: any) => [`player_${e.id}`, e])
   );

@@ -78,7 +78,7 @@ const AppElements = (props: any) => {
     return <AppFailedToFetch />;
   }
   return (
-    <Card className="w-11/12 md:w-5/12">
+    <Card className="w-11/12 md:w-5/12 mb-2">
       <CardHeader>
         <CardTitle className="text-lg">Player Stats &amp; xPoints</CardTitle>
         <CardDescription>Statistics Results and Expectations</CardDescription>

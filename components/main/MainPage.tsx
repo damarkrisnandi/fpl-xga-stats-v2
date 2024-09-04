@@ -6,6 +6,7 @@ import AppTransferDeadline from "./AppTransferDeadline";
 import { getBootstrapFromStorage } from "@/services";
 import AppSpinner from "./AppSpinner";
 import AppFailedToFetch from "./AppFailedToFetch";
+import AppWildCardNextFixtures from "./AppWildCardNextFixtures";
 
 const MainPage = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -41,6 +42,7 @@ const MainPage = () => {
         element_stats={bootstrap?.element_stats}
       />
       <AppElements className="w-full" bootstrap={bootstrap}/>
+      <AppWildCardNextFixtures />
     </div>
   );
 };
