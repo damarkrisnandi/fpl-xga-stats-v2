@@ -228,17 +228,17 @@ export const getExpectedPoints = (
     const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 4 : 0;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    const xGC = Math.floor(expected_goals_conceded_per_90 / 2);
+    const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC;
   }
 
   if (element_type === 1) {
-    const xPG = expected_goals_per_90 * 6;
+    const xPG = expected_goals_per_90 * 10;
     const xPA = expected_assists_per_90 * 3;
     const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 5 : 0;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    const xGC = Math.floor(expected_goals_conceded_per_90 / 2);
+    const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     const xSaves = Math.floor(saves / filteredFixtures.length / 3);
     xP =
       xPG +
