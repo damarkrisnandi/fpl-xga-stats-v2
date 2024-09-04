@@ -254,6 +254,7 @@ export const getExpectedPoints = (
     d: element.chance_of_playing_next_round / 100,
     i: element.chance_of_playing_next_round / 100,
     u: 0,
+    s: 0,
   };
 
   const diffRef: any = {
