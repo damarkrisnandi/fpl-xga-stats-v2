@@ -501,22 +501,17 @@ export const optimizationProcess = (
       ...benched,
     ];
 
+    const captaincySolution = solutionAsObject.toSorted((a: any, b: any) => b.xp - a.xp).slice(0, 2);
+
     const result = solutionAsObject.map((res: any, idx: number) => {
       return {
         ...res,
         position: idx + 1,
-        multiplier:
-          res.xp == Math.max(...solutionAsObject.map((obj: any) => obj.xp))
-            ? 2
-            : res.multiplier,
-        is_captain:
-          res.xp == Math.max(...solutionAsObject.map((obj: any) => obj.xp))
-            ? true
-            : false,
+        multiplier: captaincySolution[0].element == res.element ? 2 : res.multiplier,
+        is_captain: captaincySolution[0].element == res.element ? true : false,
+        is_vice_captain: captaincySolution[1].element == res.element ? true : false
       };
     });
-
-    console.log(result);
 
     return result;
   } catch (error) {

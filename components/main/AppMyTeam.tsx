@@ -234,7 +234,7 @@ const AppMyTeam = () => {
               setIsOptimize(false);
             }}
           >
-            <RefreshCcw className="w-4 h-4"/>
+            <RefreshCcw className="w-4 h-4" />
           </Button>
         </div>
       )}
@@ -297,6 +297,11 @@ const AppMyTeam = () => {
                     </div>
                   )
                 ) : null}
+                {player.is_vice_captain && (
+                  <div className="h-8 w-8 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                    V
+                  </div>
+                )}
               </div>
               <div className="flex justify-end">
                 <StatItem
