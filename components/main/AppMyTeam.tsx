@@ -46,13 +46,15 @@ const AppMyTeam = () => {
                 picks: pickData.picks.map((pick: any) => {
                   return {
                     ...pick,
-                    surplus_xp_prev: elementMapping(pick.element).event_points - getExpectedPoints(
-                      elementMapping(pick.element),
-                      currentEvent.id,
-                      -1,
-                      fixtures,
-                      bootstrap?.teams
-                    ),
+                    surplus_xp_prev:
+                      elementMapping(pick.element).event_points -
+                      getExpectedPoints(
+                        elementMapping(pick.element),
+                        currentEvent.id,
+                        -1,
+                        fixtures,
+                        bootstrap?.teams
+                      ),
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
                       currentEvent.id,
@@ -79,7 +81,7 @@ const AppMyTeam = () => {
                 })
               );
 
-              setIsOptimize(false)
+              setIsOptimize(false);
             });
           }
         }
@@ -92,20 +94,18 @@ const AppMyTeam = () => {
     }
     let total = 0;
     for (let pick of picksData) {
-      
       total += pick.xp * pick.multiplier;
     }
 
     return total;
   };
 
-  const totalSurplusXpPrev = (picksData:any ) => {
+  const totalSurplusXpPrev = (picksData: any) => {
     if (!picksData) {
       return 0;
     }
     let total = 0;
     for (let pick of picksData.picks) {
-      
       total += pick.surplus_xp_prev;
     }
 
@@ -201,99 +201,121 @@ const AppMyTeam = () => {
         onFindMyTeam={handleFindMyTeam}
         onRemoveMyTeam={handleRemoveMyTeam}
       />
-      { manager && 
-      <div className="flex space-x-1 w-full mt-1">
-        <Button
-          className="text-xs flex space-x-5"
-          variant={"outline"}
-          disabled={isOptimize}
-          onClick={(event: any) => {
-            
-            setDataView(
-              optimizationProcess(
-                bootstrap.elements,
-                fixtures,
-                bootstrap.teams,
-                currentEvent,
-                0,
-                manager,
-                picks
-              )
-            );
-            setIsOptimize(true)
-          }}
-        >
-          <Sparkles className="w-4 h-4" />&nbsp;Optimize
-        </Button>
-        <Button
-          className="text-xs"
-          variant={"outline"}
-          disabled={!isOptimize}
-          onClick={(event: any) => {
-            setDataView(picks.picks);
-            setIsOptimize(false)
-          }}
-        >
-          <RefreshCcw />
-        </Button>
-      </div>
-      }
-      { manager && 
-      <div className="w-full flex justify-end my-3">
-        <StatItem
-          label={`P${currentEvent.id} - xP${currentEvent.id}`}
-          value={totalSurplusXpPrev(picks).toFixed(2)}
-          className={`
-            ${ totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : "" }
-            ${ totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : "" }
+      {manager && (
+        <div className="flex space-x-1 w-full mt-1">
+          <Button
+            className="text-xs flex space-x-5"
+            variant={"outline"}
+            disabled={isOptimize}
+            onClick={(event: any) => {
+              setDataView(
+                optimizationProcess(
+                  bootstrap.elements,
+                  fixtures,
+                  bootstrap.teams,
+                  currentEvent,
+                  0,
+                  manager,
+                  picks
+                )
+              );
+              setIsOptimize(true);
+            }}
+          >
+            <Sparkles className="w-4 h-4" />
+            &nbsp;Optimize
+          </Button>
+          <Button
+            className="text-xs"
+            variant={"outline"}
+            disabled={!isOptimize}
+            onClick={(event: any) => {
+              setDataView(picks.picks);
+              setIsOptimize(false);
+            }}
+          >
+            <RefreshCcw />
+          </Button>
+        </div>
+      )}
+      {manager && (
+        <div className="w-full flex justify-end my-3">
+          <StatItem
+            label={`P${currentEvent.id} - xP${currentEvent.id}`}
+            value={totalSurplusXpPrev(picks).toFixed(2)}
+            className={`
+            ${
+              totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : ""
+            }
+            ${totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : ""}
           `}
-        />
-        <StatItem
-          label={isOptimize ? `ΣxP${currentEvent.id + 1}*` : `ΣxP${currentEvent.id + 1}`}
-          value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
-        />
-      </div>
-      }
+          />
+          <StatItem
+            label={
+              isOptimize
+                ? `ΣxP${currentEvent.id + 1}*`
+                : `ΣxP${currentEvent.id + 1}`
+            }
+            value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
+          />
+        </div>
+      )}
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
           <div className="w-full" key={index}>
-            {index == 11 && <div className="w-full flex justify-center items-center my-2"><Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"><Armchair className="w-3 h-3 md:m-2"/> Bench</Badge></div>}
-          <div className="w-full flex justify-between bg-slate-200">
-            
-
-            <div
-              className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
-            >
-              { index >= 11 ? <Armchair className="w-3 h-3 md:m-2"/> :  null}
-              <div> 
-                <p className="text-xs md:text-sm font-semibold">
-                  {elementMapping(player.element).web_name}
-                  {/* {positionMapping(elementMapping(player.element).element_type)} */}
-                </p>
-                <p className="text-xs font-light">
-                  {positionMapping(elementMapping(player.element).element_type)}
-                </p>
+            {index == 11 && (
+              <div className="w-full flex justify-center items-center my-2">
+                <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
+                  <Armchair className="w-3 h-3 md:m-2" /> Bench
+                </Badge>
               </div>
-              {player.is_captain ? <div className="h-8 w-8 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">C</div>: null }
-            </div>
-            <div className="flex justify-end">
-              <StatItem
-                label={`GW${currentEvent.id}`}
-                value={elementMapping(player.element).event_points}
-              />
-              <StatItem
-                label={`P${currentEvent.id}-xP${currentEvent.id}`}
-                value={(
-                  elementMapping(player.element).event_points -
-                  getExpectedPoints(
-                    elementMapping(player.element),
-                    currentEvent.id,
-                    -1,
-                    fixtures,
-                    bootstrap?.teams
+            )}
+            <div className="w-full flex justify-between bg-slate-200">
+              <div
+                className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
+              >
+                {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null}
+                <div>
+                  <p className="text-xs md:text-sm font-semibold">
+                    {elementMapping(player.element).web_name}
+                    {/* {positionMapping(elementMapping(player.element).element_type)} */}
+                  </p>
+                  <p className="text-xs font-light">
+                    {positionMapping(
+                      elementMapping(player.element).element_type
+                    )}
+                  </p>
+                </div>
+                {player.is_captain ? (
+                  player.multiplier == 2 ? (
+                    <div className="h-8 w-8 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                      C
+                    </div>
+                  ) : (
+                    <div className="h-8 w-8 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                      C
+                    </div>
                   )
-                ).toFixed(2)}
-                className={`
+                ) : null}
+              </div>
+              <div className="flex justify-end">
+                <StatItem
+                  label={`GW${currentEvent.id}`}
+                  value={elementMapping(player.element).event_points}
+                />
+                <StatItem
+                  label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                  value={(
+                    elementMapping(player.element).event_points -
+                    getExpectedPoints(
+                      elementMapping(player.element),
+                      currentEvent.id,
+                      -1,
+                      fixtures,
+                      bootstrap?.teams
+                    )
+                  ).toFixed(2)}
+                  className={`
             ${
               elementMapping(player.element).event_points -
                 getExpectedPoints(
@@ -322,23 +344,23 @@ const AppMyTeam = () => {
                 : ""
             }
             `}
-              />
-              <AppNextFixtures
-                teams={bootstrap?.teams}
-                element={elementMapping(player.element)}
-                nextFixtures={nextFixtures(elementMapping(player.element))}
-              />
+                />
+                <AppNextFixtures
+                  teams={bootstrap?.teams}
+                  element={elementMapping(player.element)}
+                  nextFixtures={nextFixtures(elementMapping(player.element))}
+                />
 
-              <AppExpectedPts
-                element={elementMapping(player.element)}
-                currentEvent={currentEvent}
-                deltaEvent={0}
-                fixtures={fixtures}
-                teams={bootstrap?.teams}
-                multiplier={player.multiplier}
-              />
+                <AppExpectedPts
+                  element={elementMapping(player.element)}
+                  currentEvent={currentEvent}
+                  deltaEvent={0}
+                  fixtures={fixtures}
+                  teams={bootstrap?.teams}
+                  multiplier={player.multiplier}
+                />
+              </div>
             </div>
-          </div>
           </div>
         ))}
     </div>

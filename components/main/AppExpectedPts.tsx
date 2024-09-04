@@ -67,7 +67,7 @@ const AppExpectedPts = (props: any) => {
     const [xPoints, setXPoints] = useState<any>(0);
     
     useEffect(() => {
-        setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams) * multiplier)
+        setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams))
     })
 
     if (xPoints < 2) {
