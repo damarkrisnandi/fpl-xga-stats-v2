@@ -147,7 +147,7 @@ const AppWildCardNextFixtures = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-2"></CardContent>
-      <div className="w-full p-10">
+      <div className="w-full">
         <div className="w-full flex justify-end my-3">
           <StatItem
             label={"COST"}
