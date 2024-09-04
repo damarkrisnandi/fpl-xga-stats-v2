@@ -263,7 +263,7 @@ const AppMyTeam = () => {
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
           <div className="w-full" key={index}>
-            {index == 11 && (
+            {player.position == 12 && (
               <div className="w-full flex justify-center items-center my-2">
                 <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
                   <Armchair className="w-3 h-3 md:m-2" /> Bench

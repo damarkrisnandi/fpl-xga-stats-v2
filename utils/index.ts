@@ -508,7 +508,7 @@ export const optimizationProcess = (
         multiplier:
           res.xp == Math.max(...solutionAsObject.map((obj: any) => obj.xp))
             ? 2
-            : 1,
+            : res.multiplier,
         is_captain:
           res.xp == Math.max(...solutionAsObject.map((obj: any) => obj.xp))
             ? true
