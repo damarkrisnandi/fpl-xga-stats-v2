@@ -287,11 +287,11 @@ const AppMyTeam = () => {
                 </div>
                 {player.is_captain ? (
                   player.multiplier == 2 ? (
-                    <div className="h-8 w-8 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                    <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
                       C
                     </div>
                   ) : (
-                    <div className="h-8 w-8 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                    <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
                       C
                     </div>
                   )
