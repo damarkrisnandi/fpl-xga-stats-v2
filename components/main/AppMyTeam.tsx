@@ -45,6 +45,13 @@ const AppMyTeam = () => {
                 picks: pickData.picks.map((pick: any) => {
                   return {
                     ...pick,
+                    surplus_xp_prev: elementMapping(pick.element).event_points - getExpectedPoints(
+                      elementMapping(pick.element),
+                      currentEvent.id,
+                      -1,
+                      fixtures,
+                      bootstrap?.teams
+                    ),
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
                       currentEvent.id,
@@ -86,6 +93,19 @@ const AppMyTeam = () => {
     for (let pick of picksData) {
       
       total += pick.xp * pick.multiplier;
+    }
+
+    return total;
+  };
+
+  const totalSurplusXpPrev = (picksData:any ) => {
+    if (!picksData) {
+      return 0;
+    }
+    let total = 0;
+    for (let pick of picksData.picks) {
+      
+      total += pick.surplus_xp_prev;
     }
 
     return total;
@@ -219,6 +239,14 @@ const AppMyTeam = () => {
       { manager && 
       <div className="w-full flex justify-end my-3">
         <StatItem
+          label={`P${currentEvent.id} - xP${currentEvent.id}`}
+          value={totalSurplusXpPrev(picks).toFixed(2)}
+          className={`
+            ${ totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : "" }
+            ${ totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : "" }
+          `}
+        />
+        <StatItem
           label={isOptimize ? `ΣxP${currentEvent.id + 1}*` : `ΣxP${currentEvent.id + 1}`}
           value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
         />
@@ -232,7 +260,7 @@ const AppMyTeam = () => {
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
             >
-              { index >= 11 ? <Armchair className="w-3 h-3"/> : <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span> }
+              { index >= 11 ? <Armchair className="w-3 h-3 md:m-2"/> : <span className="w-2 h-2 bg-green-500 rounded-full md:m-2"></span> }
               <div>
 
               

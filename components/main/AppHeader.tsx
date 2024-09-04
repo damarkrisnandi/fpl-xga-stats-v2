@@ -34,7 +34,11 @@ const AppHeader = () => {
       </Sheet>
       <div className="flex justify-center items-center space-x-4">
  <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} />
-      <p className="text-sm font-bold text-white">FantasyXGA</p>
+ <div className="flex items-center">
+ <p className="text-sm font-bold text-white">Fantasy</p> 
+ <p className="text-sm font-bold bg-white pt-1 pb-1 pr-2">XGA</p>
+ </div>
+      
        
       </div>
           </nav>
