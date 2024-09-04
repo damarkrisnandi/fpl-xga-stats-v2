@@ -47,7 +47,7 @@ const AppInputMyTeam = (props: any) => {
                     <p className="text-sm md:text-xl font-semibold">{manager.name}</p>
                     <p className="text-xs md:text-sm">{ manager.player_first_name } { manager.player_last_name}</p>
                     <div className="w-full flex justify-end space-x-1">
-                        <Button className="flex space-x-2 text-xs md:text-sm" disabled={!teamId || teamId.length == 0} value={manager.id} onClick={handleOnFind}>Find My Team</Button>
+                        <Button className="flex space-x-2 text-xs md:text-sm" disabled={localStorage.getItem('manager_id_stored') !== null} value={manager.id} onClick={handleOnFind}>Find My Team</Button>
                         {
                             localStorage.getItem('manager_id_stored') &&
                             <Button className="flex space-x-2 text-xs md:text-sm" variant={'destructive'} value={'manager_id_stored'} onClick={handleOnRemoveStoredId}><Trash /></Button>
