@@ -4,7 +4,7 @@ import AppInputMyTeam from "./AppInputMyTeam";
 import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
-import AppNextFixtures from "./AppNextFixtures"
+import AppNextFixtures from "./AppNextFixtures";
 import {
   getBootstrapFromStorage,
   getFixtures,
@@ -12,9 +12,14 @@ import {
   getPicksData,
 } from "@/services/index";
 
-import { positionMapping, getExpectedPoints, optimizationProcess } from "@/utils/index";
+import {
+  positionMapping,
+  getExpectedPoints,
+  optimizationProcess,
+} from "@/utils/index";
 import { Button } from "../ui/button";
-import { RefreshCcw, Sparkle } from "lucide-react";
+import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
+import { Badge } from "../ui/badge";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -26,7 +31,65 @@ const AppMyTeam = () => {
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
+  const elementMapping = (id: number) =>
+    bootstrap.elements.find((el: any) => el.id == id);
+  const setDataPicks = () => {
+    getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
+      (value: any) => {
+        setManager(value);
+        if (!picks) {
+          if (value) {
+            getPicksData(value.id, currentEvent.id).then((pickData) => {
+              setPicks({
+                ...pickData,
+                picks: pickData.picks.map((pick: any) => {
+                  return {
+                    ...pick,
+                    xp: getExpectedPoints(
+                      elementMapping(pick.element),
+                      currentEvent.id,
+                      0,
+                      fixtures,
+                      bootstrap?.teams
+                    ),
+                  };
+                }),
+              });
 
+              setDataView(
+                pickData.picks.map((pick: any) => {
+                  return {
+                    ...pick,
+                    xp: getExpectedPoints(
+                      elementMapping(pick.element),
+                      currentEvent.id,
+                      0,
+                      fixtures,
+                      bootstrap?.teams
+                    ),
+                  };
+                })
+              );
+
+              setIsOptimize(false)
+            });
+          }
+        }
+      }
+    );
+  };
+  const totalXp = (picksData: any) => {
+    if (!picksData || picksData.length == 0) {
+      return 0;
+    }
+    let total = 0;
+    for (let pick of picksData) {
+      
+      total += pick.xp * pick.multiplier;
+    }
+
+    return total;
+  };
   useEffect(() => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
@@ -53,13 +116,10 @@ const AppMyTeam = () => {
       if (
         currentEvent &&
         !currentEvent.error &&
-        localStorage.getItem("manager_id_stored")
+        localStorage.getItem("manager_id_stored") &&
+        !manager
       ) {
-        getManagerData(localStorage.getItem('manager_id_stored') || 0).then((value: any) =>{ setManager(value) })
         setDataPicks();
-      }
-
-      if (bootstrap && !bootstrap.error && fixtures.length && !fixtures[0].error && manager && !manager.error && picks && !picks.error && optimizedPicks.length == 0) {
       }
     }
   }, [bootstrap, fixtures, manager, picks]);
@@ -71,7 +131,23 @@ const AppMyTeam = () => {
     );
   }
 
-  if ((bootstrap && bootstrap.error)) {
+  if (!currentEvent) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppSpinner />
+      </div>
+    );
+  }
+
+  if (bootstrap && bootstrap.error) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppFailedToFetch />
+      </div>
+    );
+  }
+
+  if (picks && picks.error) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -86,70 +162,149 @@ const AppMyTeam = () => {
   };
 
   const handleRemoveMyTeam = (event: any) => {
-    setPicks(null)
-  }
-
-  const setDataPicks = () => {
-    const managerId = localStorage.getItem("manager_id_stored");
-    if (managerId) getPicksData((managerId || 0), currentEvent.id).then((value) => {
-      setPicks(value);
-
-      if (picks && !picks.error) {
-        setDataView(picks.picks)
-        setOptimizedPicks(optimizationProcess(bootstrap.elements, fixtures, bootstrap.teams, currentEvent, 0, manager, picks));
-
-      }
-    });
+    setPicks(null);
+    setDataView([]);
   };
 
-  const elementMapping = (id: number) => bootstrap.elements.find((el: any) => el.id == id);
-
-  const nextFixtures = (element: any) => fixtures.filter((fix: any) => fix.event == currentEvent.id + 1 && (fix.team_h == element.team || fix.team_a == element.team) );
+  const nextFixtures = (element: any) =>
+    fixtures.filter(
+      (fix: any) =>
+        fix.event == currentEvent.id + 1 &&
+        (fix.team_h == element.team || fix.team_a == element.team)
+    );
 
   return (
     <div className="w-11/12 md:w-5/12">
-      <AppInputMyTeam onFindMyTeam={handleFindMyTeam} onRemoveMyTeam={handleRemoveMyTeam} />
-      <div className="flex space-x-1 w-full">
-       <Button className="text-xs" variant={'outline'} onClick={(event: any) => {setDataView([])}}><Sparkle/> Optimize</Button>
-       <Button className="text-xs" variant={'outline'} onClick={(event: any) => {setDataView(picks.picks)}}><RefreshCcw/></Button> 
+      <AppInputMyTeam
+        onFindMyTeam={handleFindMyTeam}
+        onRemoveMyTeam={handleRemoveMyTeam}
+      />
+      { manager && 
+      <div className="flex space-x-1 w-full mt-1">
+        <Button
+          className="text-xs flex space-x-5"
+          variant={"outline"}
+          disabled={isOptimize}
+          onClick={(event: any) => {
+            
+            setDataView(
+              optimizationProcess(
+                bootstrap.elements,
+                fixtures,
+                bootstrap.teams,
+                currentEvent,
+                0,
+                manager,
+                picks
+              )
+            );
+            setIsOptimize(true)
+          }}
+        >
+          <Sparkles className="w-4 h-4" />&nbsp;Optimize
+        </Button>
+        <Button
+          className="text-xs"
+          variant={"outline"}
+          disabled={!isOptimize}
+          onClick={(event: any) => {
+            setDataView(picks.picks);
+            setIsOptimize(false)
+          }}
+        >
+          <RefreshCcw />
+        </Button>
       </div>
-      {dataView.length &&
-        dataView.map((player: any) => (
-          <div className="w-full flex justify-between bg-slate-200" key={player.element}>
+      }
+      { manager && 
+      <div className="w-full flex justify-end my-3">
+        <StatItem
+          label={isOptimize ? `ΣxP${currentEvent.id + 1}*` : `ΣxP${currentEvent.id + 1}`}
+          value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
+        />
+      </div>
+      }
+      {dataView.length > 0 &&
+        dataView.map((player: any, index: number) => (
+          <div className="w-full flex justify-between bg-slate-200" key={index}>
+            
+
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
             >
+              { index >= 11 ? <Armchair className="w-3 h-3"/> : <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span> }
+              <div>
+
+              
               <p className="text-xs md:text-sm font-semibold">
-                {elementMapping(player.element).web_name} |
+                {elementMapping(player.element).web_name}
+                {/* {positionMapping(elementMapping(player.element).element_type)} */}
+              </p>
+              <p className="text-xs font-light">
                 {positionMapping(elementMapping(player.element).element_type)}
               </p>
+              </div>
             </div>
             <div className="flex justify-end">
-              <StatItem label={`GW${currentEvent.id}`} value={elementMapping(player.element).event_points}/>
-              <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
-            value={(elementMapping(player.element).event_points - getExpectedPoints(elementMapping(player.element), currentEvent.id, -1, fixtures, bootstrap?.teams)).toFixed(2)} 
-            className={`
+              <StatItem
+                label={`GW${currentEvent.id}`}
+                value={elementMapping(player.element).event_points}
+              />
+              <StatItem
+                label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                value={(
+                  elementMapping(player.element).event_points -
+                  getExpectedPoints(
+                    elementMapping(player.element),
+                    currentEvent.id,
+                    -1,
+                    fixtures,
+                    bootstrap?.teams
+                  )
+                ).toFixed(2)}
+                className={`
             ${
-              (elementMapping(player.element).event_points - getExpectedPoints(elementMapping(player.element), currentEvent.id, -1, fixtures, bootstrap?.teams)) > 0
+              elementMapping(player.element).event_points -
+                getExpectedPoints(
+                  elementMapping(player.element),
+                  currentEvent.id,
+                  -1,
+                  fixtures,
+                  bootstrap?.teams
+                ) >
+              0
                 ? "bg-green-200 text-green-700"
                 : ""
             }
             ${
-              elementMapping(player.element).event_points == 0 || (elementMapping(player.element).event_points - getExpectedPoints(elementMapping(player.element), currentEvent.id, -1, fixtures, bootstrap?.teams)) < 0
+              elementMapping(player.element).event_points == 0 ||
+              elementMapping(player.element).event_points -
+                getExpectedPoints(
+                  elementMapping(player.element),
+                  currentEvent.id,
+                  -1,
+                  fixtures,
+                  bootstrap?.teams
+                ) <
+                0
                 ? "bg-red-200 text-red-700"
                 : ""
             }
             `}
-            /> 
-            <AppNextFixtures teams={bootstrap?.teams} element={elementMapping(player.element)} nextFixtures={nextFixtures(elementMapping(player.element))}/>
+              />
+              <AppNextFixtures
+                teams={bootstrap?.teams}
+                element={elementMapping(player.element)}
+                nextFixtures={nextFixtures(elementMapping(player.element))}
+              />
 
-            <AppExpectedPts
-            element={elementMapping(player.element)}
-            currentEvent={currentEvent}
-            deltaEvent={0}
-            fixtures={fixtures}
-            teams={bootstrap?.teams}
-            />
+              <AppExpectedPts
+                element={elementMapping(player.element)}
+                currentEvent={currentEvent}
+                deltaEvent={0}
+                fixtures={fixtures}
+                teams={bootstrap?.teams}
+              />
             </div>
           </div>
         ))}
@@ -158,7 +313,6 @@ const AppMyTeam = () => {
 };
 
 export default AppMyTeam;
-
 
 const StatItem = (props: any) => {
   const { className, label, value } = props;
