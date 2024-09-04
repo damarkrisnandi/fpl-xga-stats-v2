@@ -183,7 +183,7 @@ const AppMyTeam = () => {
   };
 
   const handleRemoveMyTeam = (event: any) => {
-    setManaget(null);
+    setManager(null);
     setPicks(null);
     setDataView([]);
   };
