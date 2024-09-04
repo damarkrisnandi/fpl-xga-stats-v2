@@ -271,7 +271,7 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
-            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams}/>
+            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams} multiplier={1}/>
             
             <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
@@ -292,7 +292,7 @@ const PlayerCardStats = (props: any) => {
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <AppNextFixtures teams={teams} element={element} nextFixtures={nextFixtures} />
-            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams}/>
+            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams} multiplier={1}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  

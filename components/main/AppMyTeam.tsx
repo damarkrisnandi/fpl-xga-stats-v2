@@ -20,6 +20,7 @@ import {
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Separator } from "@radix-ui/react-select";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -254,24 +255,25 @@ const AppMyTeam = () => {
       }
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
-          <div className="w-full flex justify-between bg-slate-200" key={index}>
+          <div className="w-full" key={index}>
+            {index == 11 && <div className="w-full flex justify-center items-center my-2"><Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"><Armchair className="w-3 h-3 md:m-2"/> Bench</Badge></div>}
+          <div className="w-full flex justify-between bg-slate-200">
             
 
             <div
               className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
             >
-              { index >= 11 ? <Armchair className="w-3 h-3 md:m-2"/> : <span className="w-2 h-2 bg-green-500 rounded-full md:m-2"></span> }
-              <div>
-
-              
-              <p className="text-xs md:text-sm font-semibold">
-                {elementMapping(player.element).web_name}
-                {/* {positionMapping(elementMapping(player.element).element_type)} */}
-              </p>
-              <p className="text-xs font-light">
-                {positionMapping(elementMapping(player.element).element_type)}
-              </p>
+              { index >= 11 ? <Armchair className="w-3 h-3 md:m-2"/> :  null}
+              <div> 
+                <p className="text-xs md:text-sm font-semibold">
+                  {elementMapping(player.element).web_name}
+                  {/* {positionMapping(elementMapping(player.element).element_type)} */}
+                </p>
+                <p className="text-xs font-light">
+                  {positionMapping(elementMapping(player.element).element_type)}
+                </p>
               </div>
+              {player.is_captain ? <div className="h-8 w-8 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">C</div>: null }
             </div>
             <div className="flex justify-end">
               <StatItem
@@ -332,8 +334,10 @@ const AppMyTeam = () => {
                 deltaEvent={0}
                 fixtures={fixtures}
                 teams={bootstrap?.teams}
+                multiplier={player.multiplier}
               />
             </div>
+          </div>
           </div>
         ))}
     </div>
