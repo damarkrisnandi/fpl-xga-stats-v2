@@ -212,7 +212,7 @@ export const getExpectedPoints = (
     const xPA = expected_assists_per_90 * 3;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    xP = xPG + xPA + pMP + bonus / filteredFixtures.length + xOG;
+    xP = xPG + xPA + pMP + xOG;
   }
   if (element_type === 3) {
     const xPG = expected_goals_per_90 * 5;
@@ -220,7 +220,7 @@ export const getExpectedPoints = (
     const xCS = clean_sheets_per_90 * 1;
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
-    xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG;
+    xP = xPG + xPA + pMP + xOG;
   }
   if (element_type === 2) {
     const xPG = expected_goals_per_90 * 6;
@@ -229,7 +229,7 @@ export const getExpectedPoints = (
     const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
     const xOG = (own_goals / filteredFixtures.length) * -1;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xCS + pMP + bonus / filteredFixtures.length + xOG + xGC;
+    xP = xPG + xPA + pMP + xOG + xGC;
   }
 
   if (element_type === 1) {
@@ -243,9 +243,7 @@ export const getExpectedPoints = (
     xP =
       xPG +
       xPA +
-      xCS +
       pMP +
-      bonus / filteredFixtures.length +
       xOG +
       xGC +
       xSaves;
