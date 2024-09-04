@@ -14,6 +14,7 @@ import {
 } from "../ui/sheet";
 import AppSheetMenu from "./AppSheetMenu";
 import Image from "next/image";
+import Link from "next/link";
 
 const AppHeader = () => {
   return (
@@ -25,23 +26,23 @@ const AppHeader = () => {
         <SheetContent side={"left"} className="pt-12">
           <SheetHeader>
             <div className="bg-[#37003c] w-16 h-16 flex justify-center items-center rounded-lg shadow-md">
-                <Image src="/pl-main-logo.png" alt="PL" width={32} height={32} /> 
+              <Image src="/pl-main-logo.png" alt="PL" width={32} height={32} />
             </div>
             <SheetTitle>Main Menu</SheetTitle>
           </SheetHeader>
           <AppSheetMenu />
         </SheetContent>
       </Sheet>
-      <div className="flex justify-center items-center space-x-4">
- <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} />
- <div className="flex items-center">
- <p className="text-sm font-bold text-white">Fantasy</p> 
- <p className="text-sm font-bold bg-white pt-1 pb-1 pr-2">XGA</p>
- </div>
-      
-       
-      </div>
-          </nav>
+      <Link href="/">
+        <div className="flex justify-center items-center space-x-4">
+          <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} />
+          <div className="flex items-center">
+            <p className="text-sm font-bold text-white">Fantasy</p>
+            <p className="text-sm font-bold bg-white pt-1 pb-1 pr-2">XGA</p>
+          </div>
+        </div>
+      </Link>
+    </nav>
   );
 };
 
