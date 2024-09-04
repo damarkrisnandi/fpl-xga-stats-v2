@@ -234,7 +234,7 @@ const AppMyTeam = () => {
               setIsOptimize(false);
             }}
           >
-            <RefreshCcw />
+            <RefreshCcw className="w-4 h-4"/>
           </Button>
         </div>
       )}
