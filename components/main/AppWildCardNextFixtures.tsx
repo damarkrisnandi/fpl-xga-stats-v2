@@ -137,6 +137,13 @@ const AppWildCardNextFixtures = () => {
         fix.event == currentEvent.id + 1 &&
         (fix.team_h == element.team || fix.team_a == element.team)
     );
+    const getFormation = () => {
+        const defNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 2).length;
+        const midNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 3).length;
+        const fwdNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 4).length;
+
+        return `${defNum}-${midNum}-${fwdNum}`;
+    }
 
   return (
     <Card className="w-11/12 md:w-5/12">
@@ -149,6 +156,10 @@ const AppWildCardNextFixtures = () => {
       <CardContent className="space-y-2"></CardContent>
       <div className="w-full">
         <div className="w-full flex justify-end my-3">
+            <StatItem
+            label={"Formation"}
+            value={getFormation()}
+          />
           <StatItem
             label={"COST"}
             value={dataView.length > 0 ? totalCost(dataView).toFixed(1) : 0}
@@ -174,7 +185,7 @@ const AppWildCardNextFixtures = () => {
               )}
               <div className="w-full flex justify-between bg-slate-200">
                 <div
-                  className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
+                  className={`w-44 h-14 md:w-72 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
                 >
                   {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null}
                   <div>
