@@ -176,9 +176,9 @@ const PlayerCardStats = (props: any) => {
         </div>
         <div className="flex justify-center flex-col mb-2">
           {element.news && element.news.length && (
-      <div className="w-full flex justify-center">
-        <NewsContainer news={element.news} />
-      </div>
+            <div className="w-full flex justify-center">
+              <NewsContainer news={element.news} />
+            </div>
           )}
           <div className="w-full flex justify-center">
             <StatItem
@@ -315,7 +315,7 @@ const StatItem = (props: any) => {
         className || ""
       } bg-slate-200`}
     >
-      <p className="text-xs md:text-sm">{label}</p>
+      <p className="text-[0.6em] md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>
     </div>
   );
