@@ -29,6 +29,7 @@ const AppHeader = () => {
               <Image src="/pl-main-logo.png" alt="PL" width={32} height={32} />
             </div>
             <SheetTitle>Main Menu</SheetTitle>
+            <SheetDescription />
           </SheetHeader>
           <AppSheetMenu />
         </SheetContent>
