@@ -128,37 +128,43 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     bps,
     yellow_cards,
     red_cards,
+    goals_scored,
+    assists,
+
   } = element;
-  const xYC = (yellow_cards / fixturesLen) * -1;
-  const xRC = (red_cards / fixturesLen) * -2;
+  const indexPer90 = (90 / minutes);
+  const xYC = (yellow_cards * (90 / minutes)) * -1;
+  const xRC = (red_cards * (90 / minutes)) * -2;
   const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
-  const xOG = (own_goals / fixturesLen) * -1;
+  const xOG = (own_goals * (90 / minutes)) * -1;
+  const goalp90 = goals_scored * indexPer90;
+  const assistp90 = assists * indexPer90; 
   if (element_type === 4) {
-    const xPG = expected_goals_per_90 * 4;
-    const xPA = expected_assists_per_90 * 3;
+    const xPG = ((expected_goals_per_90 + goalp90) / 2) * 4;
+    const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     xP = xPG + xPA;
   }
   if (element_type === 3) {
-    const xPG = expected_goals_per_90 * 5;
-    const xPA = expected_assists_per_90 * 3;
+    const xPG = ((expected_goals_per_90 + goalp90) / 2) * 5;
+    const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = clean_sheets_per_90 >= 0.67 ? 1 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     xP = xPG + xPA + xGC;
   }
   if (element_type === 2) {
-    const xPG = expected_goals_per_90 * 6;
-    const xPA = expected_assists_per_90 * 3;
+    const xPG = ((expected_goals_per_90 + goalp90) / 2) * 6;
+    const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     xP = xPG + xPA + xGC;
   }
 
   if (element_type === 1) {
-    const xPG = expected_goals_per_90 * 10;
-    const xPA = expected_assists_per_90 * 3;
+    const xPG = ((expected_goals_per_90 + goalp90) / 2) * 10;
+    const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
       const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    const xSaves = Math.floor((saves / fixturesLen) / 3);
+    const xSaves = Math.floor((saves * (90 / minutes)) / 3);
     xP =
       xPG +
       xPA +
