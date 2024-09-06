@@ -141,29 +141,30 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
   if (element_type === 3) {
     const xPG = expected_goals_per_90 * 5;
     const xPA = expected_assists_per_90 * 3;
-    const xCS = clean_sheets_per_90 * 1;
+    const xCS = clean_sheets_per_90 >= 0.67 ? 1 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC;
+    xP = xPG + xPA + xGC + xCS;
   }
   if (element_type === 2) {
     const xPG = expected_goals_per_90 * 6;
     const xPA = expected_assists_per_90 * 3;
-    const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 4 : 0;
+    const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC;
+    xP = xPG + xPA + xGC + xCS;
   }
 
   if (element_type === 1) {
     const xPG = expected_goals_per_90 * 10;
     const xPA = expected_assists_per_90 * 3;
-    const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 4 : 0;
+    const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
       const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     const xSaves = Math.floor((saves / fixturesLen) / 3);
     xP =
       xPG +
       xPA +
       xGC +
-      xSaves;
+      xSaves +
+      xCS;
   }
 
   xP += pMP + xOG;
