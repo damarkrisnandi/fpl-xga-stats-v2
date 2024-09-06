@@ -23,7 +23,7 @@ const AppSideBar = () => {
         <Image src="/pl-main-logo.png" alt="PL" width={32} height={32} />
       </div>
       {menuTree.map((menu: any) => (
-        <div className="">
+        <div className="" key={menu.id}>
           <div className="flex items-center justify-start w-full font-semibold">
             {menu.name}
             {menu.current && (

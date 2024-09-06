@@ -23,7 +23,7 @@ import { Skeleton } from "../ui/skeleton";
 import AppTopStandings from "./AppTopStanding"
 import AppFailedToFetch from "./AppFailedToFetch";
 
-const AppLeagueSummary = async (props: any) => {
+const AppLeagueSummary = (props: any) => {
   const {
     season,
     leagueAlias,

@@ -75,7 +75,7 @@ const AppLiveEvent = () => {
         });
       }
     }
-  }, [bootstrap, fixtures, liveEvent]);
+  }, [bootstrap, fixtures, liveEvent, currentEvent]);
 
   if (!bootstrap) {
     return (

@@ -161,7 +161,7 @@ const AppMyTeam = () => {
         setDataPicks();
       }
     }
-  }, [bootstrap, fixtures, manager, picks]);
+  }, [bootstrap,bootstrapHist, fixtures, manager, picks]);
   if (!bootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">

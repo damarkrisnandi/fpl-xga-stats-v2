@@ -28,16 +28,16 @@ const AppTransferDeadline = (props: any) => {
   // if (!bootstrap) {
   //   return null;
   // }
-  const nextEvent = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime())[0];
+  const nextEvents = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime());
   useEffect(() => {
     if (!event) {
-      setEvent(nextEvent);
+      setEvent(nextEvents.length ? nextEvents[0] : { id: 39 });
     }
 
     if (!deadline) {
       // Update the count down every 1 second
       const x = setInterval(function () {
-        let countDownDate = new Date(nextEvent.deadline_time).getTime();
+        let countDownDate = new Date(nextEvents.length ? nextEvents[0].deadline_time : new Date()).getTime();
         // Get today's date and time
         const now = new Date().getTime();
 
@@ -69,7 +69,7 @@ const AppTransferDeadline = (props: any) => {
         }
       }, 1000);
     }
-  }, []);
+  }, [event, deadline]);
 
   if (!event || !deadline) {
     return (<SkeletonCard />);

@@ -15,7 +15,7 @@ const AppInputMyTeam = (props: any) => {
                 getManagerData(localStorage.getItem('manager_id_stored') || 0).then((value: any) => setManager(value))
             }, 300);
         }
-    })
+    }, [teamId, manager])
     const handleOnChange = (event: any) => {
         setTeamId(event.target.value)
     }

@@ -65,7 +65,7 @@ const AppElements = (props: any) => {
     if (fixtures.length == 0) {
       getFixtures().then((data) => setFixtures(data));
     }
-  });
+  }, [bootstrapHist, bootstrap.events, fixtures.length]);
 
   if (!bootstrapHist && fixtures.length == 0) {
     return (

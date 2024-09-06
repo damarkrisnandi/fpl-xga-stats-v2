@@ -7,14 +7,7 @@ const AppNextFixtures = (props: any) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
   };
 
-  const [diffStyle, setDiffStyle] = useState<any>([]);
-
   useEffect(() => {
-    if (diffStyle.length == 0) {
-      setDiffStyle(nextFixtures.map((nextf:any) => {
-        return { id: nextf.id , difficultyColor: difficultyColor(element.team == nextf.team_h ? nextf.team_h_difficulty : nextf.team_a_difficulty)}
-      }))
-    }
   })
 
   return (
@@ -23,8 +16,7 @@ const AppNextFixtures = (props: any) => {
     >
       <p className="text-xs md:text-sm">Next</p>
       <div>
-        {diffStyle.length &&
-        nextFixtures
+        {nextFixtures
         .map((nextf: any, index: number) => {
             const Difficulties = [
                 (props: any) => null,

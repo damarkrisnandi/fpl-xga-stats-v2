@@ -68,7 +68,7 @@ const AppExpectedPts = (props: any) => {
     
     useEffect(() => {
         setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams, elementHist))
-    })
+    }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist])
 
     if (xPoints < 2) {
         return <StatItemExtraLow label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
