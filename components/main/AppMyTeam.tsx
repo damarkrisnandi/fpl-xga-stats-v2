@@ -6,6 +6,7 @@ import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
 import {
+  getArchivedBootstrap,
   getBootstrapFromStorage,
   getFixtures,
   getManagerData,
@@ -16,6 +17,7 @@ import {
   positionMapping,
   getExpectedPoints,
   optimizationProcess,
+  previousSeason,
 } from "@/utils/index";
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
@@ -24,6 +26,7 @@ import { Separator } from "@radix-ui/react-select";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
+  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [picks, setPicks] = useState<any>(null);
@@ -118,6 +121,12 @@ const AppMyTeam = () => {
       });
     }
 
+    if (!bootstrapHist) {
+      getArchivedBootstrap(previousSeason).then((value: any) => {
+        setBootstrapHist(value);
+      }) 
+    }
+
     if (bootstrap && !bootstrap.error) {
       setCurrentEvent(
         bootstrap.events
@@ -168,6 +177,22 @@ const AppMyTeam = () => {
     );
   }
 
+  if (!bootstrapHist) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppSpinner />
+      </div>
+    );
+  }
+
+  if (bootstrapHist && bootstrapHist.error) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppFailedToFetch />
+      </div>
+    );
+  }
+
   if (picks && picks.error) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -211,6 +236,7 @@ const AppMyTeam = () => {
               setDataView(
                 optimizationProcess(
                   bootstrap.elements,
+                  bootstrapHist.elements,
                   fixtures,
                   bootstrap.teams,
                   currentEvent,
@@ -357,6 +383,7 @@ const AppMyTeam = () => {
 
                 <AppExpectedPts
                   element={elementMapping(player.element)}
+                  elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
                   currentEvent={currentEvent}
                   deltaEvent={0}
                   fixtures={fixtures}

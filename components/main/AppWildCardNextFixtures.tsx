@@ -6,6 +6,7 @@ import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
 import {
+    getArchivedBootstrap,
   getBootstrapFromStorage,
   getFixtures,
   getManagerData,
@@ -16,6 +17,7 @@ import {
   positionMapping,
   getExpectedPoints,
   optimizationProcess,
+  previousSeason,
 } from "@/utils/index";
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
@@ -31,6 +33,7 @@ import {
 
 const AppWildCardNextFixtures = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
+  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
@@ -40,6 +43,7 @@ const AppWildCardNextFixtures = () => {
   const setDataPicks = () => {
     const wildCardDraft = optimizationProcess(
       bootstrap.elements,
+      bootstrapHist.elements,
       fixtures,
       bootstrap?.teams,
       currentEvent,
@@ -47,6 +51,7 @@ const AppWildCardNextFixtures = () => {
     );
     const wildcardPicks = optimizationProcess(
       bootstrap.elements,
+      bootstrapHist.elements,
       fixtures,
       bootstrap?.teams,
       currentEvent,
@@ -86,6 +91,12 @@ const AppWildCardNextFixtures = () => {
       });
     }
 
+    if (!bootstrapHist) {
+        getArchivedBootstrap(previousSeason).then((value: any) => {
+            setBootstrapHist(value);
+        })
+    }
+
     if (bootstrap && !bootstrap.error) {
       setCurrentEvent(
         bootstrap.events
@@ -102,11 +113,11 @@ const AppWildCardNextFixtures = () => {
         });
       }
 
-      if (currentEvent && !currentEvent.error) {
+      if (currentEvent && !currentEvent.error && bootstrapHist && !bootstrapHist.error) {
         setDataPicks();
       }
     }
-  }, [bootstrap, fixtures]);
+  }, [bootstrap, bootstrapHist, fixtures]);
   if (!bootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -124,6 +135,23 @@ const AppWildCardNextFixtures = () => {
   }
 
   if (bootstrap && bootstrap.error) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppFailedToFetch />
+      </div>
+    );
+  }
+
+  if (!bootstrapHist) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppSpinner />
+      </div>
+    );
+  }
+
+
+  if (bootstrapHist && bootstrapHist.error) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -234,6 +262,7 @@ const AppWildCardNextFixtures = () => {
 
                   <AppExpectedPts
                     element={elementMapping(player.element)}
+                    elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element))}
                     currentEvent={currentEvent}
                     deltaEvent={0}
                     fixtures={fixtures}

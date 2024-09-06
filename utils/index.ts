@@ -1,68 +1,7 @@
 import { solve } from "yalps";
 
 export const leaguesData = [
-  // {
-  //     name: 'FPLMGM#5',
-  //     current: true,
-  //     children: [
-  //         {
-  //             name: 'Home',
-  //             id: ''
-  //         },
-  //         {
-  //             name: 'League A',
-  //             id: '815990',
-  //             league: true,
-  //             showRelegationZone: true,
-  //             showPromotionZone: false
-  //         },
-  //         {
-  //             name: 'League B',
-  //             id: '816007',
-  //             league: true,
-  //             showRelegationZone: false,
-  //             showPromotionZone: true
-  //         },
-  //         {
-  //             name: 'League S',
-  //             id: '815963',
-  //             league: true,
-  //             showRelegationZone: false,
-  //             showPromotionZone: false
-  //         }
-  //     ]
-  // },
-  // {
-  //     name: 'FPLMGM#4',
-  //     children: [
-  //         {
-  //             name: 'Summary',
-  //             id: '2023-2024'
-  //         },
-  //         {
-  //             name: 'League A',
-  //             id: '2023-2024/league-a'
-  //         },
-  //         {
-  //             name: 'League B',
-  //             id: '2023-2024/league-b'
-  //         },
-  //         {
-  //             name: 'Super League',
-  //             id: '2023-2024/super-league'
-  //         }
-  //     ]
-  // },
-  // {
-  //     name: 'FPLMGM#3',
-  //     children: [
-  //         {
-  //             name: 'Data Not Found',
-  //             id: '',
-  //             disabled: true,
-  //         }
-  //     ]
-  // },
+  
 ];
 
 export const menuTree = [
@@ -87,6 +26,7 @@ export const menuTree = [
 ];
 
 export const currentSeason = "2024-2025";
+export const previousSeason = "2023-2024";
 
 export function getPlayerPhotoUrl(photo: string): string {
   const imageId = photo?.split(".")[0] || "";
@@ -172,29 +112,8 @@ export function statsMapping(code: string): string {
   return stats[code] || "";
 }
 
-export const getExpectedPoints = (
-  element: any,
-  currentGameWeek: number,
-  deltaEvent: number,
-  fixtures: any,
-  teams: any
-) => {
-  let gameWeek = currentGameWeek + deltaEvent;
-
-  if (gameWeek > 38) {
-    return 0;
-  } else if (gameWeek < 1) {
-    // bisa pake history data bootstrap static
-    return 0;
-  }
-
+const calculateBaseExpected = (element: any, fixturesLen: number) => {
   let xP = 0;
-  const filteredFixtures = fixtures.filter(
-    (fix: any) =>
-      (element.team == fix.team_h || element.team == fix.team_a) &&
-      fix.event <= gameWeek
-  );
-
   const {
     element_type,
     bonus,
@@ -210,10 +129,10 @@ export const getExpectedPoints = (
     yellow_cards,
     red_cards,
   } = element;
-  const xYC = (yellow_cards / filteredFixtures.length) * -1;
-  const xRC = (red_cards / filteredFixtures.length) * -2;
+  const xYC = (yellow_cards / fixturesLen) * -1;
+  const xRC = (red_cards / fixturesLen) * -2;
   const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
-  const xOG = (own_goals / filteredFixtures.length) * -1;
+  const xOG = (own_goals / fixturesLen) * -1;
   if (element_type === 4) {
     const xPG = expected_goals_per_90 * 4;
     const xPA = expected_assists_per_90 * 3;
@@ -239,7 +158,7 @@ export const getExpectedPoints = (
     const xPA = expected_assists_per_90 * 3;
     const xCS = starts_per_90 >= 0.67 ? clean_sheets_per_90 * 4 : 0;
       const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    const xSaves = Math.floor(saves / filteredFixtures.length / 3);
+    const xSaves = Math.floor((saves / fixturesLen) / 3);
     xP =
       xPG +
       xPA +
@@ -248,6 +167,42 @@ export const getExpectedPoints = (
   }
 
   xP += pMP + xOG;
+
+  return xP;
+}
+
+export const getExpectedPoints = (
+  element: any,
+  currentGameWeek: number,
+  deltaEvent: number,
+  fixtures: any,
+  teams: any,
+  elementHistory?: any
+) => {
+  let gameWeek = currentGameWeek + deltaEvent;
+
+  if (gameWeek > 38) {
+    return 0;
+  } else if (gameWeek < 1) {
+    // bisa pake history data bootstrap static
+    return 0;
+  }
+
+  let xP = 0;
+  const filteredFixtures = fixtures.filter(
+    (fix: any) =>
+      (element.team == fix.team_h || element.team == fix.team_a) &&
+      fix.event <= gameWeek
+  );
+
+  xP = calculateBaseExpected(element, filteredFixtures.length)
+
+  let xPHistory = 0;
+  if (elementHistory) {
+    xPHistory = calculateBaseExpected(elementHistory, 38);
+  }
+
+  xP = (0.85 * xP) + (0.15 * xPHistory);
 
   const elementStatusIndex: any = {
     a: 1,
@@ -372,7 +327,7 @@ export const getExpectedPoints = (
         );
     }
 
-    xP = xP * starts_per_90 * diffIndex * elementStatusIndex[element.status];
+    xP = xP * element.starts_per_90 * diffIndex * elementStatusIndex[element.status];
 
     totalXP += xP;
   }
@@ -455,7 +410,7 @@ const picksOptimizationModel = (
   teams: any,
   currentEvent: any,
   deltaEvent: number,
-  picksData: any
+  picksData?: any
   ) => {
   elements.sort((a: any, b: any) => a.element_type - b.element_type);
     const elements1 = elements.filter((el: any) =>
@@ -524,6 +479,7 @@ const picksOptimizationModel = (
 
 export const optimizationProcess = (
   elements: any,
+  elementsHistory: any,
   fixtures: any,
   teams: any,
   currentEvent: any,
@@ -558,7 +514,8 @@ export const optimizationProcess = (
             currentEvent.id,
             deltaEvent,
             fixtures,
-            teams
+            teams,
+            elementsHistory.find((eh: any) => elements.find((el: any) => el.id == p.element).code == eh.code)
           ),
         };
       })
@@ -580,7 +537,8 @@ export const optimizationProcess = (
             currentEvent.id,
             deltaEvent,
             fixtures,
-            teams
+            teams,
+            elementsHistory.find((eh: any) => elements.find((el: any) => el.id == Number(v[0].split('_')[1])).code == eh.code)
           ),
         };
       }),
@@ -592,12 +550,15 @@ export const optimizationProcess = (
     const result = solutionAsObject.map((res: any, idx: number) => {
       return {
         ...res,
+        web_name: elements.find((el: any) => el.id == res.element).web_name,
         position: idx + 1,
         multiplier: captaincySolution[0].element == res.element ? 2 : res.multiplier,
         is_captain: captaincySolution[0].element == res.element ? true : false,
         is_vice_captain: captaincySolution[1].element == res.element ? true : false
       };
     });
+
+    console.log(result)
 
     return result;
   } catch (error) {

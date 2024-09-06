@@ -1,6 +1,6 @@
 "use client";
 
-import { getBootstrapFromStorage, getFixtures } from "@/services";
+import { getArchivedBootstrap, getBootstrapFromStorage, getFixtures } from "@/services";
 import {
   Card,
   CardContent,
@@ -23,7 +23,7 @@ import {
 import { ScrollArea } from "../ui/scroll-area";
 import { CirclePercent, Euro, PoundSterling, RefreshCw, TriangleAlert } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
-import { difficultyColor, xPColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
+import { difficultyColor, xPColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping, previousSeason } from "@/utils";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Button } from "../ui/button";
@@ -34,13 +34,18 @@ import AppExpectedPts from "./AppExpectedPts";
 const AppElements = (props: any) => {
   const { bootstrap } = props;
   // const [bootstrap, setBootstrap] = useState<any>(null);
+  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
 
   useEffect(() => {
-      
+      if (!bootstrapHist) {
+        getArchivedBootstrap(previousSeason).then((value: any) => {
+          setBootstrapHist(value);
+        })
+      }
     setCurrentEvent(
       bootstrap.events
         .filter(
@@ -62,7 +67,7 @@ const AppElements = (props: any) => {
     }
   });
 
-  if (fixtures.length == 0) {
+  if (!bootstrapHist && fixtures.length == 0) {
     return (
       <Card className="w-11/12 md:w-5/12">
         <CardHeader>
@@ -74,7 +79,7 @@ const AppElements = (props: any) => {
     );
   }
 
-  if (fixtures.length && fixtures[0].error) {
+  if ((fixtures.length && fixtures[0].error) || (bootstrapHist && bootstrapHist.error)) {
     return <AppFailedToFetch />;
   }
   return (
@@ -98,7 +103,7 @@ const AppElements = (props: any) => {
                 key={el.id}
                 className="flex flex-col items-center justify-center space-y-2"
               >
-                <PlayerCardStats element={el} currentEvent={currentEvent} fixtures={fixtures} teams={bootstrap?.teams}/>
+                <PlayerCardStats element={el} elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == el.code)} currentEvent={currentEvent} fixtures={fixtures} teams={bootstrap?.teams}/>
               </div>
             ))}
         </ScrollArea>
@@ -135,7 +140,7 @@ const SelectTeam = (props: any) => {
 };
 
 const PlayerCardStats = (props: any) => {
-  const { className, element, currentEvent, fixtures, teams } = props;
+  const { className, element, currentEvent, fixtures, teams, elementHist } = props;
 
   const getTeamShort = (code: number) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
@@ -271,7 +276,7 @@ const PlayerCardStats = (props: any) => {
           </div>)}
           {currentEvent.id > 1 && <div className="w-full flex justify-center">
             <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
-            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams} multiplier={1}/>
+            <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams} multiplier={1}/>
             
             <StatItem label={' '} value={' '} />
             <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
@@ -292,7 +297,7 @@ const PlayerCardStats = (props: any) => {
           </div>}
           {currentEvent.id < 38 && <div className="w-full flex justify-center">
             <AppNextFixtures teams={teams} element={element} nextFixtures={nextFixtures} />
-            <AppExpectedPts element={element} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams} multiplier={1}/>
+            <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams} multiplier={1}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  

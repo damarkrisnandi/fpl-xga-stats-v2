@@ -63,11 +63,11 @@ const StatItemExtraHigh = (props: any) => {
 };
 
 const AppExpectedPts = (props: any) => {
-    const { element, currentEvent, deltaEvent, fixtures, teams, multiplier } = props;
+    const { element, elementHist, currentEvent, deltaEvent, fixtures, teams, multiplier } = props;
     const [xPoints, setXPoints] = useState<any>(0);
     
     useEffect(() => {
-        setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams))
+        setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams, elementHist))
     })
 
     if (xPoints < 2) {

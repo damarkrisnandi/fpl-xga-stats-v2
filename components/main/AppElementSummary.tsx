@@ -1,10 +1,11 @@
 "use client";
-import { getBootstrapFromStorage, getFixtures } from "@/services";
+import { getArchivedBootstrap, getBootstrapFromStorage, getFixtures } from "@/services";
 import {
   getExpectedPoints,
   getPlayerPhotoUrl,
   getTeamLogoUrl,
   positionMapping,
+  previousSeason,
 } from "@/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ export const AppElementSummary = (props: any) => {
   const { elementId } = props;
 
   const [bootstrap, setBootstrap] = useState<any>(null);
+  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [elementSummary, setElementSummary] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
@@ -48,6 +50,12 @@ export const AppElementSummary = (props: any) => {
           getFixtures().then((data: any) => setFixtures(data));
         }
       });
+    }
+
+    if (!bootstrapHist) {
+      getArchivedBootstrap(previousSeason).then((value: any) => {
+        setBootstrapHist(value);
+      })
     }
   });
 
@@ -128,6 +136,7 @@ export const AppElementSummary = (props: any) => {
               />
               <AppExpectedPts
                 element={elementMapping()}
+                elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping().code)}
                 currentEvent={currentEvent}
                 deltaEvent={-1}
                 fixtures={fixtures}
@@ -182,7 +191,7 @@ export const AppElementSummary = (props: any) => {
 
             {currentEvent.id < 38 && <div className="flex">
             <AppNextFixtures teams={bootstrap?.teams} element={elementMapping()} nextFixtures={getNextFixtures()} />
-            <AppExpectedPts element={elementMapping()} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={bootstrap?.teams} multiplier={1}/>
+            <AppExpectedPts element={elementMapping()} currentEvent={currentEvent} elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping().code)} deltaEvent={0} fixtures={fixtures} teams={bootstrap?.teams} multiplier={1}/>
             <StatItem label={' '} value={' '} />
             <StatItem label={' '} value={' '} />
  
