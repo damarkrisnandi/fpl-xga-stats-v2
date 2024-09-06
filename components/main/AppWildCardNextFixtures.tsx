@@ -268,7 +268,7 @@ const AppWildCardNextFixtures = () => {
 
                   <AppExpectedPts
                     element={elementMapping(player.element)}
-                    elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element))}
+                    elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
                     currentEvent={currentEvent}
                     deltaEvent={0}
                     fixtures={fixtures}
