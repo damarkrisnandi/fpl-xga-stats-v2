@@ -34,7 +34,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AppHeader />
         <div className="flex w-full">
+          <div className="hidden md:block w-2/12 bg-slate-200 fixed top-0 h-screen">
           <AppSideBar />
+          </div>
           <div className="w-full">{children}</div>
         </div>
         <AppFooter />
