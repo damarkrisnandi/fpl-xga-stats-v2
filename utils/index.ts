@@ -409,6 +409,7 @@ const wildcardOptimizationModel = (
         ...posConstraints2,
         ...teamConstaints,
         max_pick: { equal: 15 },
+        is_playing_next: { min: 0.75 * 15, max: 15 }
       },
       variables: {
         ...fplVariables2,
@@ -482,6 +483,7 @@ const picksOptimizationModel = (
         // ...playerConstraints2,
         ...teamConstaints,
         max_pick: { max: 11 },
+        is_playing_next: { min: 0.75 * 11, max: 11 }
       },
       variables: {
         ...fplVariables2,
@@ -627,7 +629,7 @@ const createVariables = (
           ],
 
           [`team_${e.team_code}`, 1],
-          [`is_playing`, e.status === "a" ? 1 : 0],
+          [`is_playing_next`, e.chance_of_playing_next_round || 0],
         ]);
 
         return {
