@@ -1,4 +1,4 @@
-.import { solve } from "yalps";
+import { solve } from "yalps";
 
 export const leaguesData = [
   
