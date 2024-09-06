@@ -46,21 +46,21 @@ const AppElements = (props: any) => {
           setBootstrapHist(value);
         })
       }
-    setCurrentEvent(
-      bootstrap.events
+
+      const currentAndPreviousEvents = bootstrap.events
         .filter(
           (event: any) =>
             new Date(event.deadline_time).getTime() <= new Date().getTime()
-        )
-        .at(-1)
-    );
+      );
 
-    setNextEvent(
-      bootstrap.events.filter(
+      const allNextEvents = bootstrap.events.filter(
         (event: any) =>
           new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]
-    );
+      )[0]; 
+
+    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+
+    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
     if (fixtures.length == 0) {
       getFixtures().then((data) => setFixtures(data));

@@ -30,21 +30,20 @@ export const AppElementSummary = (props: any) => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
         setBootstrap(value);
-        setCurrentEvent(
-          value.events
-            .filter(
-              (event: any) =>
-                new Date(event.deadline_time).getTime() <= new Date().getTime()
-            )
-            .at(-1)
-        );
+        const currentAndPreviousEvents = bootstrap.events
+        .filter(
+          (event: any) =>
+            new Date(event.deadline_time).getTime() <= new Date().getTime()
+      );
 
-        setNextEvent(
-          value.events.filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() > new Date().getTime()
-          )[0]
-        );
+      const allNextEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() > new Date().getTime()
+      )[0]; 
+
+    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+
+    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
         if (fixtures.length == 0) {
           getFixtures().then((data: any) => setFixtures(data));

@@ -37,37 +37,34 @@ const AppFixtures = (props: any) => {
     if (!fixtures || fixtures.length == 0) {
       getFixtures()
         .then((value: any) => {
+          const currentAndPreviousEvents = events.filter(
+            (event: any) =>
+              new Date(event.deadline_time).getTime() <= new Date().getTime()
+          );
 
-          setNextEvent(
-            events.filter(
-              (event: any) =>
-                new Date(event.deadline_time).getTime() > new Date().getTime()
-            )[0]
-          );
+          const allNextEvents = events.filter(
+            (event: any) =>
+              new Date(event.deadline_time).getTime() > new Date().getTime()
+          )[0];
+
           setCurrentEvent(
-            events
-              .filter(
-                (event: any) =>
-                  new Date(event.deadline_time).getTime() <=
-                  new Date().getTime()
-              )
-              .at(-1)
+            currentAndPreviousEvents.length > 0
+              ? currentAndPreviousEvents.at(-1)
+              : 0
           );
+
+          setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
           if (value && !value.error) {
             setFixtures(value);
           } else {
             setFixtures([value]);
           }
-
         })
-        .catch((err) => {
-
-        });
+        .catch((err) => {});
     }
   });
 
   if (!fixtures || fixtures.length == 0) {
-
     return <SkeletonFixtures />;
   }
 
@@ -199,10 +196,11 @@ const AppFixtures = (props: any) => {
                   </AccordionItem>
                 ))}
             </Accordion>
-            <Button asChild variant={'outline'} className="w-full">
-                <Link href={`/live-event`}>
-                    Live Event <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span>
-                </Link>
+            <Button asChild variant={"outline"} className="w-full">
+              <Link href={`/live-event`}>
+                Live Event{" "}
+                <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span>
+              </Link>
             </Button>
           </CardContent>
           <CardFooter></CardFooter>
@@ -218,7 +216,10 @@ const AppFixtures = (props: any) => {
             {fixtures
               .filter((fixture: any) => fixture.event == nextEvent?.id)
               .map((fixture) => (
-                <div className="flex justify-center items-center space-x-2" key={fixture.id}>
+                <div
+                  className="flex justify-center items-center space-x-2"
+                  key={fixture.id}
+                >
                   <div className="flex justify-end items-center">
                     <p className="w-10 text-right text-sm font-semibold mr-3">
                       {getTeamShort(fixture.team_h)}

@@ -56,14 +56,16 @@ const AppMyTeam = () => {
                         currentEvent.id,
                         -1,
                         fixtures,
-                        bootstrap?.teams
+                        bootstrap?.teams,
+                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
                       ),
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
                       currentEvent.id,
                       0,
                       fixtures,
-                      bootstrap?.teams
+                      bootstrap?.teams,
+                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
                     ),
                   };
                 }),
@@ -78,7 +80,8 @@ const AppMyTeam = () => {
                       currentEvent.id,
                       0,
                       fixtures,
-                      bootstrap?.teams
+                      bootstrap?.teams,
+                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
                     ),
                   };
                 })
@@ -98,6 +101,7 @@ const AppMyTeam = () => {
     let total = 0;
     for (let pick of picksData) {
       total += pick.xp * pick.multiplier;
+      console.log(pick.xp * pick.multiplier, total)
     }
 
     return total;
@@ -128,14 +132,20 @@ const AppMyTeam = () => {
     }
 
     if (bootstrap && !bootstrap.error) {
-      setCurrentEvent(
-        bootstrap.events
-          .filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() <= new Date().getTime()
-          )
-          .at(-1)
+      const currentAndPreviousEvents = bootstrap.events
+        .filter(
+          (event: any) =>
+            new Date(event.deadline_time).getTime() <= new Date().getTime()
       );
+
+      const allNextEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() > new Date().getTime()
+      )[0]; 
+
+    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+
+    // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
       if (fixtures.length == 0) {
         getFixtures().then((dataFixtures: any) => {
@@ -342,7 +352,8 @@ const AppMyTeam = () => {
                       currentEvent.id,
                       -1,
                       fixtures,
-                      bootstrap?.teams
+                      bootstrap?.teams,
+                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
                     )
                   ).toFixed(2)}
                   className={`
@@ -353,7 +364,8 @@ const AppMyTeam = () => {
                   currentEvent.id,
                   -1,
                   fixtures,
-                  bootstrap?.teams
+                  bootstrap?.teams,
+                  bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
                 ) >
               0
                 ? "bg-green-200 text-green-700"
@@ -367,7 +379,8 @@ const AppMyTeam = () => {
                   currentEvent.id,
                   -1,
                   fixtures,
-                  bootstrap?.teams
+                  bootstrap?.teams,
+                  bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
                 ) <
                 0
                 ? "bg-red-200 text-red-700"

@@ -100,7 +100,7 @@ export function statsMapping(code: string): string {
     assists: "👟",
     clean_sheets: "🔰",
     goals_conceded: "❌",
-    own_goals: "OG",
+    own_goals: "x⚽️x",
     penalties_saved: "PS",
     penalties_missed: "PM",
     yellow_cards: "🟨",
@@ -143,14 +143,14 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     const xPA = expected_assists_per_90 * 3;
     const xCS = clean_sheets_per_90 >= 0.67 ? 1 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC + xCS;
+    xP = xPG + xPA + xGC;
   }
   if (element_type === 2) {
     const xPG = expected_goals_per_90 * 6;
     const xPA = expected_assists_per_90 * 3;
     const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC + xCS;
+    xP = xPG + xPA + xGC;
   }
 
   if (element_type === 1) {
@@ -163,11 +163,10 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
       xPG +
       xPA +
       xGC +
-      xSaves +
-      xCS;
+      xSaves;
   }
 
-  xP += pMP + xOG;
+  xP += pMP + xOG ;
 
   return xP;
 }
@@ -203,7 +202,15 @@ export const getExpectedPoints = (
     xPHistory = calculateBaseExpected(elementHistory, 38);
   }
 
-  xP = (0.85 * xP) + (0.15 * xPHistory);
+  if (elementHistory) {
+    if (gameWeek == 0) {
+      xP = xPHistory;
+    } else {
+      xP = (0.85 * xP) + (0.15 * xPHistory);
+    }
+  } else  {
+    
+  }
 
   const elementStatusIndex: any = {
     a: 1,
