@@ -116,7 +116,6 @@ export default AppElements;
 
 const SelectTeam = (props: any) => {
     const handleOnSelect = (value: any) => {
-        console.log(value)
         props.onValueChangeTeam(value)
     }
   return (

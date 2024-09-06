@@ -101,7 +101,6 @@ const AppMyTeam = () => {
     let total = 0;
     for (let pick of picksData) {
       total += pick.xp * pick.multiplier;
-      console.log(pick.xp * pick.multiplier, total)
     }
 
     return total;
