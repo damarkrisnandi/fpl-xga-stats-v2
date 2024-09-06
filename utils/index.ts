@@ -212,7 +212,7 @@ export const getExpectedPoints = (
     if (gameWeek == 0) {
       xP = xPHistory;
     } else {
-      // xP = (0.85 * xP) + (0.15 * xPHistory);
+      xP = (0.85 * xP) + (0.15 * xPHistory);
     }
   } else  {
     
