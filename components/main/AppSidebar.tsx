@@ -14,7 +14,7 @@ const AppSideBar = () => {
     <div className="pt-24 pl-10">
       {menuTree.map((menu: any) => (
         <div className="" key={menu.id}>
-          <div className="flex items-center justify-start w-full font-semibold">
+          <div className="flex items-center justify-start w-full font-semibold text-lg">
             
             {menu.name}
             {menu.current && (
@@ -26,7 +26,7 @@ const AppSideBar = () => {
               <Button
                 asChild
                 variant={"ghost"}
-                className="flex justify-start rounded-none"
+                className={`flex justify-start rounded-none ${pathname == '/' + submenu.id ? 'font-semibold text-lg': ''}`}
                 key={submenu.id}
               >
                 <Link
