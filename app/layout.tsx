@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AppHeader from "@/components/main/AppHeader";
 import AppFooter from "@/components/main/AppFooter";
+import AppSideBar from "@/components/main/AppSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,12 +13,12 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: '/xga_icon.png',
-        media: '(prefers-color-scheme: light)',
+        url: "/xga_icon.png",
+        media: "(prefers-color-scheme: light)",
       },
       {
-        url: '/xga_icon.png',
-        media: '(prefers-color-scheme: dark)',
+        url: "/xga_icon.png",
+        media: "(prefers-color-scheme: dark)",
       },
     ],
   },
@@ -32,9 +33,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <AppHeader />
-        {children}
-        <AppFooter /> 
-        </body>
+        <div className="flex w-full">
+          <AppSideBar />
+          <div className="w-full">{children}</div>
+        </div>
+        <AppFooter />
+      </body>
     </html>
   );
 }

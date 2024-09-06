@@ -20,7 +20,7 @@ const AppHeader = () => {
   return (
     <nav className="bg-[#37003c] h-16 w-full p-5 flex space-x-6 items-center fixed top-0 shadow-md z-10">
       <Sheet>
-        <SheetTrigger>
+        <SheetTrigger className="md:hidden">
           <AlignJustify className="h-4 w-4 text-white" />
         </SheetTrigger>
         <SheetContent side={"left"} className="pt-12">
@@ -36,7 +36,7 @@ const AppHeader = () => {
       </Sheet>
       <Link href="/">
         <div className="flex justify-center items-center space-x-4">
-          <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} />
+          <Image src="/pl-main-logo.png" alt="PL" width={24} height={24} className="block md:hidden"/>
           <div className="flex items-center">
             <p className="text-sm font-bold text-white">Fantasy</p>
             <p className="text-sm font-bold bg-white pt-1 pb-1 pr-2">XGA</p>

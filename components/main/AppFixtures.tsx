@@ -54,6 +54,7 @@ const AppFixtures = (props: any) => {
           );
 
           setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+          
           if (value && !value.error) {
             setFixtures(value);
           } else {
@@ -88,9 +89,7 @@ const AppFixtures = (props: any) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <Accordion type="single" collapsible className="w-full">
-              {fixtures
-
-                .filter((fixture: any) => fixture.event == currentEvent?.id)
+              {fixtures.filter((fixture: any) => fixture.event == currentEvent?.id)
                 .map((fixture) => (
                   <AccordionItem key={fixture.id} value={fixture.id}>
                     <AccordionTrigger className="w-full">

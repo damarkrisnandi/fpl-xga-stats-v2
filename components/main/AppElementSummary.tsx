@@ -30,13 +30,13 @@ export const AppElementSummary = (props: any) => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
         setBootstrap(value);
-        const currentAndPreviousEvents = bootstrap.events
+        const currentAndPreviousEvents = value.events
         .filter(
           (event: any) =>
             new Date(event.deadline_time).getTime() <= new Date().getTime()
       );
 
-      const allNextEvents = bootstrap.events.filter(
+      const allNextEvents = value.events.filter(
         (event: any) =>
           new Date(event.deadline_time).getTime() > new Date().getTime()
       )[0]; 

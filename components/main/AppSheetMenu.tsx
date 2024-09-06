@@ -5,10 +5,13 @@ import { Button } from '../ui/button';
 import Link from 'next/link';
 import { SheetClose } from '../ui/sheet';
 import { menuTree } from '@/utils';
+import { usePathname } from 'next/navigation';
 
 
 
 const AppSheetMenu = () => {
+    const pathname = usePathname();
+    console.log('cek', pathname);
     return (
         <div>
             <Accordion type="single" collapsible className="w-full">
@@ -24,8 +27,9 @@ const AppSheetMenu = () => {
                         <AccordionContent>
                             <Accordion type="single" collapsible className="w-full">
                                 {
-                                    menu.children.map((submenu: any) => (
-                                        <SheetClose asChild key={submenu.id}>
+                                    menu.children
+                                    .map((submenu: any) => (
+                                        <SheetClose asChild key={submenu.id} disabled={pathname == `/${submenu.id}`}>
                                             <Button asChild variant={'ghost'} className="w-full">
                                                 <Link href={'/' + submenu.id} passHref={false}>
                                                     {submenu.name}
