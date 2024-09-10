@@ -226,7 +226,7 @@ const AppFixtures = (props: any) => {
           <CardContent className="space-y-2">
             {fixtures
               .filter((fixture: any) => fixture.event == nextEvent?.id)
-              .map((fixture) => (
+              .map((fixture: any) => (
                 <div
                   className="flex justify-center items-center space-x-2"
                   key={fixture.id}
