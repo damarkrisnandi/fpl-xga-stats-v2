@@ -6,7 +6,7 @@ import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
 import {
-    getArchivedBootstrap,
+  getArchivedBootstrap,
   getBootstrapFromStorage,
   getFixtures,
   getManagerData,
@@ -30,36 +30,126 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import {
+  QueryClientProvider,
+  QueryClient,
+  useQuery,
+  useQueries,
+} from "@tanstack/react-query";
 
 const AppWildCardNextFixtures = () => {
-  const [bootstrap, setBootstrap] = useState<any>(null);
-  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [fixtures, setFixtures] = useState<any>([]);
+  const queryClient = new QueryClient();
+  const [
+    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
+    {
+      data: bootstrapHist,
+      isLoading: isLoadingBootstrapHist,
+      error: errorBoostrapHist,
+    },
+    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["bootstrap"],
+        queryFn: async () => await getBootstrapFromStorage(),
+        staleTime: Infinity,
+      },
+      {
+        queryKey: ["bootstrapHist"],
+        queryFn: async () => await getArchivedBootstrap("2023-2024"),
+        staleTime: Infinity,
+      },
+      {
+        queryKey: ["fixtures"],
+        queryFn: async () => await getFixtures(),
+        staleTime: Infinity,
+      },
+    ],
+  });
+  const {
+    data: currentEvent,
+    isLoading: isLoadingCurrentEvent,
+    isError: isErrorCurrentEvent,
+  } = useQuery({
+    queryKey: ["currentEvent"],
+    queryFn: () => {
+      const currentAndPreviousEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() <= new Date().getTime()
+      );
+
+      const allNextEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() > new Date().getTime()
+      )[0];
+
+      return currentAndPreviousEvents.length > 0
+        ? currentAndPreviousEvents.at(-1)
+        : { id: 0 };
+    },
+    enabled: !!bootstrap && !!bootstrapHist && !!fixtures,
+  });
+
+  // const [bootstrap, setBootstrap] = useState<any>(null);
+  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
+  // const [currentEvent, setCurrentEvent] = useState<any>(null);
+  // const [fixtures, setFixtures] = useState<any>([]);
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
-  const [dataView, setDataView] = useState<any>([]);
+  // const [dataView, setDataView] = useState<any>([]);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
+    // if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
+    //   return;
+    // }
     const wildCardDraft = optimizationProcess(
-      bootstrap.elements,
-      bootstrapHist.elements,
+      bootstrap?.elements,
+      bootstrapHist?.elements,
       fixtures,
       bootstrap?.teams,
       currentEvent,
       0
     );
     const wildcardPicks = optimizationProcess(
-      bootstrap.elements,
-      bootstrapHist.elements,
+      bootstrap?.elements,
+      bootstrapHist?.elements,
       fixtures,
       bootstrap?.teams,
       currentEvent,
       0,
       { picks: wildCardDraft }
-    );
-    setDataView(wildcardPicks);
+    );;
+    return wildcardPicks;
   };
+
+  const {
+    data: dataView,
+    isLoading: isLoadingDataView,
+    error: errorDataView,
+  } = useQuery({
+    queryKey: ["dataView"],
+    queryFn: () => {
+      const wildCardDraft = optimizationProcess(
+        bootstrap?.elements,
+        bootstrapHist?.elements,
+        fixtures,
+        bootstrap?.teams,
+        currentEvent,
+        0
+      );
+      const wildcardPicks = optimizationProcess(
+        bootstrap?.elements,
+        bootstrapHist?.elements,
+        fixtures,
+        bootstrap?.teams,
+        currentEvent,
+        0,
+        { picks: wildCardDraft }
+      );
+      return wildcardPicks;
+    },
+    enabled: !!bootstrap && !!bootstrapHist && !!fixtures && !!currentEvent,
+  });
   const totalXp = (picksData: any) => {
     if (!picksData || picksData.length == 0) {
       return 0;
@@ -84,47 +174,13 @@ const AppWildCardNextFixtures = () => {
     return total / 10;
   };
 
-  useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((value: any) => {
-        setBootstrap(value);
-      });
-    }
-
-    if (!bootstrapHist) {
-        getArchivedBootstrap(previousSeason).then((value: any) => {
-            setBootstrapHist(value);
-        })
-    }
-
-    if (bootstrap && !bootstrap.error) {
-      const currentAndPreviousEvents = bootstrap.events
-        .filter(
-          (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime()
-      );
-
-      const allNextEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]; 
-
-    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
-
-    // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-
-      if (fixtures.length == 0) {
-        getFixtures().then((dataFixtures: any) => {
-          setFixtures(dataFixtures);
-        });
-      }
-
-      if (currentEvent && !currentEvent.error && bootstrapHist && !bootstrapHist.error) {
-        setDataPicks();
-      }
-    }
-  }, [bootstrap, bootstrapHist, fixtures]);
-  if (!bootstrap) {
+  useEffect(() => {}, []);
+  if (
+    isLoadingBootstrap ||
+    isLoadingBootstrapHist ||
+    isLoadingFixtures ||
+    !dataView
+  ) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -140,24 +196,7 @@ const AppWildCardNextFixtures = () => {
     );
   }
 
-  if (bootstrap && bootstrap.error) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppFailedToFetch />
-      </div>
-    );
-  }
-
-  if (!bootstrapHist) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
-      </div>
-    );
-  }
-
-
-  if (bootstrapHist && bootstrapHist.error) {
+  if (errorBoostrap || errorBoostrapHist || errorFixtures || errorDataView) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -171,13 +210,22 @@ const AppWildCardNextFixtures = () => {
         fix.event == currentEvent.id + 1 &&
         (fix.team_h == element.team || fix.team_a == element.team)
     );
-    const getFormation = () => {
-        const defNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 2).length;
-        const midNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 3).length;
-        const fwdNum = dataView.filter((dv: any, i: number) => i < 12 && elementMapping(dv.element).element_type == 4).length;
+  const getFormation = () => {
+    const defNum = dataView.filter(
+      (dv: any, i: number) =>
+        i < 12 && elementMapping(dv.element).element_type == 2
+    ).length;
+    const midNum = dataView.filter(
+      (dv: any, i: number) =>
+        i < 12 && elementMapping(dv.element).element_type == 3
+    ).length;
+    const fwdNum = dataView.filter(
+      (dv: any, i: number) =>
+        i < 12 && elementMapping(dv.element).element_type == 4
+    ).length;
 
-        return `${defNum}-${midNum}-${fwdNum}`;
-    }
+    return `${defNum}-${midNum}-${fwdNum}`;
+  };
 
   return (
     <Card className="w-11/12 md:w-5/12">
@@ -190,10 +238,7 @@ const AppWildCardNextFixtures = () => {
       <CardContent className="space-y-2"></CardContent>
       <div className="w-full">
         <div className="w-full flex justify-end my-3">
-            <StatItem
-            label={"Formation"}
-            value={getFormation()}
-          />
+          <StatItem label={"Formation"} value={getFormation()} />
           <StatItem
             label={"COST"}
             value={dataView.length > 0 ? totalCost(dataView).toFixed(1) : 0}
@@ -268,7 +313,10 @@ const AppWildCardNextFixtures = () => {
 
                   <AppExpectedPts
                     element={elementMapping(player.element)}
-                    elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
+                    elementHist={bootstrapHist?.elements.find(
+                      (elh: any) =>
+                        elh.code == elementMapping(player.element).code
+                    )}
                     currentEvent={currentEvent}
                     deltaEvent={0}
                     fixtures={fixtures}

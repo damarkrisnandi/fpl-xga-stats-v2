@@ -7,33 +7,44 @@ import { getBootstrapFromStorage } from "@/services";
 import AppSpinner from "./AppSpinner";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppWildCardNextFixtures from "./AppWildCardNextFixtures";
+import { QueryClientProvider,QueryClient, useQuery } from '@tanstack/react-query';
 
+
+const queryClient = new QueryClient();
 const MainPage = () => {
-  const [bootstrap, setBootstrap] = useState<any>(null);
-  useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((value: any) => {
-        setBootstrap(value);
-      });
-    }
-  });
-  if (!bootstrap) {
+ 
+  return (
+    <QueryClientProvider client={queryClient}>
+      <MainPageContent />
+    </QueryClientProvider>
+    
+  );
+};
+
+export default MainPage;
+
+const MainPageContent = () => {
+  const { data: bootstrap, isLoading, error } = useQuery ({
+    queryKey: ["bootstrap"],
+    queryFn: async () => await getBootstrapFromStorage(),
+  })
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppSpinner />
       </div>
     );
   }
-
-  if (bootstrap && bootstrap.error) {
+  if (error) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppFailedToFetch />
       </div>
     );
   }
-  return (
-    <div className="flex flex-col items-center">
+
+ return (
+  <div className="flex flex-col items-center">
       <AppTransferDeadline bootstrap={bootstrap} />
       <AppFixtures
         teams={bootstrap?.teams}
@@ -44,7 +55,5 @@ const MainPage = () => {
       <AppElements className="w-full" bootstrap={bootstrap}/>
       <AppWildCardNextFixtures />
     </div>
-  );
-};
-
-export default MainPage;
+ ) 
+} 

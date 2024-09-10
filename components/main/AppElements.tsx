@@ -30,22 +30,52 @@ import { Button } from "../ui/button";
 import Link from "next/link";
 import AppNextFixtures from "./AppNextFixtures";
 import AppExpectedPts from "./AppExpectedPts";
+import {
+  QueryClientProvider,
+  QueryClient,
+  useQuery,
+  useQueries,
+} from "@tanstack/react-query";
 
 const AppElements = (props: any) => {
-  const { bootstrap } = props;
+  const queryClient = new QueryClient();
+  const [
+    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
+    { data: bootstrapHist, isLoading: isLoadingBootstrapHist, error: errorBoostrapHist },
+    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["bootstrap"],
+        queryFn: async () => await getBootstrapFromStorage(),
+        staleTime: Infinity,
+      },
+      {
+        queryKey: ["bootstrapHist"],
+        queryFn: async () => await getArchivedBootstrap('2023-2024'),
+        staleTime: Infinity,
+      },
+      {
+        queryKey: ["fixtures"],
+        queryFn: async () => await getFixtures(),
+        staleTime: Infinity,
+      },
+    ],
+  });
+  // const { bootstrap } = props;
   // const [bootstrap, setBootstrap] = useState<any>(null);
-  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
+  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
-  const [fixtures, setFixtures] = useState<any>([]);
+  // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
 
   useEffect(() => {
-      if (!bootstrapHist) {
-        getArchivedBootstrap(previousSeason).then((value: any) => {
-          setBootstrapHist(value);
-        })
-      }
+      // if (!bootstrapHist) {
+      //   getArchivedBootstrap(previousSeason).then((value: any) => {
+      //     setBootstrapHist(value);
+      //   })
+      // }
 
       const currentAndPreviousEvents = bootstrap.events
         .filter(
@@ -62,12 +92,12 @@ const AppElements = (props: any) => {
 
     setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
-    if (fixtures.length == 0) {
-      getFixtures().then((data) => setFixtures(data));
-    }
-  }, [bootstrapHist, bootstrap.events, fixtures.length]);
+    // if (fixtures.length == 0) {
+    //   getFixtures().then((data) => setFixtures(data));
+    // }
+  }, []);
 
-  if (!bootstrapHist && fixtures.length == 0) {
+  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
     return (
       <Card className="w-11/12 md:w-5/12">
         <CardHeader>
@@ -79,7 +109,7 @@ const AppElements = (props: any) => {
     );
   }
 
-  if ((fixtures.length && fixtures[0].error) || (bootstrapHist && bootstrapHist.error)) {
+  if (errorBoostrap || errorBoostrapHist || errorFixtures) {
     return <AppFailedToFetch />;
   }
   return (

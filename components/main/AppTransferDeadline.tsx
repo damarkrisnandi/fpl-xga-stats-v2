@@ -9,6 +9,7 @@ import {
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { Hourglass } from "lucide-react";
+import { QueryClientProvider,QueryClient, useQuery } from '@tanstack/react-query';
 
 const TimerContainer = (props: any) => {
   return (
@@ -22,14 +23,24 @@ const TimerContainer = (props: any) => {
 };
 
 const AppTransferDeadline = (props: any) => {
-  const { bootstrap } = props;
+  // const { bootstrap } = props;
+  const queryClient = new QueryClient();
+  const { data: bootstrap, isLoading, error } = useQuery ({
+    queryKey: ["bootstrap"],
+    queryFn: async () => await getBootstrapFromStorage(),
+  })
+  if (isLoading) {
+    return (<SkeletonCard />);
+  }
   const [event, setEvent] = useState<any>(null);
   const [deadline, setDeadline] = useState<any>(null);
   // if (!bootstrap) {
   //   return null;
   // }
-  const nextEvents = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime());
+  
   useEffect(() => {
+    
+    const nextEvents = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime());
     if (!event) {
       setEvent(nextEvents.length ? nextEvents[0] : { id: 39 });
     }

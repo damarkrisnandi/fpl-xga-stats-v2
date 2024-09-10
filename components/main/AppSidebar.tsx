@@ -9,11 +9,10 @@ import { ChevronRightCircle } from "lucide-react";
 
 const AppSideBar = () => {
   const pathname = usePathname();
-  console.log("cek", pathname);
   return (
     <div className="pt-24 pl-10">
-      {menuTree.map((menu: any) => (
-        <div className="" key={menu.id}>
+      {menuTree.map((menu: any, index: number) => (
+        <div className="" key={index}>
           <div className="flex items-center justify-start w-full font-semibold text-lg">
             
             {menu.name}
@@ -22,12 +21,12 @@ const AppSideBar = () => {
             )}
           </div>
           <div className=" flex flex-col">
-            {menu.children.map((submenu: any) => (
+            {menu.children.map((submenu: any, index: number) => (
               <Button
                 asChild
                 variant={"ghost"}
                 className={`flex justify-start rounded-none ${pathname == '/' + submenu.id ? 'font-semibold text-lg': ''}`}
-                key={submenu.id}
+                key={index}
               >
                 <Link
                   href={"/" + submenu.id}

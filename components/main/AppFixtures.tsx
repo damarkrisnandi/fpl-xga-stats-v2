@@ -22,10 +22,35 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import Link from "next/link";
+import {
+  QueryClientProvider,
+  QueryClient,
+  useQuery,
+  useQueries,
+} from "@tanstack/react-query";
 
 const AppFixtures = (props: any) => {
-  const { teams, events, elements, element_stats } = props;
-  const [fixtures, setFixtures] = useState<any[]>([]);
+  const queryClient = new QueryClient();
+
+  const [
+    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
+    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["bootstrap"],
+        queryFn: async () => await getBootstrapFromStorage(),
+        staleTime: Infinity,
+      },
+      {
+        queryKey: ["fixtures"],
+        queryFn: async () => await getFixtures(),
+        staleTime: Infinity,
+      },
+    ],
+  });
+
+  const { teams, events, elements, element_stats } = bootstrap;
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [nextEvent, setNextEvent] = useState<any>(null);
 
@@ -34,42 +59,28 @@ const AppFixtures = (props: any) => {
   };
 
   useEffect(() => {
-    if (!fixtures || fixtures.length == 0) {
-      getFixtures()
-        .then((value: any) => {
-          const currentAndPreviousEvents = events.filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() <= new Date().getTime()
-          );
+    const currentAndPreviousEvents = events.filter(
+      (event: any) =>
+        new Date(event.deadline_time).getTime() <= new Date().getTime()
+    );
 
-          const allNextEvents = events.filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() > new Date().getTime()
-          )[0];
+    const allNextEvents = events.filter(
+      (event: any) =>
+        new Date(event.deadline_time).getTime() > new Date().getTime()
+    )[0];
 
-          setCurrentEvent(
-            currentAndPreviousEvents.length > 0
-              ? currentAndPreviousEvents.at(-1)
-              : 0
-          );
+    setCurrentEvent(
+      currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0
+    );
 
-          setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-          
-          if (value && !value.error) {
-            setFixtures(value);
-          } else {
-            setFixtures([value]);
-          }
-        })
-        .catch((err) => {});
-    }
+    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
   });
 
-  if (!fixtures || fixtures.length == 0) {
+  if (isLoadingBootstrap || isLoadingFixtures) {
     return <SkeletonFixtures />;
   }
 
-  if (fixtures.length > 0 && fixtures[0].error) {
+  if (errorBoostrap || errorFixtures) {
     return <AppFailedToFetch />;
   }
 
@@ -89,7 +100,8 @@ const AppFixtures = (props: any) => {
           </CardHeader>
           <CardContent className="space-y-2">
             <Accordion type="single" collapsible className="w-full">
-              {fixtures.filter((fixture: any) => fixture.event == currentEvent?.id)
+              {fixtures
+                .filter((fixture: any) => fixture.event == currentEvent?.id)
                 .map((fixture) => (
                   <AccordionItem key={fixture.id} value={fixture.id}>
                     <AccordionTrigger className="w-full">
