@@ -132,11 +132,11 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     assists,
 
   } = element;
-  const indexPer90 = (90 / minutes);
-  const xYC = (yellow_cards * (90 / minutes)) * -1;
-  const xRC = (red_cards * (90 / minutes)) * -2;
+  const indexPer90 = minutes > 0 ? (90 / minutes) : 0;
+  const xYC = (yellow_cards * indexPer90) * -1;
+  const xRC = (red_cards * indexPer90) * -2;
   const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
-  const xOG = (own_goals * (90 / minutes)) * -1;
+  const xOG = (own_goals * indexPer90) * -1;
   const goalp90 = goals_scored * indexPer90;
   const assistp90 = assists * indexPer90; 
   if (element_type === 4) {
@@ -149,14 +149,14 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = clean_sheets_per_90 >= 0.67 ? 1 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC;
+    xP = xPG + xPA + xGC ;
   }
   if (element_type === 2) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 6;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC;
+    xP = xPG + xPA + xGC ;
   }
 
   if (element_type === 1) {
@@ -164,12 +164,12 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
       const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    const xSaves = Math.floor((saves * (90 / minutes)) / 3);
+    const xSaves = Math.floor((saves * indexPer90) / 3);
     xP =
       xPG +
       xPA +
       xGC +
-      xSaves;
+      xSaves ;
   }
 
   xP += pMP + xOG ;
@@ -627,7 +627,7 @@ const createVariables = (
           ],
 
           [`team_${e.team_code}`, 1],
-          [`is_playing`, e.status === "a" ? 1 : 0],
+          [`is_playing_next`, e.chance_of_playing_next_round || 0],
         ]);
 
         return {
