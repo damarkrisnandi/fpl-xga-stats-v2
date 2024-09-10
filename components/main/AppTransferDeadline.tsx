@@ -29,9 +29,7 @@ const AppTransferDeadline = (props: any) => {
     queryKey: ["bootstrap"],
     queryFn: async () => await getBootstrapFromStorage(),
   })
-  if (isLoading) {
-    return (<SkeletonCard />);
-  }
+  
   const [event, setEvent] = useState<any>(null);
   const [deadline, setDeadline] = useState<any>(null);
   // if (!bootstrap) {
@@ -83,6 +81,10 @@ const AppTransferDeadline = (props: any) => {
   }, [event, deadline]);
 
   if (!event || !deadline) {
+    return (<SkeletonCard />);
+  }
+
+  if (isLoading) {
     return (<SkeletonCard />);
   }
 
