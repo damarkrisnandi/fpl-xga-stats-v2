@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import { getFixtures } from "@/services";
+import { getFixtures, getBootstrapFromStorage } from "@/services";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
 import AppScoreBoard from "./AppScoreboard";
