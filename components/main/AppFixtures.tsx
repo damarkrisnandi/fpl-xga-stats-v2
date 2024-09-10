@@ -102,7 +102,7 @@ const AppFixtures = (props: any) => {
             <Accordion type="single" collapsible className="w-full">
               {fixtures
                 .filter((fixture: any) => fixture.event == currentEvent?.id)
-                .map((fixture) => (
+                .map((fixture: any) => (
                   <AccordionItem key={fixture.id} value={fixture.id}>
                     <AccordionTrigger className="w-full">
                       <div className="w-full flex justify-center items-center space-x-2">
