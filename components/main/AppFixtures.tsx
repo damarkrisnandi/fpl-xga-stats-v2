@@ -58,22 +58,28 @@ const AppFixtures = (props: any) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
   };
 
+  const setAllEvent = () => {
+    const currentAndPreviousEvents = bootstrap.events
+        .filter(
+          (event: any) =>
+            new Date(event.deadline_time).getTime() <= new Date().getTime()
+      );
+
+      const allNextEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() > new Date().getTime()
+      )[0]; 
+
+      if (!currentEvent) setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+
+    if (!nextEvent) {
+      setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39)
+      console.log(nextEvent);
+    };
+  }
+  
   useEffect(() => {
-    const currentAndPreviousEvents = events.filter(
-      (event: any) =>
-        new Date(event.deadline_time).getTime() <= new Date().getTime()
-    );
-
-    const allNextEvents = events.filter(
-      (event: any) =>
-        new Date(event.deadline_time).getTime() > new Date().getTime()
-    )[0];
-
-    setCurrentEvent(
-      currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0
-    );
-
-    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+    setAllEvent();
   });
 
   if (isLoadingBootstrap || isLoadingFixtures) {

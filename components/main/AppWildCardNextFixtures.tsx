@@ -90,18 +90,10 @@ const AppWildCardNextFixtures = () => {
     enabled: !!bootstrap && !!bootstrapHist && !!fixtures,
   });
 
-  // const [bootstrap, setBootstrap] = useState<any>(null);
-  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
-  // const [currentEvent, setCurrentEvent] = useState<any>(null);
-  // const [fixtures, setFixtures] = useState<any>([]);
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
-  // const [dataView, setDataView] = useState<any>([]);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
-    // if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
-    //   return;
-    // }
     const wildCardDraft = optimizationProcess(
       bootstrap?.elements,
       bootstrapHist?.elements,
@@ -228,7 +220,7 @@ const AppWildCardNextFixtures = () => {
   };
 
   return (
-    <Card className="w-11/12 md:w-5/12">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>Wildcard Draft</CardTitle>
         <CardDescription>

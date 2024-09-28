@@ -69,15 +69,10 @@ const AppElements = (props: any) => {
   const [nextEvent, setNextEvent] = useState<any>(null);
   // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
+  const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
 
-  useEffect(() => {
-      // if (!bootstrapHist) {
-      //   getArchivedBootstrap(previousSeason).then((value: any) => {
-      //     setBootstrapHist(value);
-      //   })
-      // }
-
-      const currentAndPreviousEvents = bootstrap.events
+  const setAllEvent = () => {
+    const currentAndPreviousEvents = bootstrap.events
         .filter(
           (event: any) =>
             new Date(event.deadline_time).getTime() <= new Date().getTime()
@@ -88,14 +83,20 @@ const AppElements = (props: any) => {
           new Date(event.deadline_time).getTime() > new Date().getTime()
       )[0]; 
 
-    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+      if (!currentEvent) setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
 
-    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+    if (!nextEvent) setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+  }
 
-    // if (fixtures.length == 0) {
-    //   getFixtures().then((data) => setFixtures(data));
+  useEffect(() => { 
+    // if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
+      
+    // } else {
+      setAllEvent()
     // }
   }, []);
+
+  
 
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
     return (
@@ -107,19 +108,20 @@ const AppElements = (props: any) => {
         <CardContent></CardContent>
       </Card>
     );
-  }
+  } 
 
   if (errorBoostrap || errorBoostrapHist || errorFixtures) {
     return <AppFailedToFetch />;
   }
   return (
-    <Card className="w-11/12 md:w-5/12 mb-2">
+    <Card className="w-full mb-2">
       <CardHeader>
         <CardTitle className="text-lg">Player Stats &amp; xPoints</CardTitle>
         <CardDescription>Statistics Results and Expectations</CardDescription>
       </CardHeader>
       <CardContent>
         <SelectTeam teams={bootstrap?.teams}  onValueChangeTeam={(value: any) => { setFilterByTeam(value ? Number(value) : null)}} className="mb-2" />
+        <SelectPosition  onValueChangePosition={(value: any) => { setFilterByPosition(value ? Number(value) : null)}} className="mb-2" />
         <ScrollArea className="h-[600px] w-full rounded-md border p-4">
           {bootstrap.elements
             .toSorted(
@@ -128,6 +130,7 @@ const AppElements = (props: any) => {
                 a.total_points
             )
             .filter((el: any) => filterByTeam ? el.team == filterByTeam : el)
+            .filter((el: any) => filterByPosition ? el.element_type == filterByPosition : el)
             .map((el: any) => (
               <div
                 key={el.id}
@@ -167,6 +170,28 @@ const SelectTeam = (props: any) => {
     </Select>
   );
 };
+const SelectPosition = (props: any) => {
+  const handleOnSelect = (value: any) => {
+      props.onValueChangePosition(value)
+  }
+return (
+  <Select onValueChange={handleOnSelect}>
+    <SelectTrigger className={`w-full ${props.className}`}>
+      <SelectValue placeholder="Filter Players by Position" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Teams</SelectLabel>
+        <SelectItem value={'0'} key={0} >All</SelectItem>
+          <SelectItem value={`1`} >GKP</SelectItem>
+          <SelectItem value={`2`} >DEF</SelectItem>
+          <SelectItem value={`3`} >MID</SelectItem>
+          <SelectItem value={`4`} >FWD</SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+);
+};
 
 const PlayerCardStats = (props: any) => {
   const { className, element, currentEvent, fixtures, teams, elementHist } = props;
@@ -175,8 +200,8 @@ const PlayerCardStats = (props: any) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
   };
 
-  const nextFixtures = fixtures.filter((fix: any) => fix.event == currentEvent.id + 1 && (fix.team_h == element.team || fix.team_a == element.team) );
-  const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
+  const nextFixtures = () => fixtures.filter((fix: any) => fix.event == currentEvent.id + 1 && (fix.team_h == element.team || fix.team_a == element.team) );
+  // const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
       <div className="w-full p-2">
@@ -303,16 +328,16 @@ const PlayerCardStats = (props: any) => {
             <StatItem label={`CS90`} value={element.clean_sheets_per_90} />
             
           </div>)}
-          {currentEvent.id > 1 && <div className="w-full flex justify-center">
-            <StatItem label={`GW${currentEvent.id}`} value={element.event_points} /> 
+          {currentEvent?.id > 1 && <div className="w-full flex justify-center">
+            <StatItem label={`GW${currentEvent?.id}`} value={element.event_points} /> 
             <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={-1} fixtures={fixtures} teams={teams} multiplier={1}/>
             
             <StatItem label={' '} value={' '} />
-            <StatItem label={`P${currentEvent.id}-xP${currentEvent.id}`} 
-            value={(element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)).toFixed(2)} 
+            <StatItem label={`P${currentEvent?.id}-xP${currentEvent?.id}`} 
+            value={(element.event_points - getExpectedPoints(element, currentEvent?.id, -1, fixtures, teams)).toFixed(2)} 
             className={`
             ${
-              (element.event_points - getExpectedPoints(element, currentEvent.id, -1, fixtures, teams)) > 0
+              (element.event_points - getExpectedPoints(element, currentEvent?.id, -1, fixtures, teams)) > 0
                 ? "bg-green-200 text-green-700"
                 : ""
             }
@@ -324,11 +349,11 @@ const PlayerCardStats = (props: any) => {
             `}
             />
           </div>}
-          {currentEvent.id < 38 && <div className="w-full flex justify-center">
-            <AppNextFixtures teams={teams} element={element} nextFixtures={nextFixtures} />
+          {currentEvent?.id < 38 && <div className="w-full flex justify-center">
+            <AppNextFixtures teams={teams} element={element} nextFixtures={nextFixtures()} />
             <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={0} fixtures={fixtures} teams={teams} multiplier={1}/>
-            <StatItem label={' '} value={' '} />
-            <StatItem label={' '} value={' '} />
+            <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={1} fixtures={fixtures} teams={teams} multiplier={1}/>
+            <AppExpectedPts element={element} elementHist={elementHist} currentEvent={currentEvent} deltaEvent={2} fixtures={fixtures} teams={teams} multiplier={1}/>
  
           </div>}
         </div>
@@ -370,9 +395,9 @@ const NewsContainer = (props: any) => {
 
 function showExpected(props: string, position: number) {
     const allowance: any = {
-        "xG": [2, 3, 4],
-        "xA": [2, 3, 4],
-        "xGC": [1, 2],
+        "xG": [],
+        "xA": [],
+        "xGC": [],
         "xP": [1, 2, 3, 4],
         "CS": [],
     }
