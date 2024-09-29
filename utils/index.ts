@@ -239,6 +239,8 @@ export const getExpectedPoints = (
       fix.event == gameWeek &&
       (element.team == fix.team_h || element.team == fix.team_a)
   );
+
+
   let totalXP = 0;
 
   const getHomeAwayIndex = (
@@ -322,6 +324,9 @@ export const getExpectedPoints = (
 
   for (let fixture of filteredfixturesByGameweek) {
     if (element.team == fixture.team_h) {
+      if (deltaEvent < 0 && !fixture.finished) {
+        return 0;
+      }
       diffIndex =
         diffRef[fixture.team_h_difficulty] +
         getHomeAwayIndex(
@@ -331,6 +336,9 @@ export const getExpectedPoints = (
           true
         );
     } else if (element.team == fixture.team_a) {
+      if (deltaEvent < 0 && !fixture.finished) {
+        return 0;
+      }
       diffIndex =
         diffRef[fixture.team_a_difficulty] +
         getHomeAwayIndex(
@@ -344,6 +352,26 @@ export const getExpectedPoints = (
     xP = xP * element.starts_per_90 * diffIndex * elementStatusIndex[element.status];
 
     totalXP += xP;
+  }
+
+
+  // current match check 
+  const currentFixtures = fixtures.filter(
+    (fix: any) =>
+      fix.event == currentGameWeek &&
+      (element.team == fix.team_h || element.team == fix.team_a)
+  );
+  for (let fixture of currentFixtures) {
+    if (element.team == fixture.team_h) {
+      if (deltaEvent < 0 && !fixture.started) {
+        totalXP = 0;
+      }
+    } else if (element.team == fixture.team_a) {
+      if (deltaEvent < 0 && !fixture.started) {
+        totalXP = 0;
+      }
+    }
+    continue;
   }
 
   return totalXP;

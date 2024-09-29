@@ -5,6 +5,7 @@ import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
+import { AppCurrentFixtures } from "./AppNextFixtures";
 import {
   getArchivedBootstrap,
   getBootstrapFromStorage,
@@ -117,6 +118,8 @@ const AppMyTeam = () => {
 
     return total;
   };
+
+  
   useEffect(() => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
@@ -229,6 +232,12 @@ const AppMyTeam = () => {
         (fix.team_h == element.team || fix.team_a == element.team)
     );
 
+    const currentFixtures = (element: any) => fixtures.filter(
+      (fix: any) =>
+        fix.event == currentEvent.id &&
+        (element.team == fix.team_h || element.team == fix.team_a)
+    );
+
   return (
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam
@@ -338,11 +347,15 @@ const AppMyTeam = () => {
                 )}
               </div>
               <div className="flex justify-end">
-                <StatItem
+              {currentFixtures(elementMapping(player.element))[0].started ? 
+              <StatItem
                   label={`GW${currentEvent.id}`}
                   value={elementMapping(player.element).event_points}
-                />
-                <StatItem
+                /> : <StatItem
+                label={``}
+                value={''}
+              /> }
+                {currentFixtures(elementMapping(player.element))[0].started ? <StatItem
                   label={`P${currentEvent.id}-xP${currentEvent.id}`}
                   value={(
                     elementMapping(player.element).event_points -
@@ -356,37 +369,42 @@ const AppMyTeam = () => {
                     )
                   ).toFixed(2)}
                   className={`
-            ${
-              elementMapping(player.element).event_points -
-                getExpectedPoints(
-                  elementMapping(player.element),
-                  currentEvent.id,
-                  -1,
-                  fixtures,
-                  bootstrap?.teams,
-                  bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
-                ) >
-              0
-                ? "bg-green-200 text-green-700"
-                : ""
-            }
-            ${
-              elementMapping(player.element).event_points == 0 ||
-              elementMapping(player.element).event_points -
-                getExpectedPoints(
-                  elementMapping(player.element),
-                  currentEvent.id,
-                  -1,
-                  fixtures,
-                  bootstrap?.teams,
-                  bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
-                ) <
-                0
-                ? "bg-red-200 text-red-700"
-                : ""
-            }
-            `}
+                  ${
+                    elementMapping(player.element).event_points -
+                      getExpectedPoints(
+                        elementMapping(player.element),
+                        currentEvent.id,
+                        -1,
+                        fixtures,
+                        bootstrap?.teams,
+                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
+                      ) >
+                    0
+                      ? "bg-green-200 text-green-700"
+                      : ""
+                  }
+                  ${
+                    elementMapping(player.element).event_points == 0 ||
+                    elementMapping(player.element).event_points -
+                      getExpectedPoints(
+                        elementMapping(player.element),
+                        currentEvent.id,
+                        -1,
+                        fixtures,
+                        bootstrap?.teams,
+                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
+                      ) <
+                      0
+                      ? "bg-red-200 text-red-700"
+                      : ""
+                  }
+                  `}
+                /> : <AppCurrentFixtures
+                  teams={bootstrap?.teams}
+                  element={elementMapping(player.element)}
+                  currentFixtures={currentFixtures(elementMapping(player.element))}
                 />
+                }
                 <AppNextFixtures
                   teams={bootstrap?.teams}
                   element={elementMapping(player.element)}
