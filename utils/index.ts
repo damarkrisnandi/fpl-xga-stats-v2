@@ -356,23 +356,23 @@ export const getExpectedPoints = (
 
 
   // current match check 
-  const currentFixtures = fixtures.filter(
-    (fix: any) =>
-      fix.event == currentGameWeek &&
-      (element.team == fix.team_h || element.team == fix.team_a)
-  );
-  for (let fixture of currentFixtures) {
-    if (element.team == fixture.team_h) {
-      if (deltaEvent < 0 && !fixture.started) {
-        totalXP = 0;
-      }
-    } else if (element.team == fixture.team_a) {
-      if (deltaEvent < 0 && !fixture.started) {
-        totalXP = 0;
-      }
-    }
-    continue;
-  }
+  // const currentFixtures = fixtures.filter(
+  //   (fix: any) =>
+  //     fix.event == currentGameWeek &&
+  //     (element.team == fix.team_h || element.team == fix.team_a)
+  // );
+  // for (let fixture of currentFixtures) {
+  //   if (element.team == fixture.team_h) {
+  //     if (deltaEvent < 0 && !fixture.started) {
+  //       totalXP = 0;
+  //     }
+  //   } else if (element.team == fixture.team_a) {
+  //     if (deltaEvent < 0 && !fixture.started) {
+  //       totalXP = 0;
+  //     }
+  //   }
+  //   continue;
+  // }
 
   return totalXP;
 };

@@ -351,10 +351,15 @@ const AppMyTeam = () => {
               <StatItem
                   label={`GW${currentEvent.id}`}
                   value={elementMapping(player.element).event_points}
-                /> : <StatItem
-                label={``}
-                value={''}
-              /> }
+                /> : <AppExpectedPts
+                element={elementMapping(player.element)}
+                elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
+                currentEvent={currentEvent}
+                deltaEvent={-1}
+                fixtures={fixtures}
+                teams={bootstrap?.teams}
+                multiplier={player.multiplier}
+              />}
                 {currentFixtures(elementMapping(player.element))[0].started ? <StatItem
                   label={`P${currentEvent.id}-xP${currentEvent.id}`}
                   value={(
