@@ -51,7 +51,7 @@ export const AppCurrentFixtures = (props: any) => {
     <div
       className={`w-14 h-14 md:w-24 md:h-24 flex flex-col justify-center items-center bg-slate-200`}
     >
-      <p className="text-xs md:text-sm">not started</p>
+      <p className="text-xs md:text-sm">vs</p>
       <div>
         {currentFixtures
         .map((currentf: any, index: number) => {
