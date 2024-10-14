@@ -93,26 +93,7 @@ const AppWildCardNextFixtures = () => {
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
-  const setDataPicks = () => {
-    const wildCardDraft = optimizationProcess(
-      bootstrap?.elements,
-      bootstrapHist?.elements,
-      fixtures,
-      bootstrap?.teams,
-      currentEvent,
-      0
-    );
-    const wildcardPicks = optimizationProcess(
-      bootstrap?.elements,
-      bootstrapHist?.elements,
-      fixtures,
-      bootstrap?.teams,
-      currentEvent,
-      0,
-      { picks: wildCardDraft }
-    );;
-    return wildcardPicks;
-  };
+  
 
   const {
     data: dataView,
