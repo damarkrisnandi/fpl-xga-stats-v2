@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppInputMyTeam from "./AppInputMyTeam";
 import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
@@ -14,9 +14,9 @@ import {
 } from "@/services/index";
 
 import {
-  positionMapping,
   getExpectedPoints,
   optimizationProcess,
+  positionMapping,
   previousSeason,
 } from "@/utils/index";
 import { Button } from "../ui/button";
@@ -31,10 +31,10 @@ import {
   CardTitle,
 } from "../ui/card";
 import {
-  QueryClientProvider,
   QueryClient,
-  useQuery,
+  QueryClientProvider,
   useQueries,
+  useQuery,
 } from "@tanstack/react-query";
 
 const AppWildCardNextFixtures = () => {
@@ -75,12 +75,12 @@ const AppWildCardNextFixtures = () => {
     queryFn: () => {
       const currentAndPreviousEvents = bootstrap.events.filter(
         (event: any) =>
-          new Date(event.deadline_time).getTime() <= new Date().getTime()
+          new Date(event.deadline_time).getTime() <= new Date().getTime(),
       );
 
       const allNextEvents = bootstrap.events.filter(
         (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
+          new Date(event.deadline_time).getTime() > new Date().getTime(),
       )[0];
 
       return currentAndPreviousEvents.length > 0
@@ -93,7 +93,6 @@ const AppWildCardNextFixtures = () => {
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
-  
 
   const {
     data: dataView,
@@ -108,7 +107,7 @@ const AppWildCardNextFixtures = () => {
         fixtures,
         bootstrap?.teams,
         currentEvent,
-        0
+        0,
       );
       const wildcardPicks = optimizationProcess(
         bootstrap?.elements,
@@ -117,7 +116,7 @@ const AppWildCardNextFixtures = () => {
         bootstrap?.teams,
         currentEvent,
         0,
-        { picks: wildCardDraft }
+        { picks: wildCardDraft },
       );
       return wildcardPicks;
     },
@@ -181,20 +180,20 @@ const AppWildCardNextFixtures = () => {
     fixtures.filter(
       (fix: any) =>
         fix.event == currentEvent.id + 1 &&
-        (fix.team_h == element.team || fix.team_a == element.team)
+        (fix.team_h == element.team || fix.team_a == element.team),
     );
   const getFormation = () => {
     const defNum = dataView.filter(
       (dv: any, i: number) =>
-        i < 12 && elementMapping(dv.element).element_type == 2
+        i < 12 && elementMapping(dv.element).element_type == 2,
     ).length;
     const midNum = dataView.filter(
       (dv: any, i: number) =>
-        i < 12 && elementMapping(dv.element).element_type == 3
+        i < 12 && elementMapping(dv.element).element_type == 3,
     ).length;
     const fwdNum = dataView.filter(
       (dv: any, i: number) =>
-        i < 12 && elementMapping(dv.element).element_type == 4
+        i < 12 && elementMapping(dv.element).element_type == 4,
     ).length;
 
     return `${defNum}-${midNum}-${fwdNum}`;
@@ -217,11 +216,9 @@ const AppWildCardNextFixtures = () => {
             value={dataView.length > 0 ? totalCost(dataView).toFixed(1) : 0}
           />
           <StatItem
-            label={
-              isOptimize
-                ? `ΣxP${currentEvent.id + 1}*`
-                : `ΣxP${currentEvent.id + 1}`
-            }
+            label={isOptimize
+              ? `ΣxP${currentEvent.id + 1}*`
+              : `ΣxP${currentEvent.id + 1}`}
             value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
           />
         </div>
@@ -247,21 +244,25 @@ const AppWildCardNextFixtures = () => {
                     </p>
                     <p className="text-xs font-light">
                       {positionMapping(
-                        elementMapping(player.element).element_type
+                        elementMapping(player.element).element_type,
                       )}
                     </p>
                   </div>
-                  {player.is_captain ? (
-                    player.multiplier == 2 ? (
-                      <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                        C
-                      </div>
-                    ) : (
-                      <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                        C
-                      </div>
+                  {player.is_captain
+                    ? (
+                      player.multiplier == 2
+                        ? (
+                          <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                            C
+                          </div>
+                        )
+                        : (
+                          <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                            C
+                          </div>
+                        )
                     )
-                  ) : null}
+                    : null}
                   {player.is_vice_captain && (
                     <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
                       V
@@ -271,11 +272,10 @@ const AppWildCardNextFixtures = () => {
                 <div className="flex justify-end">
                   <StatItem
                     label={`COST`}
-                    value={
-                      (elementMapping(player.element).now_cost / 10).toFixed(
-                        1
-                      ) + "M"
-                    }
+                    value={(elementMapping(player.element).now_cost / 10)
+                      .toFixed(
+                        1,
+                      ) + "M"}
                   />
 
                   <AppNextFixtures
@@ -288,7 +288,7 @@ const AppWildCardNextFixtures = () => {
                     element={elementMapping(player.element)}
                     elementHist={bootstrapHist?.elements.find(
                       (elh: any) =>
-                        elh.code == elementMapping(player.element).code
+                        elh.code == elementMapping(player.element).code,
                     )}
                     currentEvent={currentEvent}
                     deltaEvent={0}

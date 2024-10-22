@@ -7,28 +7,30 @@ import { getBootstrapFromStorage } from "@/services";
 import AppSpinner from "./AppSpinner";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppWildCardNextFixtures from "./AppWildCardNextFixtures";
-import { QueryClientProvider,QueryClient, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-
+import AppScatterPlot from "./AppScatterPlot";
 
 const queryClient = new QueryClient();
 const MainPage = () => {
- 
   return (
     <QueryClientProvider client={queryClient}>
       <MainPageContent />
     </QueryClientProvider>
-    
   );
 };
 
 export default MainPage;
 
 const MainPageContent = () => {
-  const { data: bootstrap, isLoading, error } = useQuery ({
+  const { data: bootstrap, isLoading, error } = useQuery({
     queryKey: ["bootstrap"],
     queryFn: async () => await getBootstrapFromStorage(),
-  })
+  });
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -44,20 +46,23 @@ const MainPageContent = () => {
     );
   }
 
- return (
-  <div className="flex flex-col items-center">
+  return (
+    <div className="flex flex-col items-center">
       <AppTransferDeadline bootstrap={bootstrap} />
-      
+
       <Tabs defaultValue="wildcard" className="w-11/12 md:w-5/12 mb-2">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="wildcard">Wildcard</TabsTrigger>
           <TabsTrigger value="stats">Player Stats</TabsTrigger>
         </TabsList>
-        <TabsContent value="wildcard" className="flex flex-col items-center w-full">
+        <TabsContent
+          value="wildcard"
+          className="flex flex-col items-center w-full"
+        >
           <AppWildCardNextFixtures />
         </TabsContent>
         <TabsContent value="stats">
-          <AppElements className="w-full"/>
+          <AppElements className="w-full" />
         </TabsContent>
       </Tabs>
 
@@ -68,5 +73,5 @@ const MainPageContent = () => {
         element_stats={bootstrap?.element_stats}
       />
     </div>
- ) 
-} 
+  );
+};

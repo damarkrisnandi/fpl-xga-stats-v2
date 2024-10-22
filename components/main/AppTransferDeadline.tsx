@@ -3,13 +3,17 @@ import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { Hourglass } from "lucide-react";
-import { QueryClientProvider,QueryClient, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { getBootstrapFromStorage } from "@/services";
 
 const TimerContainer = (props: any) => {
@@ -26,20 +30,21 @@ const TimerContainer = (props: any) => {
 const AppTransferDeadline = (props: any) => {
   // const { bootstrap } = props;
   const queryClient = new QueryClient();
-  const { data: bootstrap, isLoading, error } = useQuery ({
+  const { data: bootstrap, isLoading, error } = useQuery({
     queryKey: ["bootstrap"],
     queryFn: async () => await getBootstrapFromStorage(),
-  })
-  
+  });
+
   const [event, setEvent] = useState<any>(null);
   const [deadline, setDeadline] = useState<any>(null);
   // if (!bootstrap) {
   //   return null;
   // }
-  
+
   useEffect(() => {
-    
-    const nextEvents = bootstrap.events.filter((event: any) => new Date(event.deadline_time).getTime() > new Date().getTime());
+    const nextEvents = bootstrap.events.filter((event: any) =>
+      new Date(event.deadline_time).getTime() > new Date().getTime()
+    );
     if (!event) {
       setEvent(nextEvents.length ? nextEvents[0] : { id: 39 });
     }
@@ -47,7 +52,9 @@ const AppTransferDeadline = (props: any) => {
     if (!deadline) {
       // Update the count down every 1 second
       const x = setInterval(function () {
-        let countDownDate = new Date(nextEvents.length ? nextEvents[0].deadline_time : new Date()).getTime();
+        let countDownDate = new Date(
+          nextEvents.length ? nextEvents[0].deadline_time : new Date(),
+        ).getTime();
         // Get today's date and time
         const now = new Date().getTime();
 
@@ -57,7 +64,7 @@ const AppTransferDeadline = (props: any) => {
         // Time calculations for days, hours, minutes and seconds
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor(
-          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
         );
         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -82,23 +89,26 @@ const AppTransferDeadline = (props: any) => {
   }, [event, deadline]);
 
   if (!event || !deadline) {
-    return (<SkeletonCard />);
+    return <SkeletonCard />;
   }
 
   if (isLoading) {
-    return (<SkeletonCard />);
+    return <SkeletonCard />;
   }
 
   return (
     <Card className="w-11/12 md:w-5/12 mb-2">
       <CardHeader>
-        <CardTitle className="flex items-center">{event?.name}<Hourglass className="h-5 w-5 font-bold ml-3"/></CardTitle>
+        <CardTitle className="flex items-center">
+          {event?.name}
+          <Hourglass className="h-5 w-5 font-bold ml-3" />
+        </CardTitle>
         <CardDescription>Transfer Deadline</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center items-center">
         {deadline && (
           <div className="flex space-x-1">
-            <TimerContainer time={deadline.days} unit="days"  />
+            <TimerContainer time={deadline.days} unit="days" />
             <TimerContainer time={deadline.hours} unit="hours" />
             <TimerContainer time={deadline.minutes} unit="minutes" />
             <TimerContainer time={deadline.seconds} unit="seconds" />

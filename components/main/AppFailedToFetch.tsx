@@ -6,9 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  CircleX,
-} from "lucide-react";
+import { CircleX } from "lucide-react";
 
 const AppFailedToFetch = () => {
   return (
@@ -19,7 +17,9 @@ const AppFailedToFetch = () => {
           <div className="w-10 h-10 bg-slate-200 flex justify-center items-center rounded-lg">
             <CircleX />
           </div>
-          <p className="text-xs">Failed to fetch data, please try again later</p>
+          <p className="text-xs">
+            Failed to fetch data, please try again later
+          </p>
         </div>
       </CardContent>
     </Card>

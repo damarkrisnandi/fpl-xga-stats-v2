@@ -35,7 +35,7 @@ export default function RootLayout({
         <AppHeader />
         <div className="flex w-full">
           <div className="hidden md:block w-3/12 lg:w-2/12 bg-slate-200 fixed top-0 h-screen">
-          <AppSideBar />
+            <AppSideBar />
           </div>
           <div className="w-full">{children}</div>
         </div>

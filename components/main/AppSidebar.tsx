@@ -14,7 +14,6 @@ const AppSideBar = () => {
       {menuTree.map((menu: any, index: number) => (
         <div className="" key={index}>
           <div className="flex items-center justify-start w-full font-semibold text-lg">
-            
             {menu.name}
             {menu.current && (
               <span className="w-2 h-2 bg-green-500 rounded-full m-2"></span>
@@ -25,7 +24,9 @@ const AppSideBar = () => {
               <Button
                 asChild
                 variant={"ghost"}
-                className={`flex justify-start rounded-none ${pathname == '/' + submenu.id ? 'font-semibold text-lg': ''}`}
+                className={`flex justify-start rounded-none ${
+                  pathname == "/" + submenu.id ? "font-semibold text-lg" : ""
+                }`}
                 key={index}
               >
                 <Link
@@ -33,7 +34,7 @@ const AppSideBar = () => {
                   passHref={false}
                   className="justify-start"
                 >
-                    <ChevronRightCircle className="w-4 h-4 mr-2"/>
+                  <ChevronRightCircle className="w-4 h-4 mr-2" />
                   {submenu.name}
                 </Link>
               </Button>

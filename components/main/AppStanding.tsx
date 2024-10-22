@@ -3,9 +3,9 @@ import { getLeagueData } from "@/services";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -14,7 +14,13 @@ import { Separator } from "../ui/separator";
 import AppTopStandings from "./AppTopStanding";
 import { useEffect, useState } from "react";
 import PositionChanges from "@/components/main/PositionChange";
-import { Trophy, ChevronLeft, CircleX, ChevronsUp, ChevronsDown } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronsDown,
+  ChevronsUp,
+  CircleX,
+  Trophy,
+} from "lucide-react";
 
 const AppStandings = (props: any) => {
   const { leagueId, showPromotionZone, showRelegationZone } = props;
@@ -24,7 +30,6 @@ const AppStandings = (props: any) => {
   useEffect(() => {
     if (!league) {
       getLeague(leagueId).then((data) => {
-
         setLeague(data);
       });
     }
@@ -53,26 +58,34 @@ const AppStandings = (props: any) => {
         <CardContent>
           {league?.standings?.results.map((team: any, index: number) => (
             <div key={team.id} className={`w-full p-2 `}>
-              {team.rank === 1 ? (
-                <div className="pt-7 flex justify-center items-center flex-col space-y-5">
-                  {/* <Trophy className="w-7 h-7" /> */}
-                  <AppTopStandings entry={team} value={'total'}/>
-                  <Separator />
-                </div>
-              ) : (
-                <div>
-                  <div className="pt-3 pb-6 flex justify-between items-center w-full">
-                    <PositionChanges entry={team} />
-                    <p className="text-xl font-semibold ml-3">{team.rank}</p>
-                    <div className="w-full px-5">
-                      <p className="text-xs font-semibold">{team.entry_name}</p>
-                      <p className="text-xs">{team.player_name}</p>
-                    </div>
-                    <p className="text-xl font-semibold">{team.total}</p>
+              {team.rank === 1
+                ? (
+                  <div className="pt-7 flex justify-center items-center flex-col space-y-5">
+                    {/* <Trophy className="w-7 h-7" /> */}
+                    <AppTopStandings entry={team} value={"total"} />
+                    <Separator />
                   </div>
-                  <CustomSeparator index={index} showPromotionZone={showPromotionZone} showRelegationZone={showRelegationZone}/>
-                </div>
-              )}
+                )
+                : (
+                  <div>
+                    <div className="pt-3 pb-6 flex justify-between items-center w-full">
+                      <PositionChanges entry={team} />
+                      <p className="text-xl font-semibold ml-3">{team.rank}</p>
+                      <div className="w-full px-5">
+                        <p className="text-xs font-semibold">
+                          {team.entry_name}
+                        </p>
+                        <p className="text-xs">{team.player_name}</p>
+                      </div>
+                      <p className="text-xl font-semibold">{team.total}</p>
+                    </div>
+                    <CustomSeparator
+                      index={index}
+                      showPromotionZone={showPromotionZone}
+                      showRelegationZone={showRelegationZone}
+                    />
+                  </div>
+                )}
             </div>
           ))}
         </CardContent>
@@ -90,7 +103,6 @@ async function getLeague(leagueId: string) {
 
   while (hasNextPage) {
     const nextPageData = await getLeagueData(leagueId, page);
-
 
     if (nextPageData && nextPageData.error) {
       hasNextPage = false;
@@ -138,16 +150,20 @@ const CustomSeparator = (props: any) => {
   if (showPromotionZone && index == 6) {
     return (
       <div className="w-full flex justify-center items-center h-4">
-        <Separator className={`w-2/12 md:w-3/12 lg:w-4/12 border-green-600 border-2`} />
+        <Separator
+          className={`w-2/12 md:w-3/12 lg:w-4/12 border-green-600 border-2`}
+        />
         <Badge
           className="border-green-600 border-2 text-green-600 flex justify-center"
           variant={"outline"}
         >
-          <ChevronsUp className="w-4 h-4"/>
+          <ChevronsUp className="w-4 h-4" />
           Promotion Zone
-          <ChevronsUp className="w-4 h-4"/>
+          <ChevronsUp className="w-4 h-4" />
         </Badge>
-        <Separator className={`w-2/12 md:w-4/12 lg:w-4/12 border-green-600 border-2`} />
+        <Separator
+          className={`w-2/12 md:w-4/12 lg:w-4/12 border-green-600 border-2`}
+        />
       </div>
     );
   }
@@ -155,16 +171,20 @@ const CustomSeparator = (props: any) => {
   if (showRelegationZone && index == 25 - 1) {
     return (
       <div className="w-full flex justify-center items-center h-4">
-        <Separator className={`w-2/12 md:w-3/12 lg:w-4/12 border-red-600 border-2`} />
+        <Separator
+          className={`w-2/12 md:w-3/12 lg:w-4/12 border-red-600 border-2`}
+        />
         <Badge
           className="border-red-600 border-2 text-red-600 flex justify-center"
           variant={"outline"}
         >
-          <ChevronsDown className="w-4 h-4"/>
+          <ChevronsDown className="w-4 h-4" />
           Relegation Zone
-          <ChevronsDown className="w-4 h-4"/>
+          <ChevronsDown className="w-4 h-4" />
         </Badge>
-        <Separator className={`w-2/12 md:w-3/12 lg:w-4/12 border-red-600 border-2`} />
+        <Separator
+          className={`w-2/12 md:w-3/12 lg:w-4/12 border-red-600 border-2`}
+        />
       </div>
     );
   }

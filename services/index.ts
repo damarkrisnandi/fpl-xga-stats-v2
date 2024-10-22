@@ -20,7 +20,7 @@ export function getFixtures() {
 export function getLeagueData(league: string, page: number, phase?: number) {
   return fromStorage(
     `league/${league}/${page || 1}`,
-    `${API_URL}/league/${league}/${page || 1}${phase ? '&phase=' + phase : ''}`
+    `${API_URL}/league/${league}/${page || 1}${phase ? "&phase=" + phase : ""}`,
   );
   // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
   //   res.json()
@@ -30,7 +30,7 @@ export function getLeagueData(league: string, page: number, phase?: number) {
 export function getManagerData(id: number | string) {
   return fromStorage(
     `manager/${id}`,
-    `${API_URL}/manager/${id}`
+    `${API_URL}/manager/${id}`,
   );
   // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
   //   res.json()
@@ -41,7 +41,7 @@ export function getPicksData(managerId: number | string, gameweek: number) {
   return fromStorage(
     `picks/${managerId}/${gameweek}`,
     `${API_URL}/picks/${managerId}/${gameweek}`,
-    5
+    5,
   );
   // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
   //   res.json()
@@ -51,7 +51,7 @@ export function getPicksData(managerId: number | string, gameweek: number) {
 export function getLiveEventData(event: number) {
   return fromStorage(
     `live-event/${event}`,
-    `${API_URL}/live-event/${event}`
+    `${API_URL}/live-event/${event}`,
   );
   // return fetch(`${API_URL}/league/${league}/${page || 1}`).then((res) =>
   //   res.json()
@@ -60,19 +60,19 @@ export function getLiveEventData(event: number) {
 
 export function getArchivedBootstrap(season: string) {
   return fetch(`${ARCHIVED_API_URL}/${season}/bootstrap-static.json`).then(
-    (res) => res.json()
+    (res) => res.json(),
   );
 }
 
 export function getArchivedLeague(
   season: string,
   league: string,
-  page?: number
+  page?: number,
 ) {
   return fetch(
     `${ARCHIVED_API_URL}/${season}/leagues-classic/fplmgm/${league}/${
       page || 1
-    }.json`
+    }.json`,
   ).then((res) => res.json());
 }
 
@@ -84,13 +84,15 @@ async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
   } else {
     const response = await fetch(urlFetch).then((res) =>
       res.ok ? res.json() : { error: true }
-    ).catch((err) => {return { error: true }});
+    ).catch((err) => {
+      return { error: true };
+    });
     if (response && !response.error) {
       localStorage.setItem(key, JSON.stringify(response));
     } else {
       localStorage.removeItem(key);
       localStorage.removeItem(`expired_data_storage:${key}`);
-      return { error: true }
+      return { error: true };
     }
   }
   return JSON.parse(localStorage.getItem(key) as string);
@@ -105,7 +107,7 @@ function clearStorage(key: string, holdTime?: number) {
   if (!localStorage.getItem(`expired_data_storage:${key}`)) {
     localStorage.setItem(
       `expired_data_storage:${key}`,
-      (new Date().getTime() + 1000 * 60 * (holdTime || 3)).toString()
+      (new Date().getTime() + 1000 * 60 * (holdTime || 3)).toString(),
     );
   }
 }
@@ -113,7 +115,8 @@ function clearStorage(key: string, holdTime?: number) {
 function checkExpired(key: string) {
   return (
     localStorage.getItem(`expired_data_storage:${key}`) &&
-    new Date().getTime() >= Number(localStorage.getItem(`expired_data_storage:${key}`))
+    new Date().getTime() >=
+      Number(localStorage.getItem(`expired_data_storage:${key}`))
   );
 }
 
@@ -148,7 +151,7 @@ function storageSizeCheck() {
       (_lsTotal / 1024).toFixed(2) +
       " KB" +
       ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
-    css
+    css,
   );
 
   var _lsTotal = 0,
@@ -182,6 +185,6 @@ function storageSizeCheck() {
       (_lsTotal / 1024).toFixed(2) +
       " KB" +
       ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
-    css
+    css,
   );
 }

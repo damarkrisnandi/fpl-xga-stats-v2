@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import AppInputMyTeam from "./AppInputMyTeam";
 import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
@@ -15,9 +15,9 @@ import {
 } from "@/services/index";
 
 import {
-  positionMapping,
   getExpectedPoints,
   optimizationProcess,
+  positionMapping,
   previousSeason,
 } from "@/utils/index";
 import { Button } from "../ui/button";
@@ -50,15 +50,16 @@ const AppMyTeam = () => {
                 picks: pickData.picks.map((pick: any) => {
                   return {
                     ...pick,
-                    surplus_xp_prev:
-                      elementMapping(pick.element).event_points -
+                    surplus_xp_prev: elementMapping(pick.element).event_points -
                       getExpectedPoints(
                         elementMapping(pick.element),
                         currentEvent.id,
                         -1,
                         fixtures,
                         bootstrap?.teams,
-                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
+                        bootstrapHist?.elements.find((elh: any) =>
+                          elh.code == elementMapping(pick.element).code
+                        ),
                       ),
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
@@ -66,7 +67,9 @@ const AppMyTeam = () => {
                       0,
                       fixtures,
                       bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
+                      bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      ),
                     ),
                   };
                 }),
@@ -82,17 +85,19 @@ const AppMyTeam = () => {
                       0,
                       fixtures,
                       bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(pick.element).code)
+                      bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      ),
                     ),
                   };
-                })
+                }),
               );
 
               setIsOptimize(false);
             });
           }
         }
-      }
+      },
     );
   };
   const totalXp = (picksData: any) => {
@@ -119,7 +124,6 @@ const AppMyTeam = () => {
     return total;
   };
 
-  
   useEffect(() => {
     if (!bootstrap) {
       getBootstrapFromStorage().then((value: any) => {
@@ -130,24 +134,28 @@ const AppMyTeam = () => {
     if (!bootstrapHist) {
       getArchivedBootstrap(previousSeason).then((value: any) => {
         setBootstrapHist(value);
-      }) 
+      });
     }
 
     if (bootstrap && !bootstrap.error) {
       const currentAndPreviousEvents = bootstrap.events
         .filter(
           (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime()
-      );
+            new Date(event.deadline_time).getTime() <= new Date().getTime(),
+        );
 
       const allNextEvents = bootstrap.events.filter(
         (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]; 
+          new Date(event.deadline_time).getTime() > new Date().getTime(),
+      )[0];
 
-    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+      setCurrentEvent(
+        currentAndPreviousEvents.length > 0
+          ? currentAndPreviousEvents.at(-1)
+          : 0,
+      );
 
-    // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+      // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
       if (fixtures.length == 0) {
         getFixtures().then((dataFixtures: any) => {
@@ -164,7 +172,7 @@ const AppMyTeam = () => {
         setDataPicks();
       }
     }
-  }, [bootstrap,bootstrapHist, fixtures, manager, picks]);
+  }, [bootstrap, bootstrapHist, fixtures, manager, picks]);
   if (!bootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -229,13 +237,14 @@ const AppMyTeam = () => {
     fixtures.filter(
       (fix: any) =>
         fix.event == currentEvent.id + 1 &&
-        (fix.team_h == element.team || fix.team_a == element.team)
+        (fix.team_h == element.team || fix.team_a == element.team),
     );
 
-    const currentFixtures = (element: any) => fixtures.filter(
+  const currentFixtures = (element: any) =>
+    fixtures.filter(
       (fix: any) =>
         fix.event == currentEvent.id &&
-        (element.team == fix.team_h || element.team == fix.team_a)
+        (element.team == fix.team_h || element.team == fix.team_a),
     );
 
   return (
@@ -259,8 +268,8 @@ const AppMyTeam = () => {
                   bootstrap.teams,
                   currentEvent,
                   0,
-                  picks
-                )
+                  picks,
+                ),
               );
               setIsOptimize(true);
             }}
@@ -294,11 +303,9 @@ const AppMyTeam = () => {
           `}
           />
           <StatItem
-            label={
-              isOptimize
-                ? `ΣxP${currentEvent.id + 1}*`
-                : `ΣxP${currentEvent.id + 1}`
-            }
+            label={isOptimize
+              ? `ΣxP${currentEvent.id + 1}*`
+              : `ΣxP${currentEvent.id + 1}`}
             value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
           />
         </div>
@@ -325,21 +332,25 @@ const AppMyTeam = () => {
                   </p>
                   <p className="text-xs font-light">
                     {positionMapping(
-                      elementMapping(player.element).element_type
+                      elementMapping(player.element).element_type,
                     )}
                   </p>
                 </div>
-                {player.is_captain ? (
-                  player.multiplier == 2 ? (
-                    <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                      C
-                    </div>
-                  ) : (
-                    <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                      C
-                    </div>
+                {player.is_captain
+                  ? (
+                    player.multiplier == 2
+                      ? (
+                        <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                          C
+                        </div>
+                      )
+                      : (
+                        <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                          C
+                        </div>
+                      )
                   )
-                ) : null}
+                  : null}
                 {player.is_vice_captain && (
                   <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
                     V
@@ -347,69 +358,91 @@ const AppMyTeam = () => {
                 )}
               </div>
               <div className="flex justify-end">
-              {currentFixtures(elementMapping(player.element))[0].started ? 
-              <StatItem
-                  label={`GW${currentEvent.id}`}
-                  value={elementMapping(player.element).event_points}
-                /> : <AppExpectedPts
-                element={elementMapping(player.element)}
-                elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
-                currentEvent={currentEvent}
-                deltaEvent={-1}
-                fixtures={fixtures}
-                teams={bootstrap?.teams}
-                multiplier={player.multiplier}
-              />}
-                {currentFixtures(elementMapping(player.element))[0].started ? <StatItem
-                  label={`P${currentEvent.id}-xP${currentEvent.id}`}
-                  value={(
-                    elementMapping(player.element).event_points -
-                    getExpectedPoints(
-                      elementMapping(player.element),
-                      currentEvent.id,
-                      -1,
-                      fixtures,
-                      bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
-                    )
-                  ).toFixed(2)}
-                  className={`
+                {currentFixtures(elementMapping(player.element))[0].started
+                  ? (
+                    <StatItem
+                      label={`GW${currentEvent.id}`}
+                      value={elementMapping(player.element).event_points}
+                    />
+                  )
+                  : (
+                    <AppExpectedPts
+                      element={elementMapping(player.element)}
+                      elementHist={bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(player.element).code
+                      )}
+                      currentEvent={currentEvent}
+                      deltaEvent={-1}
+                      fixtures={fixtures}
+                      teams={bootstrap?.teams}
+                      multiplier={player.multiplier}
+                    />
+                  )}
+                {currentFixtures(elementMapping(player.element))[0].started
+                  ? (
+                    <StatItem
+                      label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                      value={(
+                        elementMapping(player.element).event_points -
+                        getExpectedPoints(
+                          elementMapping(player.element),
+                          currentEvent.id,
+                          -1,
+                          fixtures,
+                          bootstrap?.teams,
+                          bootstrapHist?.elements.find((elh: any) =>
+                            elh.code == elementMapping(player.element).code
+                          ),
+                        )
+                      ).toFixed(2)}
+                      className={`
                   ${
-                    elementMapping(player.element).event_points -
-                      getExpectedPoints(
-                        elementMapping(player.element),
-                        currentEvent.id,
-                        -1,
-                        fixtures,
-                        bootstrap?.teams,
-                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
-                      ) >
-                    0
-                      ? "bg-green-200 text-green-700"
-                      : ""
-                  }
+                        elementMapping(player.element).event_points -
+                              getExpectedPoints(
+                                elementMapping(player.element),
+                                currentEvent.id,
+                                -1,
+                                fixtures,
+                                bootstrap?.teams,
+                                bootstrapHist?.elements.find((elh: any) =>
+                                  elh.code ==
+                                    elementMapping(player.element).code
+                                ),
+                              ) >
+                            0
+                          ? "bg-green-200 text-green-700"
+                          : ""
+                      }
                   ${
-                    elementMapping(player.element).event_points == 0 ||
-                    elementMapping(player.element).event_points -
-                      getExpectedPoints(
-                        elementMapping(player.element),
-                        currentEvent.id,
-                        -1,
-                        fixtures,
-                        bootstrap?.teams,
-                        bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)
-                      ) <
-                      0
-                      ? "bg-red-200 text-red-700"
-                      : ""
-                  }
+                        elementMapping(player.element).event_points == 0 ||
+                          elementMapping(player.element).event_points -
+                                getExpectedPoints(
+                                  elementMapping(player.element),
+                                  currentEvent.id,
+                                  -1,
+                                  fixtures,
+                                  bootstrap?.teams,
+                                  bootstrapHist?.elements.find((elh: any) =>
+                                    elh.code ==
+                                      elementMapping(player.element).code
+                                  ),
+                                ) <
+                            0
+                          ? "bg-red-200 text-red-700"
+                          : ""
+                      }
                   `}
-                /> : <AppCurrentFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(player.element)}
-                  currentFixtures={currentFixtures(elementMapping(player.element))}
-                />
-                }
+                    />
+                  )
+                  : (
+                    <AppCurrentFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(player.element)}
+                      currentFixtures={currentFixtures(
+                        elementMapping(player.element),
+                      )}
+                    />
+                  )}
                 <AppNextFixtures
                   teams={bootstrap?.teams}
                   element={elementMapping(player.element)}
@@ -418,7 +451,9 @@ const AppMyTeam = () => {
 
                 <AppExpectedPts
                   element={elementMapping(player.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping(player.element).code)}
+                  elementHist={bootstrapHist?.elements.find((elh: any) =>
+                    elh.code == elementMapping(player.element).code
+                  )}
                   currentEvent={currentEvent}
                   deltaEvent={0}
                   fixtures={fixtures}

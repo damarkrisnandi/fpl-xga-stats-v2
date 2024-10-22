@@ -1,6 +1,13 @@
-'use client'
+"use client";
 import { useEffect, useState } from "react";
-import { difficultyColor, xPColor, getExpectedPoints, getPlayerPhotoUrl, getTeamLogoUrl, positionMapping } from "@/utils";
+import {
+  difficultyColor,
+  getExpectedPoints,
+  getPlayerPhotoUrl,
+  getTeamLogoUrl,
+  positionMapping,
+  xPColor,
+} from "@/utils";
 
 const StatItemExtraLow = (props: any) => {
   const { className, label, value } = props;
@@ -63,25 +70,66 @@ const StatItemExtraHigh = (props: any) => {
 };
 
 const AppExpectedPts = (props: any) => {
-    const { element, elementHist, currentEvent, deltaEvent, fixtures, teams, multiplier } = props;
-    const [xPoints, setXPoints] = useState<any>(0);
-    
-    useEffect(() => {
-        setXPoints(getExpectedPoints(element, currentEvent.id, deltaEvent, fixtures, teams, elementHist))
-    }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist])
+  const {
+    element,
+    elementHist,
+    currentEvent,
+    deltaEvent,
+    fixtures,
+    teams,
+    multiplier,
+  } = props;
+  const [xPoints, setXPoints] = useState<any>(0);
 
-    if (xPoints < 2) {
-        return <StatItemExtraLow label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
-    } else if (xPoints < 3) {
-        return <StatItemLow label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
-    } else if (xPoints < 5) {
-        return <StatItemMid label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
-    } else if (xPoints < 10) {
-        return <StatItemHigh label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
-    }
+  useEffect(() => {
+    setXPoints(
+      getExpectedPoints(
+        element,
+        currentEvent.id,
+        deltaEvent,
+        fixtures,
+        teams,
+        elementHist,
+      ),
+    );
+  }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist]);
 
-    return <StatItemExtraHigh label={`xP${currentEvent.id + deltaEvent + 1}`} value={xPoints.toFixed(2)} />
+  if (xPoints < 2) {
+    return (
+      <StatItemExtraLow
+        label={`xP${currentEvent.id + deltaEvent + 1}`}
+        value={xPoints.toFixed(2)}
+      />
+    );
+  } else if (xPoints < 3) {
+    return (
+      <StatItemLow
+        label={`xP${currentEvent.id + deltaEvent + 1}`}
+        value={xPoints.toFixed(2)}
+      />
+    );
+  } else if (xPoints < 5) {
+    return (
+      <StatItemMid
+        label={`xP${currentEvent.id + deltaEvent + 1}`}
+        value={xPoints.toFixed(2)}
+      />
+    );
+  } else if (xPoints < 10) {
+    return (
+      <StatItemHigh
+        label={`xP${currentEvent.id + deltaEvent + 1}`}
+        value={xPoints.toFixed(2)}
+      />
+    );
+  }
 
-}
+  return (
+    <StatItemExtraHigh
+      label={`xP${currentEvent.id + deltaEvent + 1}`}
+      value={xPoints.toFixed(2)}
+    />
+  );
+};
 
 export default AppExpectedPts;

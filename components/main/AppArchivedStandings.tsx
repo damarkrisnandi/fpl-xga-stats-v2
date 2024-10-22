@@ -1,11 +1,11 @@
 "use client";
-import { getLeagueData, getArchivedLeague } from "@/services";
+import { getArchivedLeague, getLeagueData } from "@/services";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "../ui/card";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -13,7 +13,7 @@ import { Separator } from "../ui/separator";
 import AppTopStandings from "./AppTopStanding";
 import { useEffect, useState } from "react";
 import PositionChanges from "@/components/main/PositionChange";
-import { Trophy, ChevronLeft } from "lucide-react";
+import { ChevronLeft, Trophy } from "lucide-react";
 
 const AppArchivedStandings = (props: any) => {
   const { season, leagueId } = props;
@@ -23,7 +23,6 @@ const AppArchivedStandings = (props: any) => {
   useEffect(() => {
     if (!league) {
       getLeague(season, leagueId).then((data) => {
-
         setLeague(data);
       });
     }
@@ -57,26 +56,30 @@ const AppArchivedStandings = (props: any) => {
         <CardContent>
           {league?.standings?.results.map((team: any) => (
             <div key={team.id} className={`w-full p-2 `}>
-              {team.rank === 1 ? (
-                <div className="pt-7 flex justify-center items-center flex-col space-y-5">
-                  {/* <Trophy className="w-7 h-7" /> */}
-                  <AppTopStandings entry={team} value={'total'}/>
-                  <Separator />
-                </div>
-              ) : (
-                <div>
-                  <div className="pt-3 pb-6 flex justify-between items-center w-full">
-                    <PositionChanges entry={team} />
-                    <p className="text-xl font-semibold ml-3">{team.rank}</p>
-                    <div className="w-full px-5">
-                      <p className="text-xs font-semibold">{team.entry_name}</p>
-                      <p className="text-xs">{team.player_name}</p>
-                    </div>
-                    <p className="text-xl font-semibold">{team.total}</p>
+              {team.rank === 1
+                ? (
+                  <div className="pt-7 flex justify-center items-center flex-col space-y-5">
+                    {/* <Trophy className="w-7 h-7" /> */}
+                    <AppTopStandings entry={team} value={"total"} />
+                    <Separator />
                   </div>
-                  <Separator className="w-full" />
-                </div>
-              )}
+                )
+                : (
+                  <div>
+                    <div className="pt-3 pb-6 flex justify-between items-center w-full">
+                      <PositionChanges entry={team} />
+                      <p className="text-xl font-semibold ml-3">{team.rank}</p>
+                      <div className="w-full px-5">
+                        <p className="text-xs font-semibold">
+                          {team.entry_name}
+                        </p>
+                        <p className="text-xs">{team.player_name}</p>
+                      </div>
+                      <p className="text-xl font-semibold">{team.total}</p>
+                    </div>
+                    <Separator className="w-full" />
+                  </div>
+                )}
             </div>
           ))}
         </CardContent>
@@ -94,7 +97,6 @@ async function getLeague(season: string, leagueId: string) {
 
   while (hasNextPage) {
     const nextPageData = await getArchivedLeague(season, leagueId, page);
-
 
     if (!nextPageData || nextPageData.error) {
       return null;

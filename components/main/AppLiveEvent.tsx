@@ -2,11 +2,11 @@
 import { BadgePlus, ChevronLeft, Clock, Sparkles } from "lucide-react";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "../ui/card";
 import { useEffect, useState } from "react";
 import {
@@ -51,17 +51,21 @@ const AppLiveEvent = () => {
       const currentAndPreviousEvents = bootstrap.events
         .filter(
           (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime()
-      );
+            new Date(event.deadline_time).getTime() <= new Date().getTime(),
+        );
 
       const allNextEvents = bootstrap.events.filter(
         (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]; 
+          new Date(event.deadline_time).getTime() > new Date().getTime(),
+      )[0];
 
-    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+      setCurrentEvent(
+        currentAndPreviousEvents.length > 0
+          ? currentAndPreviousEvents.at(-1)
+          : 0,
+      );
 
-    // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+      // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
       if (fixtures.length == 0) {
         getFixtures().then((dataFixtures: any) => {
@@ -168,27 +172,30 @@ const AppLiveEvent = () => {
                     <div className="text-xs">
                       {bootstrap?.elements
                         .filter((el: any) => el.team == fixture.team_h)
-
                         .filter((el: any) =>
                           liveEvent.elements.find(
                             (le: any) =>
                               le.id == el.id &&
                               le.explain.length &&
                               le.explain
-                                .find((expl: any) => expl.fixture == fixture.id)
-                                ?.stats.find(
-                                  (stat: any) => stat.identifier == "minutes"
-                                )?.value > 0
+                                  .find((expl: any) =>
+                                    expl.fixture == fixture.id
+                                  )
+                                  ?.stats.find(
+                                    (stat: any) => stat.identifier == "minutes",
+                                  )?.value > 0,
                           )
                         )
-                        .toSorted((a: any, b: any) => a.element_type - b.element_type)
+                        .toSorted((a: any, b: any) =>
+                          a.element_type - b.element_type
+                        )
                         .map((el: any) => {
                           return {
                             ...el,
                             live_stats: liveEvent.elements
                               .find((le: any) => le.id == el.id)
                               .explain.find(
-                                (expl: any) => expl.fixture == fixture.id
+                                (expl: any) => expl.fixture == fixture.id,
                               ).stats,
                           };
                         })
@@ -200,11 +207,10 @@ const AppLiveEvent = () => {
                             >
                               <Clock className="h-3 w-3" />
                               <p>
-                                {
-                                  el.live_stats.find(
-                                    (stat: any) => stat.identifier == "minutes"
-                                  )?.value
-                                }
+                                {el.live_stats.find(
+                                  (stat: any) =>
+                                    stat.identifier == "minutes",
+                                )?.value}
                                 &apos;
                               </p>
                             </span>
@@ -212,13 +218,14 @@ const AppLiveEvent = () => {
                               .filter(
                                 (stat: any) =>
                                   stat.identifier !== "minutes" &&
-                                  stat.identifier !== "bonus"
+                                  stat.identifier !== "bonus",
                               )
                               .map((stat: any, i: number) => (
                                 <span className="flex items-center" key={i}>
                                   {Array.from(
                                     { length: stat.value },
-                                    (_, index) => index + 1
+                                    (_, index) =>
+                                      index + 1,
                                   ).map((val: number) => (
                                     <p className="" key={val}>
                                       {statsMapping(stat.identifier)}
@@ -227,18 +234,16 @@ const AppLiveEvent = () => {
                                 </span>
                               ))}
                             {el.live_stats.find(
-                              (stat: any) => stat.identifier == "bonus"
+                              (stat: any) => stat.identifier == "bonus",
                             ) && (
                               <span
                                 className={`bg-green-300 flex items-center px-1`}
                               >
                                 <Sparkles className="text-yellow-500 w-3 h-3" />
                                 <p>
-                                  {
-                                    el.live_stats.find(
-                                      (stat: any) => stat.identifier == "bonus"
-                                    )?.value
-                                  }
+                                  {el.live_stats.find(
+                                    (stat: any) => stat.identifier == "bonus",
+                                  )?.value}
                                 </p>
                               </span>
                             )}
@@ -252,27 +257,30 @@ const AppLiveEvent = () => {
                     <div className="text-xs text-right">
                       {bootstrap?.elements
                         .filter((el: any) => el.team == fixture.team_a)
-
                         .filter((el: any) =>
                           liveEvent.elements.find(
                             (le: any) =>
                               le.id == el.id &&
                               le.explain.length &&
                               le.explain
-                                .find((expl: any) => expl.fixture == fixture.id)
-                                ?.stats.find(
-                                  (stat: any) => stat.identifier == "minutes"
-                                )?.value > 0
+                                  .find((expl: any) =>
+                                    expl.fixture == fixture.id
+                                  )
+                                  ?.stats.find(
+                                    (stat: any) => stat.identifier == "minutes",
+                                  )?.value > 0,
                           )
                         )
-                        .toSorted((a: any, b: any) => a.element_type - b.element_type)
+                        .toSorted((a: any, b: any) =>
+                          a.element_type - b.element_type
+                        )
                         .map((el: any) => {
                           return {
                             ...el,
                             live_stats: liveEvent.elements
                               .find((le: any) => le.id == el.id)
                               .explain.find(
-                                (expl: any) => expl.fixture == fixture.id
+                                (expl: any) => expl.fixture == fixture.id,
                               ).stats,
                           };
                         })
@@ -283,11 +291,10 @@ const AppLiveEvent = () => {
                             >
                               <Clock className="h-3 w-3" />
                               <p>
-                                {
-                                  el.live_stats.find(
-                                    (stat: any) => stat.identifier == "minutes"
-                                  )?.value
-                                }
+                                {el.live_stats.find(
+                                  (stat: any) =>
+                                    stat.identifier == "minutes",
+                                )?.value}
                                 &apos;
                               </p>
                             </span>
@@ -295,13 +302,14 @@ const AppLiveEvent = () => {
                               .filter(
                                 (stat: any) =>
                                   stat.identifier !== "minutes" &&
-                                  stat.identifier !== "bonus"
+                                  stat.identifier !== "bonus",
                               )
                               .map((stat: any, i: number) => (
                                 <span className="flex items-center" key={i}>
                                   {Array.from(
                                     { length: stat.value },
-                                    (_, index) => index + 1
+                                    (_, index) =>
+                                      index + 1,
                                   ).map((val: number) => (
                                     <p className="" key={val}>
                                       {statsMapping(stat.identifier)}
@@ -310,18 +318,16 @@ const AppLiveEvent = () => {
                                 </span>
                               ))}
                             {el.live_stats.find(
-                              (stat: any) => stat.identifier == "bonus"
+                              (stat: any) => stat.identifier == "bonus",
                             ) && (
                               <span
                                 className={`bg-green-300 flex items-center px-1`}
                               >
                                 <Sparkles className="text-yellow-500 w-3 h-3" />
                                 <p>
-                                  {
-                                    el.live_stats.find(
-                                      (stat: any) => stat.identifier == "bonus"
-                                    )?.value
-                                  }
+                                  {el.live_stats.find(
+                                    (stat: any) => stat.identifier == "bonus",
+                                  )?.value}
                                 </p>
                               </span>
                             )}

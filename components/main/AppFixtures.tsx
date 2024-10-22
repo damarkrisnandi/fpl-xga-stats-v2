@@ -10,23 +10,23 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import { getFixtures, getBootstrapFromStorage } from "@/services";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { getBootstrapFromStorage, getFixtures } from "@/services";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "../ui/button";
 import AppScoreBoard from "./AppScoreboard";
 import AppFailedToFetch from "./AppFailedToFetch";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from "@/components/ui/accordion";
 import Link from "next/link";
 import {
-  QueryClientProvider,
   QueryClient,
-  useQuery,
+  QueryClientProvider,
   useQueries,
+  useQuery,
 } from "@tanstack/react-query";
 
 const AppFixtures = (props: any) => {
@@ -60,24 +60,30 @@ const AppFixtures = (props: any) => {
 
   const setAllEvent = () => {
     const currentAndPreviousEvents = bootstrap.events
-        .filter(
-          (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime()
+      .filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() <= new Date().getTime(),
       );
 
-      const allNextEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]; 
+    const allNextEvents = bootstrap.events.filter(
+      (event: any) =>
+        new Date(event.deadline_time).getTime() > new Date().getTime(),
+    )[0];
 
-      if (!currentEvent) setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
+    if (!currentEvent) {
+      setCurrentEvent(
+        currentAndPreviousEvents.length > 0
+          ? currentAndPreviousEvents.at(-1)
+          : 0,
+      );
+    }
 
     if (!nextEvent) {
-      setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39)
+      setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
       console.log(nextEvent);
-    };
-  }
-  
+    }
+  };
+
   useEffect(() => {
     setAllEvent();
   });
@@ -116,27 +122,31 @@ const AppFixtures = (props: any) => {
                           <p className="w-10 text-right text-sm font-semibold mr-3">
                             {getTeamShort(fixture.team_h)}
                           </p>
-                          {fixture.started ? (
-                            <AppScoreBoard
-                              score={fixture.team_h_score || 0}
-                              className={` ${
-                                !fixture.finished ? "bg-[#37003c]" : ""
-                              } `}
-                            />
-                          ) : null}
+                          {fixture.started
+                            ? (
+                              <AppScoreBoard
+                                score={fixture.team_h_score || 0}
+                                className={` ${
+                                  !fixture.finished ? "bg-[#37003c]" : ""
+                                } `}
+                              />
+                            )
+                            : null}
                         </div>
-                        {!fixture.started ? (
-                          <AppScoreBoard score={"v"} />
-                        ) : null}
+                        {!fixture.started
+                          ? <AppScoreBoard score={"v"} />
+                          : null}
                         <div className="flex justify-start items-center">
-                          {fixture.started ? (
-                            <AppScoreBoard
-                              score={fixture.team_a_score || 0}
-                              className={` ${
-                                !fixture.finished ? "bg-[#37003c]" : ""
-                              } `}
-                            />
-                          ) : null}
+                          {fixture.started
+                            ? (
+                              <AppScoreBoard
+                                score={fixture.team_a_score || 0}
+                                className={` ${
+                                  !fixture.finished ? "bg-[#37003c]" : ""
+                                } `}
+                              />
+                            )
+                            : null}
                           <p className="w-10 text-left text-sm font-semibold ml-3">
                             {getTeamShort(fixture.team_a)}
                           </p>
@@ -146,25 +156,24 @@ const AppFixtures = (props: any) => {
                     <AccordionContent>
                       {fixture.stats
                         .filter(
-                          (stat: any) => stat.a.length > 0 || stat.h.length > 0
+                          (stat: any) => stat.a.length > 0 || stat.h.length > 0,
                         )
                         .map((stat: any) => (
                           <div key={stat.identifier}>
                             <div className="w-full p-1 flex justify-center items-center bg-slate-200 text-xs">
                               <p className="font-semibold">
-                                {
-                                  element_stats.find(
-                                    (es: any) => es.name == stat.identifier
-                                  ).label
-                                }
+                                {element_stats.find(
+                                  (es: any) => es.name == stat.identifier,
+                                ).label}
                               </p>
                             </div>
                             <div className="w-full flex justify-between m-auto">
                               <div className="">
                                 {stat.h
                                   .filter((home: any, index: number) => {
-                                    if (stat.identifier == "bps")
+                                    if (stat.identifier == "bps") {
                                       return index < 5;
+                                    }
                                     return home;
                                   })
                                   .map((home: any) => (
@@ -173,11 +182,9 @@ const AppFixtures = (props: any) => {
                                       className="flex text-xs"
                                     >
                                       <p>
-                                        {
-                                          elements.find(
-                                            (el: any) => el.id == home.element
-                                          ).web_name
-                                        }
+                                        {elements.find(
+                                          (el: any) => el.id == home.element,
+                                        ).web_name}
                                       </p>
                                       <p className="ml-1">({home.value})</p>
                                     </div>
@@ -186,8 +193,9 @@ const AppFixtures = (props: any) => {
                               <div className="">
                                 {stat.a
                                   .filter((away: any, index: number) => {
-                                    if (stat.identifier == "bps")
+                                    if (stat.identifier == "bps") {
                                       return index < 5;
+                                    }
                                     return away;
                                   })
                                   .map((away: any) => (
@@ -197,11 +205,9 @@ const AppFixtures = (props: any) => {
                                     >
                                       <p className="mr-1">({away.value})</p>
                                       <p>
-                                        {
-                                          elements.find(
-                                            (el: any) => el.id == away.element
-                                          ).web_name
-                                        }
+                                        {elements.find(
+                                          (el: any) => el.id == away.element,
+                                        ).web_name}
                                       </p>
                                     </div>
                                   ))}

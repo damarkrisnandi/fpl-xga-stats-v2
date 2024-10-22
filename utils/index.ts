@@ -1,8 +1,6 @@
 import { solve } from "yalps";
 
-export const leaguesData = [
-  
-];
+export const leaguesData = [];
 
 export const menuTree = [
   {
@@ -12,6 +10,10 @@ export const menuTree = [
       {
         name: "Home",
         id: "",
+      },
+      {
+        name: "Data Visualization",
+        id: "data-visualization",
       },
       {
         name: "Live Event",
@@ -130,7 +132,6 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     red_cards,
     goals_scored,
     assists,
-
   } = element;
   const indexPer90 = minutes > 0 ? (90 / minutes) : 0;
   const xYC = (yellow_cards * indexPer90) * -1;
@@ -138,7 +139,7 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
   const pMP = starts_per_90 >= 0.67 ? 2 : starts_per_90 == 0 ? 0 : 1;
   const xOG = (own_goals * indexPer90) * -1;
   const goalp90 = goals_scored * indexPer90;
-  const assistp90 = assists * indexPer90; 
+  const assistp90 = assists * indexPer90;
   if (element_type === 4) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 4;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
@@ -149,33 +150,36 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = clean_sheets_per_90 >= 0.67 ? 1 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC ;
+    xP = xPG + xPA + xGC;
   }
   if (element_type === 2) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 6;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
-    const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
+    const xCS = starts_per_90 >= 0.67
+      ? (clean_sheets_per_90 >= 0.67 ? 4 : 0)
+      : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC ;
+    xP = xPG + xPA + xGC;
   }
 
   if (element_type === 1) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 10;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
-    const xCS = starts_per_90 >= 0.67 ? (clean_sheets_per_90 >= 0.67 ? 4 : 0) : 0;
-      const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
+    const xCS = starts_per_90 >= 0.67
+      ? (clean_sheets_per_90 >= 0.67 ? 4 : 0)
+      : 0;
+    const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
     const xSaves = Math.floor((saves * indexPer90) / 3);
-    xP =
-      xPG +
+    xP = xPG +
       xPA +
       xGC +
-      xSaves ;
+      xSaves;
   }
 
-  xP += pMP + xOG ;
+  xP += pMP + xOG;
 
   return xP;
-}
+};
 
 export const getExpectedPoints = (
   element: any,
@@ -183,7 +187,7 @@ export const getExpectedPoints = (
   deltaEvent: number,
   fixtures: any,
   teams: any,
-  elementHistory?: any
+  elementHistory?: any,
 ) => {
   let gameWeek = currentGameWeek + deltaEvent;
 
@@ -198,10 +202,10 @@ export const getExpectedPoints = (
   const filteredFixtures = fixtures.filter(
     (fix: any) =>
       (element.team == fix.team_h || element.team == fix.team_a) &&
-      fix.event <= gameWeek
+      fix.event <= gameWeek,
   );
 
-  xP = calculateBaseExpected(element, filteredFixtures.length)
+  xP = calculateBaseExpected(element, filteredFixtures.length);
 
   let xPHistory = 0;
   if (elementHistory) {
@@ -214,8 +218,7 @@ export const getExpectedPoints = (
     } else {
       xP = (0.85 * xP) + (0.15 * xPHistory);
     }
-  } else  {
-    
+  } else {
   }
 
   const elementStatusIndex: any = {
@@ -237,9 +240,8 @@ export const getExpectedPoints = (
   const filteredfixturesByGameweek = fixtures.filter(
     (fix: any) =>
       fix.event == gameWeek &&
-      (element.team == fix.team_h || element.team == fix.team_a)
+      (element.team == fix.team_h || element.team == fix.team_a),
   );
-
 
   let totalXP = 0;
 
@@ -247,7 +249,7 @@ export const getExpectedPoints = (
     element: any,
     teamData: any,
     opponentData: any,
-    isHome: boolean
+    isHome: boolean,
   ) => {
     let haIdxValue = 1;
 
@@ -270,23 +272,19 @@ export const getExpectedPoints = (
     if (isHome) {
       switch (element.element_type) {
         case 4:
-          haIdxValue =
-            (1 * (homeOff - awayDefOpp)) / awayOvrOpp +
+          haIdxValue = (1 * (homeOff - awayDefOpp)) / awayOvrOpp +
             (0 * (homeDef - awayOffOpp)) / awayOvrOpp;
           break;
         case 3:
-          haIdxValue =
-            ((8 / 9) * (homeOff - awayDefOpp)) / awayOvrOpp +
+          haIdxValue = ((8 / 9) * (homeOff - awayDefOpp)) / awayOvrOpp +
             ((1 / 9) * (homeDef - awayOffOpp)) / awayOvrOpp;
           break;
         case 2:
-          haIdxValue =
-            ((9 / 15) * (homeOff - awayDefOpp)) / awayOvrOpp +
+          haIdxValue = ((9 / 15) * (homeOff - awayDefOpp)) / awayOvrOpp +
             ((6 / 15) * (homeDef - awayOffOpp)) / awayOvrOpp;
           break;
         case 1:
-          haIdxValue =
-            (0 * (homeOff - awayDefOpp)) / awayOvrOpp +
+          haIdxValue = (0 * (homeOff - awayDefOpp)) / awayOvrOpp +
             (1 * (homeDef - awayOffOpp)) / awayOvrOpp;
           break;
         default:
@@ -295,23 +293,19 @@ export const getExpectedPoints = (
     } else {
       switch (element.element_type) {
         case 4:
-          haIdxValue =
-            (1 * (awayOff - homeDefOpp)) / homeOvrOpp +
+          haIdxValue = (1 * (awayOff - homeDefOpp)) / homeOvrOpp +
             (0 * (awayDef - homeOffOpp)) / homeOvrOpp;
           break;
         case 3:
-          haIdxValue =
-            ((8 / 9) * (awayOff - homeDefOpp)) / homeOvrOpp +
+          haIdxValue = ((8 / 9) * (awayOff - homeDefOpp)) / homeOvrOpp +
             ((1 / 9) * (awayDef - homeOffOpp)) / homeOvrOpp;
           break;
         case 2:
-          haIdxValue =
-            ((9 / 15) * (awayOff - homeDefOpp)) / homeOvrOpp +
+          haIdxValue = ((9 / 15) * (awayOff - homeDefOpp)) / homeOvrOpp +
             ((6 / 15) * (awayDef - homeOffOpp)) / homeOvrOpp;
           break;
         case 1:
-          haIdxValue =
-            (0 * (awayOff - homeDefOpp)) / homeOvrOpp +
+          haIdxValue = (0 * (awayOff - homeDefOpp)) / homeOvrOpp +
             (1 * (awayDef - homeOffOpp)) / homeOvrOpp;
           break;
         default:
@@ -327,35 +321,33 @@ export const getExpectedPoints = (
       if (deltaEvent < 0 && !fixture.finished) {
         return 0;
       }
-      diffIndex =
-        diffRef[fixture.team_h_difficulty] +
+      diffIndex = diffRef[fixture.team_h_difficulty] +
         getHomeAwayIndex(
           element,
           teams.find((t: any) => t.id == fixture.team_h),
           teams.find((t: any) => t.id == fixture.team_a),
-          true
+          true,
         );
     } else if (element.team == fixture.team_a) {
       if (deltaEvent < 0 && !fixture.finished) {
         return 0;
       }
-      diffIndex =
-        diffRef[fixture.team_a_difficulty] +
+      diffIndex = diffRef[fixture.team_a_difficulty] +
         getHomeAwayIndex(
           element,
           teams.find((t: any) => t.id == fixture.team_a),
           teams.find((t: any) => t.id == fixture.team_h),
-          false
+          false,
         );
     }
 
-    xP = xP * element.starts_per_90 * diffIndex * elementStatusIndex[element.status];
+    xP = xP * element.starts_per_90 * diffIndex *
+      elementStatusIndex[element.status];
 
     totalXP += xP;
   }
 
-
-  // current match check 
+  // current match check
   // const currentFixtures = fixtures.filter(
   //   (fix: any) =>
   //     fix.event == currentGameWeek &&
@@ -382,69 +374,69 @@ const wildcardOptimizationModel = (
   fixtures: any,
   teams: any,
   currentEvent: any,
-  deltaEvent: number
-  ) => {
-    elements.sort((a: any, b: any) => a.element_type - b.element_type);
-    
-    elements.sort((a: any, b: any) => {
-      return b["xp"] - a["xp"];
-    });
+  deltaEvent: number,
+) => {
+  elements.sort((a: any, b: any) => a.element_type - b.element_type);
 
-    // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
-    const teamConstaints = Object.fromEntries(
-      elements.map((e: any) => [`team_${e.team_code}`, { max: 3 }])
-    );
+  elements.sort((a: any, b: any) => {
+    return b["xp"] - a["xp"];
+  });
 
-    // only integers
-    const fplInts = Object.fromEntries(
-      elements.map((e: any) => [`player_${e.id}`, 1])
-    );
+  // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
+  const teamConstaints = Object.fromEntries(
+    elements.map((e: any) => [`team_${e.team_code}`, { max: 3 }]),
+  );
 
-    //#region pick optimization
-    // variables
-    const fplVariables2 = createVariables(
-      elements,
-      fixtures,
-      teams,
-      "",
-      (v: any) => {
-        return v;
-      },
-      [],
-      currentEvent.id + deltaEvent
-    );
-    // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
+  // only integers
+  const fplInts = Object.fromEntries(
+    elements.map((e: any) => [`player_${e.id}`, 1]),
+  );
 
-    // constraints
-    const maxPick2 = Object.fromEntries(
-      elements.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }])
-    );
-    const posConstraints2 = {
-      gkp: { equal: 2 },
-      def: { equal: 5 },
-      mid: { equal: 5 },
-      fwd: { equal: 3 },
-    };
-    // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
+  //#region pick optimization
+  // variables
+  const fplVariables2 = createVariables(
+    elements,
+    fixtures,
+    teams,
+    "",
+    (v: any) => {
+      return v;
+    },
+    [],
+    currentEvent.id + deltaEvent,
+  );
+  // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
 
-    // pick optimization model
-    return {
-      direction: "maximize" as const,
-      objective: "xp",
-      constraints: {
-        ...maxPick2,
-        now_cost: {max: 1000},
-        ...posConstraints2,
-        ...teamConstaints,
-        max_pick: { equal: 15 },
-      },
-      variables: {
-        ...fplVariables2,
-        // ...fplCaptaincyVariables2
-      },
-      integers: [...Object.keys(fplInts)],
-    };
-}
+  // constraints
+  const maxPick2 = Object.fromEntries(
+    elements.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }]),
+  );
+  const posConstraints2 = {
+    gkp: { equal: 2 },
+    def: { equal: 5 },
+    mid: { equal: 5 },
+    fwd: { equal: 3 },
+  };
+  // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
+
+  // pick optimization model
+  return {
+    direction: "maximize" as const,
+    objective: "xp",
+    constraints: {
+      ...maxPick2,
+      now_cost: { max: 1000 },
+      ...posConstraints2,
+      ...teamConstaints,
+      max_pick: { equal: 15 },
+    },
+    variables: {
+      ...fplVariables2,
+      // ...fplCaptaincyVariables2
+    },
+    integers: [...Object.keys(fplInts)],
+  };
+};
 
 const picksOptimizationModel = (
   elements: any,
@@ -452,72 +444,72 @@ const picksOptimizationModel = (
   teams: any,
   currentEvent: any,
   deltaEvent: number,
-  picksData?: any
-  ) => {
+  picksData?: any,
+) => {
   elements.sort((a: any, b: any) => a.element_type - b.element_type);
-    const elements1 = elements.filter((el: any) =>
-      picksData.picks.map((a: any) => a.element).includes(el.id)
-    );
-    elements1.sort((a: any, b: any) => {
-      return b["xp"] - a["xp"];
-    });
+  const elements1 = elements.filter((el: any) =>
+    picksData.picks.map((a: any) => a.element).includes(el.id)
+  );
+  elements1.sort((a: any, b: any) => {
+    return b["xp"] - a["xp"];
+  });
 
-    // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
-    const teamConstaints = Object.fromEntries(
-      elements1.map((e: any) => [`team_${e.team_code}`, { max: 3 }])
-    );
+  // const playerConstraints = Object.fromEntries(mandatoryPlayer.map(p => [p, {"equal": 1}]))
+  const teamConstaints = Object.fromEntries(
+    elements1.map((e: any) => [`team_${e.team_code}`, { max: 3 }]),
+  );
 
-    // only integers
-    const fplInts = Object.fromEntries(
-      elements1.map((e: any) => [`player_${e.id}`, 1])
-    );
+  // only integers
+  const fplInts = Object.fromEntries(
+    elements1.map((e: any) => [`player_${e.id}`, 1]),
+  );
 
-    //#region pick optimization
-    // variables
-    const fplVariables2 = createVariables(
-      elements1,
-      fixtures,
-      teams,
-      "",
-      (v: any) => {
-        return v;
-      },
-      [],
-      currentEvent.id + deltaEvent
-    );
-    // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
+  //#region pick optimization
+  // variables
+  const fplVariables2 = createVariables(
+    elements1,
+    fixtures,
+    teams,
+    "",
+    (v: any) => {
+      return v;
+    },
+    [],
+    currentEvent.id + deltaEvent,
+  );
+  // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
 
-    // constraints
-    const maxPick2 = Object.fromEntries(
-      elements1.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }])
-    );
-    const posConstraints2 = {
-      gkp: { min: 1, max: 1 },
-      def: { min: 3, max: 5 },
-      mid: { min: 2, max: 5 },
-      fwd: { min: 1, max: 3 },
-    };
-    // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
+  // constraints
+  const maxPick2 = Object.fromEntries(
+    elements1.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }]),
+  );
+  const posConstraints2 = {
+    gkp: { min: 1, max: 1 },
+    def: { min: 3, max: 5 },
+    mid: { min: 2, max: 5 },
+    fwd: { min: 1, max: 3 },
+  };
+  // const playerConstraints2 = Object.fromEntries(mandatoryPlayer.map(p => [p, {"min": 0, "max": 1}]))
 
-    // pick optimization model
-    return {
-      direction: "maximize" as const,
-      objective: "xp",
-      constraints: {
-        ...maxPick2,
-        // "now_cost": {"max": money},
-        ...posConstraints2,
-        // ...playerConstraints2,
-        ...teamConstaints,
-        max_pick: { max: 11 },
-      },
-      variables: {
-        ...fplVariables2,
-        // ...fplCaptaincyVariables2
-      },
-      integers: [...Object.keys(fplInts)],
-    };
-}
+  // pick optimization model
+  return {
+    direction: "maximize" as const,
+    objective: "xp",
+    constraints: {
+      ...maxPick2,
+      // "now_cost": {"max": money},
+      ...posConstraints2,
+      // ...playerConstraints2,
+      ...teamConstaints,
+      max_pick: { max: 11 },
+    },
+    variables: {
+      ...fplVariables2,
+      // ...fplCaptaincyVariables2
+    },
+    integers: [...Object.keys(fplInts)],
+  };
+};
 
 export const optimizationProcess = (
   elements: any,
@@ -526,77 +518,118 @@ export const optimizationProcess = (
   teams: any,
   currentEvent: any,
   deltaEvent: number,
-  picksData?: any
+  picksData?: any,
 ) => {
   try {
     let picksData1;
     if (!picksData) {
-      picksData1 = { picks: elements.map((el: any) => { return { element: el.id }})}
+      picksData1 = {
+        picks: elements.map((el: any) => {
+          return { element: el.id };
+        }),
+      };
     } else {
       picksData1 = picksData;
     }
-   let model: any = picksOptimizationModel(elements, fixtures, teams, currentEvent, deltaEvent, picksData1);
-   if (!picksData) {
-    model = wildcardOptimizationModel(elements, fixtures, teams, currentEvent, deltaEvent);
-   }
+    let model: any = picksOptimizationModel(
+      elements,
+      fixtures,
+      teams,
+      currentEvent,
+      deltaEvent,
+      picksData1,
+    );
+    if (!picksData) {
+      model = wildcardOptimizationModel(
+        elements,
+        fixtures,
+        teams,
+        currentEvent,
+        deltaEvent,
+      );
+    }
 
     const solution2 = solve(model);
     if (!picksData) {
-      picksData1 = {picks: solution2.variables.map((sol: any) => { return { element: elements.find((e: any) => e.id == Number(sol[0].split('_')[1])).id }})}
+      picksData1 = {
+        picks: solution2.variables.map((sol: any) => {
+          return {
+            element: elements.find((e: any) =>
+              e.id == Number(sol[0].split("_")[1])
+            ).id,
+          };
+        }),
+      };
     }
-    
-    const benched = picksData ? picksData1.picks
-      .map((p: any, index: number) => {
-        return {
-          ...p,
-          multiplier: 0,
-          web_name: elements.find((el: any) => el.id == p.element).web_name,
-          xp: getExpectedPoints(
-            elements.find((e: any) => e.id == p.element),
-            currentEvent.id,
-            deltaEvent,
-            fixtures,
-            teams,
-            elementsHistory.find((eh: any) => elements.find((el: any) => el.id == p.element).code == eh.code)
-          ),
-        };
-      })
-      .filter(
-        (p: any) =>
-          !solution2.variables.map((v: any) => Number(v[0].split('_')[1])).includes(p.element)
-      ) : [];
+
+    const benched = picksData
+      ? picksData1.picks
+        .map((p: any, index: number) => {
+          return {
+            ...p,
+            multiplier: 0,
+            web_name: elements.find((el: any) => el.id == p.element).web_name,
+            xp: getExpectedPoints(
+              elements.find((e: any) => e.id == p.element),
+              currentEvent.id,
+              deltaEvent,
+              fixtures,
+              teams,
+              elementsHistory.find((eh: any) =>
+                elements.find((el: any) => el.id == p.element).code == eh.code
+              ),
+            ),
+          };
+        })
+        .filter(
+          (p: any) =>
+            !solution2.variables.map((v: any) => Number(v[0].split("_")[1]))
+              .includes(p.element),
+        )
+      : [];
 
     const solutionAsObject: any[] = [
       ...solution2.variables.map((v: any, idx: number) => {
         return {
-          element: elements.find((e: any) => e.id == Number(v[0].split('_')[1])).id,
+          element: elements.find((e: any) =>
+            e.id == Number(v[0].split("_")[1])
+          ).id,
           position: idx + 1,
           is_captain: false,
           is_vice_captain: false,
           multiplier: 1,
           xp: getExpectedPoints(
-            elements.find((e: any) => e.id == Number(v[0].split('_')[1])),
+            elements.find((e: any) => e.id == Number(v[0].split("_")[1])),
             currentEvent.id,
             deltaEvent,
             fixtures,
             teams,
-            elementsHistory.find((eh: any) => elements.find((el: any) => el.id == Number(v[0].split('_')[1])).code == eh.code)
+            elementsHistory.find((eh: any) =>
+              elements.find((el: any) => el.id == Number(v[0].split("_")[1]))
+                .code == eh.code
+            ),
           ),
         };
       }),
       ...benched,
     ];
 
-    const captaincySolution = solutionAsObject.toSorted((a: any, b: any) => b.xp - a.xp).slice(0, 2);
+    const captaincySolution = solutionAsObject.toSorted((a: any, b: any) =>
+      b.xp - a.xp
+    ).slice(0, 2);
 
     const result = solutionAsObject.map((res: any, idx: number) => {
       return {
         ...res,
         web_name: elements.find((el: any) => el.id == res.element).web_name,
         position: idx + 1,
-        multiplier: captaincySolution[0].element == res.element ? 2 : res.multiplier,
+        multiplier: captaincySolution[0].element == res.element
+          ? 2
+          : res.multiplier,
         is_captain: captaincySolution[0].element == res.element ? true : false,
-        is_vice_captain: captaincySolution[1].element == res.element ? true : false
+        is_vice_captain: captaincySolution[1].element == res.element
+          ? true
+          : false,
       };
     });
 
@@ -624,7 +657,7 @@ const createVariables = (
   suffix: any,
   filterCat: any,
   addEntries: any,
-  inputGw?: any
+  inputGw?: any,
 ) =>
   Object.fromEntries(
     elements
@@ -648,7 +681,12 @@ const createVariables = (
           ["xp", getExpectedPoints(e, inputGw, 0, fixtures, teams)],
           ["xp_next_2", getExpectedPoints(e, inputGw, 1, fixtures, teams)],
           ["xp_next_3", getExpectedPoints(e, inputGw, 2, fixtures, teams)],
-          ["xp_sigm_3", getExpectedPoints(e, inputGw, 0, fixtures, teams) + getExpectedPoints(e, inputGw, 1, fixtures, teams) + getExpectedPoints(e, inputGw, 2, fixtures, teams)],
+          [
+            "xp_sigm_3",
+            getExpectedPoints(e, inputGw, 0, fixtures, teams) +
+            getExpectedPoints(e, inputGw, 1, fixtures, teams) +
+            getExpectedPoints(e, inputGw, 2, fixtures, teams),
+          ],
           [
             "surplus_point",
             e.event_points - getExpectedPoints(e, inputGw, 0, fixtures, teams),
@@ -665,5 +703,5 @@ const createVariables = (
         };
       })
       .filter(filterCat)
-      .map((e: any) => [`player_${e.id}`, e])
+      .map((e: any) => [`player_${e.id}`, e]),
   );

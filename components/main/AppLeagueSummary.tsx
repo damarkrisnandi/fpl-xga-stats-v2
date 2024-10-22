@@ -10,17 +10,17 @@ import {
 } from "@/components/ui/card";
 import { getArchivedLeague, getLeagueData, getManagerData } from "@/services";
 import {
-  Construction,
-  Trophy,
-  Loader2,
   CircleX,
   Component,
+  Construction,
+  Loader2,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Skeleton } from "../ui/skeleton";
-import AppTopStandings from "./AppTopStanding"
+import AppTopStandings from "./AppTopStanding";
 import AppFailedToFetch from "./AppFailedToFetch";
 
 const AppLeagueSummary = (props: any) => {
@@ -45,16 +45,17 @@ const AppLeagueSummary = (props: any) => {
     }
 
     if (!leagueByPhase) {
-      const currentEvent = events.filter((event: any) => new Date(event.deadline_time).getTime() <= new Date().getTime()).at(-1);
+      const currentEvent = events.filter((event: any) =>
+        new Date(event.deadline_time).getTime() <= new Date().getTime()
+      ).at(-1);
 
       const currentPhase = phases
         .filter((phase: any) => phase.id > 1)
         .find(
           (phase: any) =>
-            phase.start_event <= currentEvent.id && 
-            phase.stop_event >= currentEvent.id
+            phase.start_event <= currentEvent.id &&
+            phase.stop_event >= currentEvent.id,
         );
-
 
       getLeague(leagueId, currentPhase.id).then((value) => {
         setEvent(currentEvent);
@@ -69,7 +70,7 @@ const AppLeagueSummary = (props: any) => {
   }
 
   if (league && league.error) {
-    return (<AppFailedToFetch />);
+    return <AppFailedToFetch />;
   }
 
   return (
@@ -106,47 +107,55 @@ const AppLeagueSummary = (props: any) => {
               ?.filter(
                 (result: any) =>
                   result.event_total ==
-                  Math.max(
-                    ...league?.standings?.results?.map(
-                      (r: any) => r.event_total
+                    Math.max(
+                      ...league?.standings?.results?.map(
+                        (r: any) => r.event_total,
+                      ),
+                      0,
                     ),
-                    0
-                  )
               )
-              
               .map((team: any) => (
                 <div className="w-full" key={team.entry}>
-                  <AppTopStandings entry={team} value={'event_total'}/>   
-                  <TotalTransfer entry={team} />               
+                  <AppTopStandings entry={team} value={"event_total"} />
+                  <TotalTransfer entry={team} />
                 </div>
-                
               ))}
           </TabsContent>
           <TabsContent value="motm" className="py-7">
-            {event?.id < phase?.stop_event ? (
-              <PhaseNotOverYet phase={phase} event={event} />
-            ) : (
-              <div>
-                {leagueByPhase?.standings?.results
-                  ?.filter((result: any) => result.rank === 1)
-                  .map((team: any) => (
-                    <AppTopStandings key={team.entry} entry={team} value={'total'}/>
-                  ))}
-              </div>
-            )}
+            {event?.id < phase?.stop_event
+              ? <PhaseNotOverYet phase={phase} event={event} />
+              : (
+                <div>
+                  {leagueByPhase?.standings?.results
+                    ?.filter((result: any) => result.rank === 1)
+                    .map((team: any) => (
+                      <AppTopStandings
+                        key={team.entry}
+                        entry={team}
+                        value={"total"}
+                      />
+                    ))}
+                </div>
+              )}
           </TabsContent>
           <TabsContent value="standings" className="py-7">
             {league?.standings?.results
               ?.filter((result: any) => result.rank === 1)
               .map((team: any) => (
-                <AppTopStandings key={team.entry} entry={team} value={'total'}/>
+                <AppTopStandings
+                  key={team.entry}
+                  entry={team}
+                  value={"total"}
+                />
               ))}
           </TabsContent>
         </Tabs>
       </CardContent>
       <CardFooter>
         <Button asChild variant={"outline"} className="w-full">
-          <Link href={`league/${leagueId}`} className="font-semibold">League Standings</Link>
+          <Link href={`league/${leagueId}`} className="font-semibold">
+            League Standings
+          </Link>
         </Button>
       </CardFooter>
     </Card>
@@ -193,7 +202,6 @@ const UnderConstruction = () => {
   );
 };
 
-
 const PhaseNotOverYet = (props: any) => {
   const { phase, event } = props;
   return (
@@ -209,7 +217,6 @@ const PhaseNotOverYet = (props: any) => {
     </div>
   );
 };
-
 
 function SkeletonSummary() {
   return (
@@ -235,6 +242,10 @@ function SkeletonSummary() {
 
 async function TotalTransfer(props: any) {
   const { entry } = props;
-  const managerData = await getManagerData(entry.entry)
-  return (<p className="w-full text-xs text-right">({managerData.last_deadline_total_transfers} transfers)</p>)
+  const managerData = await getManagerData(entry.entry);
+  return (
+    <p className="w-full text-xs text-right">
+      ({managerData.last_deadline_total_transfers} transfers)
+    </p>
+  );
 }

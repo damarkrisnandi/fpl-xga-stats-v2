@@ -1,5 +1,9 @@
 "use client";
-import { getArchivedBootstrap, getBootstrapFromStorage, getFixtures } from "@/services";
+import {
+  getArchivedBootstrap,
+  getBootstrapFromStorage,
+  getFixtures,
+} from "@/services";
 import {
   getExpectedPoints,
   getPlayerPhotoUrl,
@@ -31,19 +35,23 @@ export const AppElementSummary = (props: any) => {
       getBootstrapFromStorage().then((value: any) => {
         setBootstrap(value);
         const currentAndPreviousEvents = value.events
-        .filter(
+          .filter(
+            (event: any) =>
+              new Date(event.deadline_time).getTime() <= new Date().getTime(),
+          );
+
+        const allNextEvents = value.events.filter(
           (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime()
-      );
+            new Date(event.deadline_time).getTime() > new Date().getTime(),
+        )[0];
 
-      const allNextEvents = value.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime()
-      )[0]; 
+        setCurrentEvent(
+          currentAndPreviousEvents.length > 0
+            ? currentAndPreviousEvents.at(-1)
+            : 0,
+        );
 
-    setCurrentEvent(currentAndPreviousEvents.length > 0 ? currentAndPreviousEvents.at(-1) : 0);
-
-    setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
+        setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
 
         if (fixtures.length == 0) {
           getFixtures().then((data: any) => setFixtures(data));
@@ -54,7 +62,7 @@ export const AppElementSummary = (props: any) => {
     if (!bootstrapHist) {
       getArchivedBootstrap(previousSeason).then((value: any) => {
         setBootstrapHist(value);
-      })
+      });
     }
   });
 
@@ -82,7 +90,12 @@ export const AppElementSummary = (props: any) => {
     );
   }
 
-  const getNextFixtures = () => fixtures.filter((fix: any) => fix.event == currentEvent.id + 1 && (fix.team_h == elementMapping().team || fix.team_a == elementMapping().team) );
+  const getNextFixtures = () =>
+    fixtures.filter((fix: any) =>
+      fix.event == currentEvent.id + 1 &&
+      (fix.team_h == elementMapping().team ||
+        fix.team_a == elementMapping().team)
+    );
 
   return (
     <div className="w-11/12 md:w-5/12">
@@ -128,73 +141,92 @@ export const AppElementSummary = (props: any) => {
               <StatItem label={"Mins"} value={elementMapping().minutes} />
             </div>
 
-            {currentEvent.id >= 1 && <div className="flex">
-              <StatItem
-                label={`GW${currentEvent.id}`}
-                value={elementMapping().event_points}
-              />
-              <AppExpectedPts
-                element={elementMapping()}
-                elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping().code)}
-                currentEvent={currentEvent}
-                deltaEvent={-1}
-                fixtures={fixtures}
-                teams={bootstrap?.teams}
-                multiplier={1}
-              />
+            {currentEvent.id >= 1 && (
+              <div className="flex">
+                <StatItem
+                  label={`GW${currentEvent.id}`}
+                  value={elementMapping().event_points}
+                />
+                <AppExpectedPts
+                  element={elementMapping()}
+                  elementHist={bootstrapHist?.elements.find((elh: any) =>
+                    elh.code == elementMapping().code
+                  )}
+                  currentEvent={currentEvent}
+                  deltaEvent={-1}
+                  fixtures={fixtures}
+                  teams={bootstrap?.teams}
+                  multiplier={1}
+                />
 
-              <StatItem label={" "} value={" "} />
-              <StatItem
-                label={`P${currentEvent.id}-xP${currentEvent.id}`}
-                value={(
-                  elementMapping().event_points -
-                  getExpectedPoints(
-                    elementMapping(),
-                    currentEvent.id,
-                    -1,
-                    fixtures,
-                    bootstrap?.teams
-                  )
-                ).toFixed(2)}
-                className={`
+                <StatItem label={" "} value={" "} />
+                <StatItem
+                  label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                  value={(
+                    elementMapping().event_points -
+                    getExpectedPoints(
+                      elementMapping(),
+                      currentEvent.id,
+                      -1,
+                      fixtures,
+                      bootstrap?.teams,
+                    )
+                  ).toFixed(2)}
+                  className={`
             ${
-              elementMapping().event_points -
-                getExpectedPoints(
-                  elementMapping(),
-                  currentEvent.id,
-                  -1,
-                  fixtures,
-                  bootstrap?.teams
-                ) >
-              0
-                ? "bg-green-200 text-green-700"
-                : ""
-            }
+                    elementMapping().event_points -
+                          getExpectedPoints(
+                            elementMapping(),
+                            currentEvent.id,
+                            -1,
+                            fixtures,
+                            bootstrap?.teams,
+                          ) >
+                        0
+                      ? "bg-green-200 text-green-700"
+                      : ""
+                  }
             ${
-              elementMapping().event_points == 0 ||
-              elementMapping().event_points -
-                getExpectedPoints(
-                  elementMapping(),
-                  currentEvent.id,
-                  -1,
-                  fixtures,
-                  bootstrap?.teams
-                ) <
-                0
-                ? "bg-red-200 text-red-700"
-                : ""
-            }
+                    elementMapping().event_points == 0 ||
+                      elementMapping().event_points -
+                            getExpectedPoints(
+                              elementMapping(),
+                              currentEvent.id,
+                              -1,
+                              fixtures,
+                              bootstrap?.teams,
+                            ) <
+                        0
+                      ? "bg-red-200 text-red-700"
+                      : ""
+                  }
             `}
-              />
-            </div>}
+                />
+              </div>
+            )}
 
-            {currentEvent.id < 38 && <div className="flex">
-            <AppNextFixtures teams={bootstrap?.teams} element={elementMapping()} nextFixtures={getNextFixtures()} />
-            <AppExpectedPts element={elementMapping()} currentEvent={currentEvent} elementHist={bootstrapHist?.elements.find((elh: any) => elh.code == elementMapping().code)} deltaEvent={0} fixtures={fixtures} teams={bootstrap?.teams} multiplier={1}/>
-            <StatItem label={' '} value={' '} />
-            <StatItem label={' '} value={' '} />
- 
-          </div>}
+            {currentEvent.id < 38 && (
+              <div className="flex">
+                <AppNextFixtures
+                  teams={bootstrap?.teams}
+                  element={elementMapping()}
+                  nextFixtures={getNextFixtures()}
+                />
+                <AppExpectedPts
+                  element={elementMapping()}
+                  currentEvent={currentEvent}
+                  elementHist={bootstrapHist?.elements.find((elh: any) =>
+                    elh.code == elementMapping().code
+                  )}
+                  deltaEvent={0}
+                  fixtures={fixtures}
+                  teams={bootstrap?.teams}
+                  multiplier={1}
+                />
+                <StatItem label={" "} value={" "} />
+                <StatItem label={" "} value={" "} />
+              </div>
+            )}
           </div>
         </div>
       </div>
