@@ -12,7 +12,7 @@ export const menuTree = [
         id: "",
       },
       {
-        name: "Data Visualization",
+        name: "DataVis.",
         id: "data-visualization",
       },
       {
