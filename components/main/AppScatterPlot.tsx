@@ -104,7 +104,7 @@ function AppScatterPlot({ dataSeparation }: any) {
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
         <Legend />
         {(dataSeparation || separateByPosition).map((obj: any) => (
-            <Scatter name={obj.label} data={getElementsWithXP().filter(obj.filter)} fill={obj.fill}>
+            <Scatter key={obj.label} name={obj.label} data={getElementsWithXP().filter(obj.filter)} fill={obj.fill}>
                 <LabelList dataKey="web_name" position="right"/>
             </Scatter>
         ))}
