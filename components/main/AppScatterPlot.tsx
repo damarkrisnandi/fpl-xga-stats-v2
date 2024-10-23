@@ -4,7 +4,9 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  LabelList,
   Legend,
+  ResponsiveContainer,
   Scatter,
   ScatterChart,
   Tooltip,
@@ -18,74 +20,27 @@ import { useQuery } from "@tanstack/react-query";
 import { getArchivedBootstrap, getBootstrapFromStorage, getFixtures } from "@/services";
 import AppSpinner from "./AppSpinner";
 import AppFailedToFetch from "./AppFailedToFetch";
-import { getExpectedPoints, previousSeason } from "@/utils";
+import { getExpectedPoints, getTeamLogoUrl, previousSeason } from "@/utils";
+import Image from "next/image";
 
-const data01 = [
-  {
-    "x": 100,
-    "y": 200,
-    "z": 200,
-  },
-  {
-    "x": 120,
-    "y": 100,
-    "z": 260,
-  },
-  {
-    "x": 170,
-    "y": 300,
-    "z": 400,
-  },
-  {
-    "x": 140,
-    "y": 250,
-    "z": 280,
-  },
-  {
-    "x": 150,
-    "y": 400,
-    "z": 500,
-  },
-  {
-    "x": 110,
-    "y": 280,
-    "z": 200,
-  },
-];
-const data02 = [
-  {
-    "x": 200,
-    "y": 260,
-    "z": 240,
-  },
-  {
-    "x": 240,
-    "y": 290,
-    "z": 220,
-  },
-  {
-    "x": 190,
-    "y": 290,
-    "z": 250,
-  },
-  {
-    "x": 198,
-    "y": 250,
-    "z": 210,
-  },
-  {
-    "x": 180,
-    "y": 280,
-    "z": 260,
-  },
-  {
-    "x": 210,
-    "y": 220,
-    "z": 230,
-  },
-];
+const separateByPosition = [
+    // { label: "FWD",  filter: (el: any) => el.element_type == 4 && el.minutes > 90 && Number(el.points_per_game) > 5, fill: '#8884d8' },
+    { label: "MID", filter: (el:any) => el.element_type == 3, fill: '#82ca9d'},
+    // { label: "DEF",  filter: (el: any) => el.element_type == 2 && el.minutes > 90 && Number(el.points_per_game) > 3, fill: '#ff5b00' },
+    // { label: "GKP", filter: (el:any) => el.element_type == 1 && el.minutes > 90 && Number(el.points_per_game) > 2, fill: '#ff00ff'}
+]
 
-function AppScatterPlot() {
+
+const separateByTeam = [
+    { label: "ARS",  filter: (el: any) => el.team_code == 3, fill: '#EF0107', code: 3 },
+    { label: "AVL", filter: (el:any) => el.team_code == 7, fill: '#670e36', code: 7 },
+    { label: "BOU", filter: (el:any) => el.team_code == 91, fill: '#DA291C', code: 91 },
+    { label: "BRE",  filter: (el: any) => el.team_code == 94, fill: '#EF0007', code: 94 },
+    { label: "BHA", filter: (el:any) => el.team_code == 36, fill: '#0057B8', code: 36 },
+    { label: "CHE", filter: (el:any) => el.team_code == 88, fill: '#034694', code: 88 },
+]
+
+function AppScatterPlot({ dataSeparation }: any) {
   const { data: bootstrap, isLoading, error } = useQuery({
     queryKey: ["bootstrap"],
     queryFn: async () => await getBootstrapFromStorage()
@@ -100,6 +55,7 @@ function AppScatterPlot() {
     queryKey: ["fixtures"],
     queryFn: async () => await getFixtures()
   });
+
   if (isLoading || isLoadingHist || isLoadingFixtures) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -115,7 +71,7 @@ function AppScatterPlot() {
     );
   }
 
-  const getElementsWithXP = () => bootstrap && bootstrapHist && bootstrap.elements.map((el: any) => {
+  const getElementsWithXP = () => bootstrap && bootstrapHist && bootstrap?.elements?.map((el: any) => {
     return {
         ...el, 
         xp: getExpectedPoints(
@@ -127,32 +83,33 @@ function AppScatterPlot() {
             bootstrapHist?.elements.find((elh: any) => elh.code == el.code),
           ),
     }
-  })
+  }) || []
   
   return (
-    <ScatterChart
-      width={700}
-      height={700}
-      margin={{
-        top: 20,
-        right: 20,
-        bottom: 10,
-        left: 10,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="points_per_game" type="number" name="Points per Game" unit="pts/game" />
-      <YAxis dataKey="xp" type="number" name="expected points" unit="xP" />
-      <ZAxis
-        dataKey="web_name"
-      />
-      <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-      <Legend />
-      <Scatter name="FWD" data={getElementsWithXP().filter((el: any) =>el.element_type == 4)} fill="#8884d8" />
-      <Scatter name="MID" data={getElementsWithXP().filter((el: any) =>el.element_type == 3)} fill="#82ca9d" />
-      <Scatter name="DEF" data={getElementsWithXP().filter((el: any) =>el.element_type == 2)} fill="#ff5b00" />
-      <Scatter name="GKP" data={getElementsWithXP().filter((el: any) =>el.element_type == 1)} fill="#ff00ff" />
-    </ScatterChart>
+    <ResponsiveContainer height="80%" width="100%">
+        <ScatterChart
+        width={700}
+        height={700}
+        margin={{
+            top: 20,
+            right: 20,
+            bottom: 10,
+            left: 10,
+        }}
+        >
+        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+        <XAxis dataKey="points_per_game" type="number" name="Points per Game" unit="pts/game" />
+        <YAxis dataKey="xp" type="number" name="expected points" unit="xP" />
+        
+        <Tooltip cursor={{ strokeDasharray: "3 3" }} />
+        <Legend />
+        {(dataSeparation || separateByPosition).map((obj: any) => (
+            <Scatter name={obj.label} data={getElementsWithXP().filter(obj.filter)} fill={obj.fill}>
+                <LabelList dataKey="web_name" position="right"/>
+            </Scatter>
+        ))}
+        </ScatterChart>
+    </ResponsiveContainer>
   );
 }
 
