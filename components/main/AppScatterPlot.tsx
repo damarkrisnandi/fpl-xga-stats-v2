@@ -81,7 +81,7 @@ function AppScatterPlot({ dataSeparation }: any) {
             fixtures,
             bootstrap?.teams,
             bootstrapHist?.elements.find((elh: any) => elh.code == el.code),
-          ),
+          ).toFixed(2),
     }
   }) || []
   
@@ -98,8 +98,8 @@ function AppScatterPlot({ dataSeparation }: any) {
         }}
         >
         {/* <CartesianGrid strokeDasharray="3 3" /> */}
-        <XAxis dataKey="points_per_game" type="number" name="Points per Game" unit="pts/game" />
-        <YAxis dataKey="xp" type="number" name="expected points" unit="xP" />
+        <XAxis dataKey="points_per_game" type="number" name="pts/game" unit="pts/game" />
+        <YAxis dataKey="xp" type="number" name="xP" unit="xP" />
         
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
         <Legend />
