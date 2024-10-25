@@ -86,7 +86,7 @@ function AppScatterPlot({ dataSeparation }: any) {
   }) || []
   
   return (
-    <ResponsiveContainer height="80%" width="100%" minHeight={500} minWidth={100}>
+    <ResponsiveContainer height="80%" width="100%" minHeight={300} minWidth={100}  aspect={1.0 / 1.0}>
         <ScatterChart
         width={700}
         height={700}
