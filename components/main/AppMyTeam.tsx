@@ -21,9 +21,10 @@ import {
   previousSeason,
 } from "@/utils/index";
 import { Button } from "../ui/button";
-import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
+import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Separator } from "@radix-ui/react-select";
+import AppTransferDialog from "./AppTransferDialog";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -313,6 +314,7 @@ const AppMyTeam = () => {
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
           <div className="w-full" key={index}>
+            
             {player.position == 12 && (
               <div className="w-full flex justify-center items-center my-2">
                 <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
@@ -322,9 +324,12 @@ const AppMyTeam = () => {
             )}
             <div className="w-full flex justify-between bg-slate-200">
               <div
-                className={`w-28 h-14 md:w-48 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
+                className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
-                {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null}
+                <div>
+                    <AppTransferDialog />
+                </div>
+                {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                 <div>
                   <p className="text-xs md:text-sm font-semibold">
                     {elementMapping(player.element).web_name}
@@ -356,6 +361,7 @@ const AppMyTeam = () => {
                     V
                   </div>
                 )}
+                
               </div>
               <div className="flex justify-end">
                 {currentFixtures(elementMapping(player.element))[0].started
