@@ -40,7 +40,7 @@ const separateByTeam = [
     { label: "CHE", filter: (el:any) => el.team_code == 88, fill: '#034694', code: 88 },
 ]
 
-function AppScatterPlot({ dataSeparation }: any) {
+function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
   const { data: bootstrap, isLoading, error } = useQuery({
     queryKey: ["bootstrap"],
     queryFn: async () => await getBootstrapFromStorage()
@@ -98,8 +98,8 @@ function AppScatterPlot({ dataSeparation }: any) {
         }}
         >
         {/* <CartesianGrid strokeDasharray="3 3" /> */}
-        <XAxis dataKey="points_per_game" type="number" name="pts/game" unit="pts/game" />
-        <YAxis dataKey="xp" type="number" name="xP" unit="xP" />
+        <XAxis {...dataX} />
+        <YAxis {...dataY} />
         
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
         <Legend />
