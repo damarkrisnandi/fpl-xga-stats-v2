@@ -24,7 +24,7 @@ export default function AppTransferDialog() {
         <DialogHeader>
           <DialogTitle>Make Transfer Hit</DialogTitle>
           <DialogDescription>
-            Click save when you're done.
+            Click save when you&apos;re done.
           </DialogDescription>
         </DialogHeader>
         <div className="w-full text-center">
