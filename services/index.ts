@@ -37,6 +37,13 @@ export function getManagerData(id: number | string) {
   // );
 }
 
+export function getManagerTransferData(id: number | string) {
+  return fromStorage(
+    `manager/${id}/transfers`,
+    `${API_URL}/manager/${id}/transfers`,
+  );
+}
+
 export function getPicksData(managerId: number | string, gameweek: number) {
   return fromStorage(
     `picks/${managerId}/${gameweek}`,

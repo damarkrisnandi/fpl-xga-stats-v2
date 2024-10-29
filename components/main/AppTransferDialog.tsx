@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp } from "lucide-react";
+import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, X, MoveUp } from "lucide-react";
 import {
     getExpectedPoints,
     optimizationProcess,
@@ -44,6 +44,8 @@ export default function AppTransferDialog({ player, picks}: any) {
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
   const [manager, setManager] = useState<any>(null);
+  const [filterName, setFilterName] = useState<string>('');
+  const [transferIn, setTransferIn] = useState<any>(null);
 
   const setDataPicks = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
@@ -120,6 +122,15 @@ export default function AppTransferDialog({ player, picks}: any) {
         });
       }
 
+      if (!manager) {
+        getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
+            (value: any) => {
+                setManager(value);
+                
+            }
+        );
+      }
+
     }
   }, [bootstrap, bootstrapHist, fixtures, manager]);
 
@@ -135,6 +146,14 @@ export default function AppTransferDialog({ player, picks}: any) {
   }
 
   if (!currentEvent) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <AppSpinner />
+      </div>
+    );
+  }
+
+  if (!manager) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -240,10 +259,56 @@ export default function AppTransferDialog({ player, picks}: any) {
                 />
             </div>
         </div>
+        <div className="w-full flex space-x-1">
+            <StatItem label="Bank" value={(player.now_cost / 10).toFixed(1)}/>
+            {
+                transferIn && (
+                    <div className="w-full flex justify-between bg-slate-200" key={player.id}>
+                    <div className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}>
+                        <Button className="bg-red-600 text-white text-xs w-6 h-6 p-0" onClick={() => { setTransferIn(null) }}>
+                            <X className="w-4 h-4" />
+                        </Button>
+                        <div>
+                            <p className="text-xs md:text-sm font-semibold">
+                            {transferIn.web_name}
+                            </p>
+                            <p className="text-xs font-light">
+                            {positionMapping(
+                                transferIn.element_type,
+                            )}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="flex justify-end">
+                        <StatItem label="COST" value={(transferIn.now_cost / 10).toFixed(1)}/>
+                        <AppNextFixtures
+                        teams={bootstrap?.teams}
+                        element={transferIn}
+                        nextFixtures={nextFixtures(transferIn)}
+                        />
+
+                        <AppExpectedPts
+                        element={transferIn}
+                        elementHist={bootstrapHist?.elements.find((elh: any) =>
+                            elh.code == transferIn.code
+                        )}
+                        currentEvent={currentEvent}
+                        deltaEvent={0}
+                        fixtures={fixtures}
+                        teams={bootstrap?.teams}
+                        multiplier={transferIn.multiplier}
+                        />
+                    </div>
+                </div>
+                )
+            }
+        </div>        
+        <Input type="text" placeholder="Find By Name" onChange={(evt) => {setFilterName(evt.target.value)}}/>
         <ScrollArea className="h-[300px] w-full rounded-md border p-4">
         {
             bootstrap?.elements
             .filter(({ element_type }: any) => player.element_type == element_type)
+            .filter(({ web_name }: any) => web_name.toLowerCase().startsWith(filterName.toLowerCase()))
             .toSorted(
                 (a: any, b: any) =>
                   b.total_points -
@@ -251,11 +316,12 @@ export default function AppTransferDialog({ player, picks}: any) {
               )
             .map((player: any) => (
                 <div className="w-full flex justify-between bg-slate-200" key={player.id}>
-                    <div className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200`}>
-                        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={picks.map((pick: any) => pick.element).includes(player.id)}>
-                            <ArrowDownUp className="w-4 h-4" />
+                    <div className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}>
+                        <Button className="bg-green-600 text-white text-xs w-6 h-6 p-0" disabled={picks.map((pick: any) => pick.element).includes(player.id)} 
+                        onClick={() => { setTransferIn(player) }}>
+                            <MoveUp className="w-4 h-4" />
                         </Button>
-                        <div className="relative w-6 h-6 md:w-12 md:h-12">
+                        {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
                             <Image
                             src={getTeamLogoUrl(player.team_code)}
                             fill={true}
@@ -263,7 +329,7 @@ export default function AppTransferDialog({ player, picks}: any) {
                             sizes="20"
                             alt={`t${player.team_code}`}
                             />
-                        </div>
+                        </div> */}
                         <div>
                             <p className="text-xs md:text-sm font-semibold">
                             {player.web_name}
