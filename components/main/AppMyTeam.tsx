@@ -329,9 +329,9 @@ const AppMyTeam = () => {
                 className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
                 <div>
-                    <AppTransferDialog />
+                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)}/>
                 </div>
-                <div className="relative w-6 h-6 md:w-12 md:h-12">
+                {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
                     src={getTeamLogoUrl(elementMapping(player.element).team_code)}
                     fill={true}
@@ -339,7 +339,7 @@ const AppMyTeam = () => {
                     sizes="20"
                     alt={`t${elementMapping(player.element).team_code}`}
                   />
-                </div>
+                </div> */}
                 {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                 <div>
                   <p className="text-xs md:text-sm font-semibold">
