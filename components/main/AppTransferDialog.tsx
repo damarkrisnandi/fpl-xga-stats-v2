@@ -38,78 +38,18 @@ import {
 import AppElements from "./AppElements";
 import { ScrollArea } from "../ui/scroll-area";
 
-export default function AppTransferDialog({ player }: any) {
+export default function AppTransferDialog({ player, picks}: any) {
     const [bootstrap, setBootstrap] = useState<any>(null);
   const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
   const [fixtures, setFixtures] = useState<any>([]);
-  const [picks, setPicks] = useState<any>(null);
-  const [optimizedPicks, setOptimizedPicks] = useState<any>([]);
   const [manager, setManager] = useState<any>(null);
 
-  const [isOptimize, setIsOptimize] = useState<boolean>(false);
-  const [dataView, setDataView] = useState<any>([]);
-  const elementMapping = (id: number) =>
-    bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
       (value: any) => {
         setManager(value);
-        if (!picks) {
-          if (value) {
-            getPicksData(value.id, currentEvent.id).then((pickData) => {
-              setPicks({
-                ...pickData,
-                picks: pickData.picks.map((pick: any) => {
-                  return {
-                    ...pick,
-                    surplus_xp_prev: elementMapping(pick.element).event_points -
-                      getExpectedPoints(
-                        elementMapping(pick.element),
-                        currentEvent.id,
-                        -1,
-                        fixtures,
-                        bootstrap?.teams,
-                        bootstrapHist?.elements.find((elh: any) =>
-                          elh.code == elementMapping(pick.element).code
-                        ),
-                      ),
-                    xp: getExpectedPoints(
-                      elementMapping(pick.element),
-                      currentEvent.id,
-                      0,
-                      fixtures,
-                      bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) =>
-                        elh.code == elementMapping(pick.element).code
-                      ),
-                    ),
-                  };
-                }),
-              });
-
-              setDataView(
-                pickData.picks.map((pick: any) => {
-                  return {
-                    ...pick,
-                    xp: getExpectedPoints(
-                      elementMapping(pick.element),
-                      currentEvent.id,
-                      0,
-                      fixtures,
-                      bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) =>
-                        elh.code == elementMapping(pick.element).code
-                      ),
-                    ),
-                  };
-                }),
-              );
-
-              setIsOptimize(false);
-            });
-          }
-        }
+        
       },
     );
   };
@@ -180,16 +120,8 @@ export default function AppTransferDialog({ player }: any) {
         });
       }
 
-      if (
-        currentEvent &&
-        !currentEvent.error &&
-        localStorage.getItem("manager_id_stored") &&
-        !manager
-      ) {
-        setDataPicks();
-      }
     }
-  }, [bootstrap, bootstrapHist, fixtures, manager, picks]);
+  }, [bootstrap, bootstrapHist, fixtures, manager]);
 
     // useEffect(() => {
     //     console.log('cekk', elements)
@@ -234,25 +166,8 @@ export default function AppTransferDialog({ player }: any) {
     );
   }
 
-  if (picks && picks.error) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppFailedToFetch />
-      </div>
-    );
-  }
-  const handleFindMyTeam = (event: any) => {
-    localStorage.setItem(`manager_id_stored`, event);
-    setTimeout(() => {
-      setDataPicks();
-    }, 300);
-  };
+  
 
-  const handleRemoveMyTeam = (event: any) => {
-    setManager(null);
-    setPicks(null);
-    setDataView([]);
-  };
 
   const nextFixtures = (element: any) =>
     fixtures.filter(
@@ -335,9 +250,9 @@ export default function AppTransferDialog({ player }: any) {
                   a.total_points,
               )
             .map((player: any) => (
-                <div className="w-full flex justify-between bg-slate-200">
+                <div className="w-full flex justify-between bg-slate-200" key={player.id}>
                     <div className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200`}>
-                        <Button className="bg-black text-white text-xs w-6 h-6 p-0" >
+                        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={picks.map((pick: any) => pick.element).includes(player.id)}>
                             <ArrowDownUp className="w-4 h-4" />
                         </Button>
                         <div className="relative w-6 h-6 md:w-12 md:h-12">

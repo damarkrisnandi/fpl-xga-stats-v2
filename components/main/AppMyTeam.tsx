@@ -329,7 +329,7 @@ const AppMyTeam = () => {
                 className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
                 <div>
-                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)}/>
+                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView}/>
                 </div>
                 {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
