@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp } from "lucide-react";
 
-export default function AppTransferDialog() {
+export default function AppTransferDialog({player, currentFixtures}: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
