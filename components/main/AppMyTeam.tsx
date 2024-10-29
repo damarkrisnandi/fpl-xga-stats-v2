@@ -19,12 +19,14 @@ import {
   optimizationProcess,
   positionMapping,
   previousSeason,
+  getTeamLogoUrl
 } from "@/utils/index";
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
+import Image from "next/image";
 
 const AppMyTeam = () => {
   const [bootstrap, setBootstrap] = useState<any>(null);
@@ -329,6 +331,15 @@ const AppMyTeam = () => {
                 <div>
                     <AppTransferDialog />
                 </div>
+                <div className="relative w-6 h-6 md:w-12 md:h-12">
+                  <Image
+                    src={getTeamLogoUrl(elementMapping(player.element).team_code)}
+                    fill={true}
+                    className="w-6 h-6 md:w-12 md:h-12"
+                    sizes="20"
+                    alt={`t${elementMapping(player.element).team_code}`}
+                  />
+                </div>
                 {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                 <div>
                   <p className="text-xs md:text-sm font-semibold">
@@ -345,19 +356,19 @@ const AppMyTeam = () => {
                   ? (
                     player.multiplier == 2
                       ? (
-                        <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
                           C
                         </div>
                       )
                       : (
-                        <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
                           C
                         </div>
                       )
                   )
                   : null}
                 {player.is_vice_captain && (
-                  <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                  <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
                     V
                   </div>
                 )}
