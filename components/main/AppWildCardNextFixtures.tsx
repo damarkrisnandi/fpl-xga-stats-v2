@@ -18,6 +18,7 @@ import {
   optimizationProcess,
   positionMapping,
   previousSeason,
+  getTeamLogoUrl
 } from "@/utils/index";
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
@@ -36,6 +37,7 @@ import {
   useQueries,
   useQuery,
 } from "@tanstack/react-query";
+import Image from 'next/image'
 
 const AppWildCardNextFixtures = () => {
   const queryClient = new QueryClient();
@@ -234,9 +236,18 @@ const AppWildCardNextFixtures = () => {
               )}
               <div className="w-full flex justify-between bg-slate-200">
                 <div
-                  className={`w-44 h-14 md:w-72 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
+                  className={`w-full h-14 md:w-72 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
                 >
-                  {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null}
+                  <div className="relative w-6 h-6 md:w-12 md:h-12">
+                  <Image
+                    src={getTeamLogoUrl(elementMapping(player.element).team_code)}
+                    fill={true}
+                    className="w-6 h-6 md:w-12 md:h-12"
+                    sizes="20"
+                    alt={`t${elementMapping(player.element).team_code}`}
+                  />
+                </div>
+                  {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                   <div>
                     <p className="text-xs md:text-sm font-semibold">
                       {elementMapping(player.element).web_name}
@@ -249,25 +260,25 @@ const AppWildCardNextFixtures = () => {
                     </p>
                   </div>
                   {player.is_captain
-                    ? (
-                      player.multiplier == 2
-                        ? (
-                          <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                            C
-                          </div>
-                        )
-                        : (
-                          <div className="h-6 w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                            C
-                          </div>
-                        )
-                    )
-                    : null}
-                  {player.is_vice_captain && (
-                    <div className="h-6 w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                      V
-                    </div>
-                  )}
+                  ? (
+                    player.multiplier == 2
+                      ? (
+                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                          C
+                        </div>
+                      )
+                      : (
+                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                          C
+                        </div>
+                      )
+                  )
+                  : null}
+                {player.is_vice_captain && (
+                  <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                    V
+                  </div>
+                )}
                 </div>
                 <div className="flex justify-end">
                   <StatItem
