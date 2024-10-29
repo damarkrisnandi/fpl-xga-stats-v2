@@ -183,7 +183,7 @@ export default function AppTransferDialog({ player, picks}: any) {
         (element.team == fix.team_h || element.team == fix.team_a),
     );
   return (
-    <Dialog className="min-w-full" >
+    <Dialog>
       <DialogTrigger asChild>
         <Button className="bg-black text-white text-xs w-6 h-6 p-0" >
             <ArrowDownUp className="w-4 h-4" />
