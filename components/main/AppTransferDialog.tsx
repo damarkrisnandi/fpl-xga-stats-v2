@@ -248,9 +248,9 @@ export default function AppTransferDialog({ player, picks}: any) {
         return transferFee;
     } 
   return (
-    <Dialog open={open} setOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white text-xs w-6 h-6 p-0"  onClick={() => { setOpen(true) }}>
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0"  >
             <ArrowDownUp className="w-4 h-4" />
         </Button>
       </DialogTrigger>
