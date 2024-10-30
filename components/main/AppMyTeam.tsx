@@ -252,7 +252,7 @@ const AppMyTeam = () => {
         (element.team == fix.team_h || element.team == fix.team_a),
     );
 
-  const onHitTransfer = ({element_out, element, transfer}: any) => {
+  const onHitTransfer = ({element_out, element, transfer, bank}: any) => {
     setTransferPlan([...transferPlan, {element_out, element, transfer}])
     // setDataPicks()
     setPicks({...picks, picks: picks.picks.map((dv: any) => {
