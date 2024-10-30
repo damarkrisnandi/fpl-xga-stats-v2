@@ -39,7 +39,7 @@ import {
 import AppElements from "./AppElements";
 import { ScrollArea } from "../ui/scroll-area";
 
-export default function AppTransferDialog({ player, picks, onHitTransfer }: any) {
+export default function AppTransferDialog({ player, picks, tempBank, onHitTransfer }: any) {
     const [bootstrap, setBootstrap] = useState<any>(null);
   const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -244,7 +244,7 @@ export default function AppTransferDialog({ player, picks, onHitTransfer }: any)
     } 
 
     const onSubmitTransfer = () => {
-        onHitTransfer({ element_out: player.id, element: transferIn.id, transfer: true });
+        onHitTransfer({ element_out: player.id, element: transferIn.id, transfer: true, bank: player.now_cost - setTransferFee(player) - (transferIn?.now_cost || 0)});
         setOpen(false);
     } 
   return (
@@ -306,7 +306,7 @@ export default function AppTransferDialog({ player, picks, onHitTransfer }: any)
             </div>
         </div>
         <div className="w-full flex space-x-1">
-            <StatItem label="Bank" value={((player.now_cost - setTransferFee(player) + manager.last_deadline_bank - (transferIn?.now_cost || 0)) / 10).toFixed(1)}/>
+            <StatItem label="Bank" value={((player.now_cost - setTransferFee(player) + tempBank - (transferIn?.now_cost || 0)) / 10).toFixed(1)}/>
             {
                 transferIn && (
                     <div className="w-full flex justify-between bg-slate-200" key={player.id}>

@@ -22,7 +22,7 @@ import {
   getTeamLogoUrl
 } from "@/utils/index";
 import { Button } from "../ui/button";
-import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft } from "lucide-react";
+import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft, X } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
@@ -47,7 +47,6 @@ const AppMyTeam = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
       (value: any) => {
         setManager(value);
-        setTempBank(manager.last_deadline_bank);
         if (!picks) {
           if (value) {
             getPicksData(value.id, currentEvent.id).then((pickData) => {
@@ -258,19 +257,45 @@ const AppMyTeam = () => {
     // setDataPicks()
     setPicks({...picks, picks: picks.picks.map((dv: any) => {
       if (dv.element === element_out) {
-        return {...dv, element_out, element, transfer}
+        return {...dv, element_out, element, transfer, bank}
       }
       return dv;
     })})
     setDataView(dataView.map((dv: any) => {
       if (dv.element === element_out) {
-        return {...dv, element_out, element, transfer}
+        return {...dv, element_out, element, transfer, bank}
       }
       return dv;
     }))
     
   } 
 
+  const onClearTransfer = async (player: any) => {
+    await setTransferPlan(transferPlan.filter((tp: any) => tp.element !== player.element))
+    // setDataPicks()
+    await setPicks({...picks, picks: picks.picks.map((dv: any) => {
+      if (dv.element === player.element) {
+        return {...dv, element: player.element_out, element_out: undefined, transfer: false}
+      }
+      return dv;
+    })})
+    setDataView(dataView.map((dv: any) => {
+      if (dv.element === player.element) {
+        return {...dv, element: player.element_out, element_out: undefined, transfer: false}
+      }
+      return dv;
+    }))
+
+  } 
+
+  const setValueTempBank = () => {
+    let manBank = manager.last_deadline_bank;
+    for (let tp of transferPlan) {
+      manBank += tp.bank;
+    }
+
+    return manBank
+  }
   return (
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam
@@ -353,7 +378,12 @@ const AppMyTeam = () => {
                 className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
                 <div>
-                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer}/>
+                  { !player.transfer ?
+                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer} tempBank={setValueTempBank()}/> :
+                    <Button className="bg-red-600 text-white text-xs w-6 h-6 p-0" onClick={() => { onClearTransfer(player) }}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  }
                 </div>
                 {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
