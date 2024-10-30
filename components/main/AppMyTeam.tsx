@@ -22,7 +22,7 @@ import {
   getTeamLogoUrl
 } from "@/utils/index";
 import { Button } from "../ui/button";
-import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp } from "lucide-react";
+import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
@@ -39,6 +39,7 @@ const AppMyTeam = () => {
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
+  const [transferPlan, setTransferPlan] = useState<any[]>([]);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
@@ -250,6 +251,24 @@ const AppMyTeam = () => {
         (element.team == fix.team_h || element.team == fix.team_a),
     );
 
+  const onHitTransfer = ({element_out, element, transfer}: any) => {
+    setTransferPlan([...transferPlan, {element_out, element, transfer}])
+    // setDataPicks()
+    setPicks({...picks, picks: picks.picks.map((dv: any) => {
+      if (dv.element === element_out) {
+        return {...dv, element_out, element, transfer}
+      }
+      return dv;
+    })})
+    setDataView(dataView.map((dv: any) => {
+      if (dv.element === element_out) {
+        return {...dv, element_out, element, transfer}
+      }
+      return dv;
+    }))
+    
+  } 
+
   return (
     <div className="w-11/12 md:w-5/12">
       <AppInputMyTeam
@@ -272,7 +291,10 @@ const AppMyTeam = () => {
                   currentEvent,
                   0,
                   picks,
-                ),
+                ).map((dv: any) => {
+                  const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
+                  return {...dv, ...transfer}
+                })
               );
               setIsOptimize(true);
             }}
@@ -329,7 +351,7 @@ const AppMyTeam = () => {
                 className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
                 <div>
-                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView}/>
+                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer}/>
                 </div>
                 {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
@@ -342,10 +364,18 @@ const AppMyTeam = () => {
                 </div> */}
                 {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                 <div>
-                  <p className="text-xs md:text-sm font-semibold">
-                    {elementMapping(player.element).web_name}
-                    {/* {positionMapping(elementMapping(player.element).element_type)} */}
-                  </p>
+                  <div>
+                    <p className="text-xs md:text-sm font-semibold">
+                      {elementMapping(player.element).web_name}
+                    </p>
+                    {
+                      player.transfer &&
+                      <div className="flex items-center space-x-1 text-xs md:text-sm">
+                        <ArrowRightLeft  className="w-3 h-3" />
+                        <p>{ elementMapping(player.element_out).web_name }</p>
+                      </div>
+                    }
+                  </div>
                   <p className="text-xs font-light">
                     {positionMapping(
                       elementMapping(player.element).element_type,

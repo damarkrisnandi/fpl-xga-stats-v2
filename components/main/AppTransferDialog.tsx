@@ -39,7 +39,7 @@ import {
 import AppElements from "./AppElements";
 import { ScrollArea } from "../ui/scroll-area";
 
-export default function AppTransferDialog({ player, picks}: any) {
+export default function AppTransferDialog({ player, picks, onHitTransfer }: any) {
     const [bootstrap, setBootstrap] = useState<any>(null);
   const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -242,6 +242,11 @@ export default function AppTransferDialog({ player, picks}: any) {
 
         return transferFee;
     } 
+
+    const onSubmitTransfer = () => {
+        onHitTransfer({ element_out: player.id, element: transferIn.id, transfer: true });
+        setOpen(false);
+    } 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -408,7 +413,7 @@ export default function AppTransferDialog({ player, picks}: any) {
         }
         </ScrollArea>
         <DialogFooter>
-          <Button type="submit" onClick={() => { setOpen(false) }}>Save changes</Button>
+          <Button type="submit" onClick={() => { onSubmitTransfer(); }}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
