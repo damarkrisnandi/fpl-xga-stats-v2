@@ -238,13 +238,11 @@ export default function AppTransferDialog({ player, picks}: any) {
             return 0
         }
         let transferFee = 0;
-        console.log(prevTransfer)
-        const lastValueOnBuy = prevTransfer.filter((t: any) => t.element_in == player.id)[0]?.element_in_cost || 0;
+        const lastValueOnBuy = prevTransfer.filter((t: any) => t.element_in == player.id)[0]?.element_in_cost || (player.now_cost - player.cost_change_start);
         if (player.now_cost > lastValueOnBuy) {
             transferFee = Math.floor((player.now_cost - lastValueOnBuy) / 2);
         }
 
-        console.log(player.web_name, player.now_cost, lastValueOnBuy);
         return transferFee;
     } 
   return (
@@ -353,7 +351,7 @@ export default function AppTransferDialog({ player, picks}: any) {
         <ScrollArea className="h-[300px] w-full rounded-md border p-4">
         {
             bootstrap?.elements
-            .filter(({ element_type }: any) => player.element_type == element_type)
+            .filter(({ element_type, id }: any) => player.id !== id && player.element_type == element_type)
             .filter(({ web_name }: any) => web_name.toLowerCase().startsWith(filterName.toLowerCase()))
             .toSorted(
                 (a: any, b: any) =>
