@@ -34,6 +34,7 @@ import {
   getFixtures,
   getManagerData,
   getPicksData,
+  getManagerTransferData
 } from "@/services/index";
 import AppElements from "./AppElements";
 import { ScrollArea } from "../ui/scroll-area";
@@ -45,7 +46,11 @@ export default function AppTransferDialog({ player, picks}: any) {
   const [fixtures, setFixtures] = useState<any>([]);
   const [manager, setManager] = useState<any>(null);
   const [filterName, setFilterName] = useState<string>('');
+  
   const [transferIn, setTransferIn] = useState<any>(null);
+  const [prevTransfer, setPrevTransfer] = useState<any[]>([]);
+
+  const [open, setOpen] = useState(false)
 
   const setDataPicks = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
@@ -131,8 +136,16 @@ export default function AppTransferDialog({ player, picks}: any) {
         );
       }
 
+      if (prevTransfer.length == 0) {
+        getManagerTransferData(localStorage.getItem("manager_id_stored") || 0).then(
+            (value: any) => {
+                setPrevTransfer(value);
+            }
+        )
+      }
+
     }
-  }, [bootstrap, bootstrapHist, fixtures, manager]);
+  }, [bootstrap, bootstrapHist, fixtures, manager, prevTransfer]);
 
     // useEffect(() => {
     //     console.log('cekk', elements)
@@ -140,7 +153,9 @@ export default function AppTransferDialog({ player, picks}: any) {
   if (!bootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
+            <ArrowDownUp className="w-4 h-4" />
+        </Button>
       </div>
     );
   }
@@ -148,7 +163,9 @@ export default function AppTransferDialog({ player, picks}: any) {
   if (!currentEvent) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
+            <ArrowDownUp className="w-4 h-4" />
+        </Button>
       </div>
     );
   }
@@ -156,7 +173,19 @@ export default function AppTransferDialog({ player, picks}: any) {
   if (!manager) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
+            <ArrowDownUp className="w-4 h-4" />
+        </Button>
+      </div>
+    );
+  }
+
+  if (prevTransfer.length == 0) {
+    return (
+      <div className="w-full flex justify-center items-center h-screen">
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
+            <ArrowDownUp className="w-4 h-4" />
+        </Button>
       </div>
     );
   }
@@ -172,7 +201,9 @@ export default function AppTransferDialog({ player, picks}: any) {
   if (!bootstrapHist) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
+            <ArrowDownUp className="w-4 h-4" />
+        </Button>
       </div>
     );
   }
@@ -201,10 +232,25 @@ export default function AppTransferDialog({ player, picks}: any) {
         fix.event == currentEvent.id &&
         (element.team == fix.team_h || element.team == fix.team_a),
     );
+
+    const setTransferFee = (player: any) => {
+        if (!prevTransfer) {
+            return 0
+        }
+        let transferFee = 0;
+        console.log(prevTransfer)
+        const lastValueOnBuy = prevTransfer.filter((t: any) => t.element_in == player.id)[0]?.element_in_cost || 0;
+        if (player.now_cost > lastValueOnBuy) {
+            transferFee = Math.floor((player.now_cost - lastValueOnBuy) / 2);
+        }
+
+        console.log(player.web_name, player.now_cost, lastValueOnBuy);
+        return transferFee;
+    } 
   return (
-    <Dialog>
+    <Dialog open={open} setOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white text-xs w-6 h-6 p-0" >
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0"  onClick={() => { setOpen(true) }}>
             <ArrowDownUp className="w-4 h-4" />
         </Button>
       </DialogTrigger>
@@ -239,7 +285,7 @@ export default function AppTransferDialog({ player, picks}: any) {
                 </div>
             </div>
             <div className="flex justify-end">
-                <StatItem label="COST" value={(player.now_cost / 10).toFixed(1)}/>
+                <StatItem label="COST" value={((player.now_cost - setTransferFee(player)) / 10).toFixed(1)}/>
                 <AppNextFixtures
                   teams={bootstrap?.teams}
                   element={player}
@@ -260,7 +306,7 @@ export default function AppTransferDialog({ player, picks}: any) {
             </div>
         </div>
         <div className="w-full flex space-x-1">
-            <StatItem label="Bank" value={(player.now_cost / 10).toFixed(1)}/>
+            <StatItem label="Bank" value={((player.now_cost - setTransferFee(player) + manager.last_deadline_bank - (transferIn?.now_cost || 0)) / 10).toFixed(1)}/>
             {
                 transferIn && (
                     <div className="w-full flex justify-between bg-slate-200" key={player.id}>
@@ -367,7 +413,7 @@ export default function AppTransferDialog({ player, picks}: any) {
         }
         </ScrollArea>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" onClick={() => { setOpen(false) }}>Save changes</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
