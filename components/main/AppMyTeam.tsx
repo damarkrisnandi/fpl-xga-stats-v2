@@ -253,7 +253,7 @@ const AppMyTeam = () => {
     );
 
   const onHitTransfer = ({element_out, element, transfer, bank}: any) => {
-    setTransferPlan([...transferPlan, {element_out, element, transfer}])
+    setTransferPlan([...transferPlan, {element_out, element, transfer, bank}])
     // setDataPicks()
     setPicks({...picks, picks: picks.picks.map((dv: any) => {
       if (dv.element === element_out) {
@@ -294,6 +294,7 @@ const AppMyTeam = () => {
       manBank += tp.bank;
     }
 
+    console.log(transferPlan, manBank)
     return manBank
   }
   return (
