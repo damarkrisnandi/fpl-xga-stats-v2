@@ -40,12 +40,14 @@ const AppMyTeam = () => {
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
   const [transferPlan, setTransferPlan] = useState<any[]>([]);
+  const [tempBank, setTempBank] = useState<number>(0);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
       (value: any) => {
         setManager(value);
+        setTempBank(manager.last_deadline_bank);
         if (!picks) {
           if (value) {
             getPicksData(value.id, currentEvent.id).then((pickData) => {
@@ -370,7 +372,7 @@ const AppMyTeam = () => {
                     </p>
                     {
                       player.transfer &&
-                      <div className="flex items-center space-x-1 text-xs md:text-sm">
+                      <div className="flex items-center space-x-1 text-xs md:text-sm text-red-400">
                         <ArrowRightLeft  className="w-3 h-3" />
                         <p>{ elementMapping(player.element_out).web_name }</p>
                       </div>
