@@ -245,7 +245,7 @@ export default function AppTransferDialog({ player, picks}: any) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-black text-white text-[0.5em] w-9 h-6 p-0"  >
+        <Button className="bg-black text-white text-xs w-6 h-6 p-0"  >
             <ArrowDownUp className="w-4 h-4" />
         </Button>
       </DialogTrigger>
