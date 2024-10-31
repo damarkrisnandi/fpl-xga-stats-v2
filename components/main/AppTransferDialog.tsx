@@ -349,7 +349,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
                 )
             }
         </div>        
-        <Input type="text" placeholder="Find By Name" onChange={(evt) => {setFilterName(evt.target.value)}}/>
+        {/* <Input type="text" placeholder="Find By Name" onChange={(evt) => {setFilterName(evt.target.value)}}/> */}
         <ScrollArea className="h-[300px] w-full rounded-md border p-4">
         {
             bootstrap?.elements

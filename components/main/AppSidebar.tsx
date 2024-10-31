@@ -25,7 +25,7 @@ const AppSideBar = () => {
                 asChild
                 variant={"ghost"}
                 className={`flex justify-start rounded-none ${
-                  pathname == "/" + submenu.id ? "font-semibold text-lg" : ""
+                  pathname == "/" + submenu.id ? "font-semibold text-md" : ""
                 }`}
                 key={index}
               >
@@ -34,7 +34,7 @@ const AppSideBar = () => {
                   passHref={false}
                   className="justify-start"
                 >
-                  <ChevronRightCircle className="w-4 h-4 mr-2" />
+                  <ChevronRightCircle className="w-4 h-4 mr-1" />
                   {submenu.name}
                 </Link>
               </Button>
