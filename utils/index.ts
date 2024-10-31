@@ -259,8 +259,8 @@ export const getExpectedPoints = (
     const awayOff = teamData.strength_attack_away;
     const awayDef = teamData.strength_defence_away;
 
-    const homeOvr = teamData.strength_overall_home;
-    const awayOvr = teamData.strength_overall_away;
+    // const homeOvr = teamData.strength_overall_home;
+    // const awayOvr = teamData.strength_overall_away;
 
     const homeOffOpp = opponentData.strength_attack_home;
     const homeDefOpp = opponentData.strength_defence_home;

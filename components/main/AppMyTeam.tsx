@@ -334,7 +334,7 @@ const AppMyTeam = () => {
             className="text-xs"
             variant={"outline"}
             disabled={!isOptimize}
-            onClick={(event: any) => {
+            onClick={() => {
               setDataView(picks.picks);
               setIsOptimize(false);
             }}
