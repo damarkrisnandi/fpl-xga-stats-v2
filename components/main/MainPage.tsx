@@ -14,6 +14,7 @@ import {
 } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import AppScatterPlot from "./AppScatterPlot";
+import useBootstrap from "@/hooks/use-bootstrap";
 
 const queryClient = new QueryClient();
 const MainPage = () => {
@@ -26,19 +27,16 @@ const MainPage = () => {
 
 export default MainPage;
 
-const MainPageContent = () => {
-  const { data: bootstrap, isLoading, error } = useQuery({
-    queryKey: ["bootstrap"],
-    queryFn: async () => await getBootstrapFromStorage(),
-  });
-  if (isLoading) {
+const MainPageContent = () => { 
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  if (isLoadingBootstrap) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppSpinner />
       </div>
     );
   }
-  if (error) {
+  if (errorBootstrap) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppFailedToFetch />

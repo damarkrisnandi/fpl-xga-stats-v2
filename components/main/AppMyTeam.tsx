@@ -8,7 +8,7 @@ import AppNextFixtures from "./AppNextFixtures";
 import { AppCurrentFixtures } from "./AppNextFixtures";
 import {
   getArchivedBootstrap,
-  getBootstrapFromStorage,
+  // getBootstrapFromStorage,
   getFixtures,
   getManagerData,
   getPicksData,
@@ -28,6 +28,7 @@ import { Badge } from "../ui/badge";
 import AppTransferDialog from "./AppTransferDialog";
 // import Image from "next/image";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import useBootstrap from "@/hooks/use-bootstrap";
 
 const queryClient = new QueryClient();
 const AppMyTeam = () => {
@@ -38,10 +39,7 @@ const AppMyTeam = () => {
   )
 }
 const AppMyTeamContent = () => {
-  const { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBootstrap } = useQuery({
-    queryKey: ["bootstrap"],
-    queryFn: async () => await getBootstrapFromStorage(),
-  });
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { data: bootstrapHist, isLoading: isLoadingBootstrapHist, error: errorBootstrapHist } = useQuery({
     queryKey: ["bootstrapHist"],
     queryFn: async () => await getArchivedBootstrap(previousSeason)
