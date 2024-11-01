@@ -24,23 +24,69 @@ import {
 import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft, X } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { Separator } from "@radix-ui/react-select";
+// import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
-import Image from "next/image";
+// import Image from "next/image";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 const AppMyTeam = () => {
-  const [bootstrap, setBootstrap] = useState<any>(null);
-  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [fixtures, setFixtures] = useState<any>([]);
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppMyTeamContent />
+    </QueryClientProvider>
+  )
+}
+const AppMyTeamContent = () => {
+  const { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBootstrap } = useQuery({
+    queryKey: ["bootstrap"],
+    queryFn: async () => await getBootstrapFromStorage(),
+  });
+  const { data: bootstrapHist, isLoading: isLoadingBootstrapHist, error: errorBootstrapHist } = useQuery({
+    queryKey: ["bootstrapHist"],
+    queryFn: async () => await getArchivedBootstrap(previousSeason)
+  });
+  const { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures } = useQuery({
+    queryKey: ["fixtures"],
+    queryFn: async () => await getFixtures()
+  });
+
+const {
+    data: currentEvent,
+    isLoading: isLoadingCurrentEvent,
+    isError: isErrorCurrentEvent,
+  } = useQuery({
+    queryKey: ["currentEvent"],
+    queryFn: () => {
+      const currentAndPreviousEvents = bootstrap.events.filter(
+        (event: any) =>
+          new Date(event.deadline_time).getTime() <= new Date().getTime(),
+      );
+
+      // const allNextEvents = bootstrap.events.filter(
+      //   (event: any) =>
+      //     new Date(event.deadline_time).getTime() > new Date().getTime(),
+      // )[0];
+
+      return currentAndPreviousEvents.length > 0
+        ? currentAndPreviousEvents.at(-1)
+        : { id: 0 };
+    },
+    enabled: !!bootstrap && !!bootstrapHist && !!fixtures,
+  });
+
+  // const [bootstrap, setBootstrap] = useState<any>(null);
+  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
+  // const [currentEvent, setCurrentEvent] = useState<any>(null);
+  // const [fixtures, setFixtures] = useState<any>([]);
   const [picks, setPicks] = useState<any>(null);
-  const [optimizedPicks, setOptimizedPicks] = useState<any>([]);
+  // const [optimizedPicks, setOptimizedPicks] = useState<any>([]);
   const [manager, setManager] = useState<any>(null);
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
   const [transferPlan, setTransferPlan] = useState<any[]>([]);
-  const [tempBank, setTempBank] = useState<number>(0);
+  // const [tempBank, setTempBank] = useState<number>(0);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
@@ -130,55 +176,19 @@ const AppMyTeam = () => {
   };
 
   useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((value: any) => {
-        setBootstrap(value);
-      });
-    }
-
-    if (!bootstrapHist) {
-      getArchivedBootstrap(previousSeason).then((value: any) => {
-        setBootstrapHist(value);
-      });
-    }
-
-    if (bootstrap && !bootstrap.error) {
-      const currentAndPreviousEvents = bootstrap.events
-        .filter(
-          (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime(),
-        );
-
-      const allNextEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime(),
-      )[0];
-
-      setCurrentEvent(
-        currentAndPreviousEvents.length > 0
-          ? currentAndPreviousEvents.at(-1)
-          : 0,
-      );
-
-      // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-
-      if (fixtures.length == 0) {
-        getFixtures().then((dataFixtures: any) => {
-          setFixtures(dataFixtures);
-        });
-      }
+    
+    if (bootstrap) { 
 
       if (
         currentEvent &&
-        !currentEvent.error &&
         localStorage.getItem("manager_id_stored") &&
         !manager
       ) {
         setDataPicks();
       }
     }
-  }, [bootstrap, bootstrapHist, fixtures, manager, picks]);
-  if (!bootstrap) {
+  }, [bootstrap, bootstrapHist, currentEvent, fixtures, manager, picks]);
+  if (isLoadingBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -186,7 +196,7 @@ const AppMyTeam = () => {
     );
   }
 
-  if (!currentEvent) {
+  if (isLoadingCurrentEvent) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -194,7 +204,7 @@ const AppMyTeam = () => {
     );
   }
 
-  if (bootstrap && bootstrap.error) {
+  if (errorBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -202,7 +212,7 @@ const AppMyTeam = () => {
     );
   }
 
-  if (!bootstrapHist) {
+  if (isLoadingBootstrapHist) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -210,7 +220,7 @@ const AppMyTeam = () => {
     );
   }
 
-  if (bootstrapHist && bootstrapHist.error) {
+  if (errorBootstrapHist) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -270,10 +280,10 @@ const AppMyTeam = () => {
     
   } 
 
-  const onClearTransfer = async (player: any) => {
-    await setTransferPlan(transferPlan.filter((tp: any) => tp.element !== player.element))
+  const onClearTransfer = (player: any) => {
+    setTransferPlan(transferPlan.filter((tp: any) => tp.element !== player.element))
     // setDataPicks()
-    await setPicks({...picks, picks: picks.picks.map((dv: any) => {
+    setPicks({...picks, picks: picks.picks.map((dv: any) => {
       if (dv.element === player.element) {
         return {...dv, element: player.element_out, element_out: undefined, transfer: false}
       }
@@ -294,7 +304,6 @@ const AppMyTeam = () => {
       manBank += tp.bank;
     }
 
-    console.log(transferPlan, manBank)
     return manBank
   }
   return (
