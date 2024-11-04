@@ -38,12 +38,17 @@ import {
 } from "@/services/index";
 import AppElements from "./AppElements";
 import { ScrollArea } from "../ui/scroll-area";
+import useBootstrap from "@/hooks/use-bootstrap"
+import useBootstrapHist from "@/hooks/use-bootstraphist"
+import useCurrentEvent from "@/hooks/use-currentevent"
+import useFixtures from "@/hooks/use-fixtures"
 
 export default function AppTransferDialog({ player, picks, tempBank, onHitTransfer }: any) {
-    const [bootstrap, setBootstrap] = useState<any>(null);
-  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [fixtures, setFixtures] = useState<any>([]);
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason });
+  const { currentEvent } = useCurrentEvent({ bootstrap });
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+  
   const [manager, setManager] = useState<any>(null);
   const [filterName, setFilterName] = useState<string>('');
   
@@ -85,45 +90,6 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
   };
 
   useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((value: any) => {
-        setBootstrap(value);
-        
-      });
-    }
-
-    if (!bootstrapHist) {
-      getArchivedBootstrap(previousSeason).then((value: any) => {
-        setBootstrapHist(value);
-      });
-    }
-
-    if (bootstrap && !bootstrap.error) {
-      const currentAndPreviousEvents = bootstrap.events
-        .filter(
-          (event: any) =>
-            new Date(event.deadline_time).getTime() <= new Date().getTime(),
-        );
-
-      const allNextEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime(),
-      )[0];
-
-      setCurrentEvent(
-        currentAndPreviousEvents.length > 0
-          ? currentAndPreviousEvents.at(-1)
-          : 0,
-      );
-
-      // setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-
-      if (fixtures.length == 0) {
-        getFixtures().then((dataFixtures: any) => {
-          setFixtures(dataFixtures);
-        });
-      }
-
       if (!manager) {
         getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
             (value: any) => {
@@ -141,13 +107,9 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
         )
       }
 
-    }
   }, [bootstrap, bootstrapHist, fixtures, manager, prevTransfer]);
 
-    // useEffect(() => {
-    //     console.log('cekk', elements)
-    // }, [elements])
-  if (!bootstrap) {
+  if (isLoadingBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
@@ -156,17 +118,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
       </div>
     );
   }
-
-  if (!currentEvent) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
-            <ArrowDownUp className="w-4 h-4" />
-        </Button>
-      </div>
-    );
-  }
-
+ 
   if (!manager) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -187,7 +139,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
     );
   }
 
-  if (bootstrap && bootstrap.error) {
+  if (errorBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -195,7 +147,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
     );
   }
 
-  if (!bootstrapHist) {
+  if (errorBootstrapHist) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
@@ -205,7 +157,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
     );
   }
 
-  if (bootstrapHist && bootstrapHist.error) {
+  if (errorFixtures) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
