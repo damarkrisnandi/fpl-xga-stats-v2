@@ -132,6 +132,7 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
     red_cards,
     goals_scored,
     assists,
+    starts,
   } = element;
   const indexPer90 = minutes > 0 ? (90 / minutes) : 0;
   const xYC = (yellow_cards * indexPer90) * -1;
@@ -177,8 +178,8 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
       xCS;
   }
 
-  xP += pMP + xOG;
-
+  xP += pMP + xOG + xYC + xRC;
+  xP *= (minutes / (90 * fixturesLen))
   return xP;
 };
 
