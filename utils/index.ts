@@ -179,7 +179,8 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
   }
 
   xP += pMP + xOG + xYC + xRC;
-  xP *= (minutes / (90 * fixturesLen))
+  const xMin = (minutes / (90 * fixturesLen))
+  xP *= (xMin > 0.5) ? 1 : xMin;
   return xP;
 };
 

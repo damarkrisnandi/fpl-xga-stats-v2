@@ -12,8 +12,6 @@ const useNextEvent = ({ bootstrap }: any) => {
         new Date(event.deadline_time).getTime() > new Date().getTime(),
     );
 
-console.log(allNextEvents);
-
     
     if (!nextEvent) {
       setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
