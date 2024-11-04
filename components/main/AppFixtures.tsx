@@ -28,71 +28,30 @@ import {
   useQueries,
   useQuery,
 } from "@tanstack/react-query";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useFixtures from "@/hooks/use-fixtures";
+import useCurrentEvent from "@/hooks/use-currentevent";
+import useNextEvent from "@/hooks/use-nextevent";
 
 const AppFixtures = (props: any) => {
   const queryClient = new QueryClient();
 
-  const [
-    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
-    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
-  ] = useQueries({
-    queries: [
-      {
-        queryKey: ["bootstrap"],
-        queryFn: async () => await getBootstrapFromStorage(),
-        staleTime: Infinity,
-      },
-      {
-        queryKey: ["fixtures"],
-        queryFn: async () => await getFixtures(),
-        staleTime: Infinity,
-      },
-    ],
-  });
-
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+ 
   const { teams, events, elements, element_stats } = bootstrap;
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [nextEvent, setNextEvent] = useState<any>(null);
+  const { currentEvent } = useCurrentEvent({ bootstrap });
+  const { nextEvent } = useNextEvent({ bootstrap });
 
   const getTeamShort = (code: number) => {
     return teams.find((team: any) => team.id === code)?.short_name || "";
-  };
-
-  const setAllEvent = () => {
-    const currentAndPreviousEvents = bootstrap.events
-      .filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() <= new Date().getTime(),
-      );
-
-    const allNextEvents = bootstrap.events.filter(
-      (event: any) =>
-        new Date(event.deadline_time).getTime() > new Date().getTime(),
-    )[0];
-
-    if (!currentEvent) {
-      setCurrentEvent(
-        currentAndPreviousEvents.length > 0
-          ? currentAndPreviousEvents.at(-1)
-          : 0,
-      );
-    }
-
-    if (!nextEvent) {
-      setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-      console.log(nextEvent);
-    }
-  };
-
-  useEffect(() => {
-    setAllEvent();
-  });
+  }; 
 
   if (isLoadingBootstrap || isLoadingFixtures) {
     return <SkeletonFixtures />;
   }
 
-  if (errorBoostrap || errorFixtures) {
+  if (errorBootstrap || errorFixtures) {
     return <AppFailedToFetch />;
   }
 

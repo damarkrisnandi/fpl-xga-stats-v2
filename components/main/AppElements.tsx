@@ -54,78 +54,25 @@ import {
   useQueries,
   useQuery,
 } from "@tanstack/react-query";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useFixtures from "@/hooks/use-fixtures";
+import useCurrentEvent from "@/hooks/use-currentevent";
+import useNextEvent from "@/hooks/use-nextevent";
 
 const AppElements = (props: any) => {
   const queryClient = new QueryClient();
-  const [
-    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
-    {
-      data: bootstrapHist,
-      isLoading: isLoadingBootstrapHist,
-      error: errorBoostrapHist,
-    },
-    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
-  ] = useQueries({
-    queries: [
-      {
-        queryKey: ["bootstrap"],
-        queryFn: async () => await getBootstrapFromStorage(),
-        staleTime: Infinity,
-      },
-      {
-        queryKey: ["bootstrapHist"],
-        queryFn: async () => await getArchivedBootstrap("2023-2024"),
-        staleTime: Infinity,
-      },
-      {
-        queryKey: ["fixtures"],
-        queryFn: async () => await getFixtures(),
-        staleTime: Infinity,
-      },
-    ],
-  });
-  // const { bootstrap } = props;
-  // const [bootstrap, setBootstrap] = useState<any>(null);
-  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [nextEvent, setNextEvent] = useState<any>(null);
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+
+  const { currentEvent } = useCurrentEvent({ bootstrap })   
+  const { nextEvent } = useNextEvent({ bootstrap });
   // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
   const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
 
-  const setAllEvent = () => {
-    const currentAndPreviousEvents = bootstrap.events
-      .filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() <= new Date().getTime(),
-      );
-
-    const allNextEvents = bootstrap.events.filter(
-      (event: any) =>
-        new Date(event.deadline_time).getTime() > new Date().getTime(),
-    )[0];
-
-    if (!currentEvent) {
-      setCurrentEvent(
-        currentAndPreviousEvents.length > 0
-          ? currentAndPreviousEvents.at(-1)
-          : 0,
-      );
-    }
-
-    if (!nextEvent) {
-      setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-    }
-  };
-
-  useEffect(() => {
-    // if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
-
-    // } else {
-    setAllEvent();
-    // }
-  }, []);
-
+  
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
     return (
       <Card className="w-11/12 md:w-5/12">
@@ -138,7 +85,7 @@ const AppElements = (props: any) => {
     );
   }
 
-  if (errorBoostrap || errorBoostrapHist || errorFixtures) {
+  if (errorBootstrap || errorBootstrapHist || errorFixtures) {
     return <AppFailedToFetch />;
   }
   return (

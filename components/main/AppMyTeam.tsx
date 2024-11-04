@@ -29,6 +29,9 @@ import AppTransferDialog from "./AppTransferDialog";
 // import Image from "next/image";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useFixtures from "@/hooks/use-fixtures";
+import useCurrentEvent from "@/hooks/use-currentevent";
 
 const queryClient = new QueryClient();
 const AppMyTeam = () => {
@@ -40,39 +43,10 @@ const AppMyTeam = () => {
 }
 const AppMyTeamContent = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
-  const { data: bootstrapHist, isLoading: isLoadingBootstrapHist, error: errorBootstrapHist } = useQuery({
-    queryKey: ["bootstrapHist"],
-    queryFn: async () => await getArchivedBootstrap(previousSeason)
-  });
-  const { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures } = useQuery({
-    queryKey: ["fixtures"],
-    queryFn: async () => await getFixtures()
-  });
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
 
-const {
-    data: currentEvent,
-    isLoading: isLoadingCurrentEvent,
-    isError: isErrorCurrentEvent,
-  } = useQuery({
-    queryKey: ["currentEvent"],
-    queryFn: () => {
-      const currentAndPreviousEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() <= new Date().getTime(),
-      );
-
-      // const allNextEvents = bootstrap.events.filter(
-      //   (event: any) =>
-      //     new Date(event.deadline_time).getTime() > new Date().getTime(),
-      // )[0];
-
-      return currentAndPreviousEvents.length > 0
-        ? currentAndPreviousEvents.at(-1)
-        : { id: 0 };
-    },
-    enabled: !!bootstrap && !!bootstrapHist && !!fixtures,
-  });
-
+  const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap }) 
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);

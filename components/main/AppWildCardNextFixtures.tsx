@@ -38,59 +38,17 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import Image from 'next/image'
+import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useFixtures from "@/hooks/use-fixtures";
+import useCurrentEvent from "@/hooks/use-currentevent";
 
 const AppWildCardNextFixtures = () => {
   const queryClient = new QueryClient();
-  const [
-    { data: bootstrap, isLoading: isLoadingBootstrap, error: errorBoostrap },
-    {
-      data: bootstrapHist,
-      isLoading: isLoadingBootstrapHist,
-      error: errorBoostrapHist,
-    },
-    { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures },
-  ] = useQueries({
-    queries: [
-      {
-        queryKey: ["bootstrap"],
-        queryFn: async () => await getBootstrapFromStorage(),
-        staleTime: Infinity,
-      },
-      {
-        queryKey: ["bootstrapHist"],
-        queryFn: async () => await getArchivedBootstrap("2023-2024"),
-        staleTime: Infinity,
-      },
-      {
-        queryKey: ["fixtures"],
-        queryFn: async () => await getFixtures(),
-        staleTime: Infinity,
-      },
-    ],
-  });
-  const {
-    data: currentEvent,
-    isLoading: isLoadingCurrentEvent,
-    isError: isErrorCurrentEvent,
-  } = useQuery({
-    queryKey: ["currentEvent"],
-    queryFn: () => {
-      const currentAndPreviousEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() <= new Date().getTime(),
-      );
-
-      const allNextEvents = bootstrap.events.filter(
-        (event: any) =>
-          new Date(event.deadline_time).getTime() > new Date().getTime(),
-      )[0];
-
-      return currentAndPreviousEvents.length > 0
-        ? currentAndPreviousEvents.at(-1)
-        : { id: 0 };
-    },
-    enabled: !!bootstrap && !!bootstrapHist && !!fixtures,
-  });
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+  const { currentEvent } = useCurrentEvent({ bootstrap }) 
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
@@ -148,7 +106,6 @@ const AppWildCardNextFixtures = () => {
     return total / 10;
   };
 
-  useEffect(() => {}, []);
   if (
     isLoadingBootstrap ||
     isLoadingBootstrapHist ||
@@ -170,7 +127,7 @@ const AppWildCardNextFixtures = () => {
     );
   }
 
-  if (errorBoostrap || errorBoostrapHist || errorFixtures || errorDataView) {
+  if (errorBootstrap || errorBootstrapHist || errorFixtures || errorDataView) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
