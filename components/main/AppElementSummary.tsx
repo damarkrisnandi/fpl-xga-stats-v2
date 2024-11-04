@@ -18,55 +18,41 @@ import AppFailedToFetch from "./AppFailedToFetch";
 import AppExpectedPts from "./AppExpectedPts";
 import { TriangleAlert } from "lucide-react";
 import AppNextFixtures from "./AppNextFixtures";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useCurrentEvent from "@/hooks/use-currentevent";
+import useNextEvent from "@/hooks/use-nextevent";
+import useFixtures from "@/hooks/use-fixtures";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 export const AppElementSummary = (props: any) => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AppElementSummaryContent {...props}/>
+    </QueryClientProvider>
+  )
+}
+const AppElementSummaryContent = (props: any) => {
+
   const { elementId } = props;
 
-  const [bootstrap, setBootstrap] = useState<any>(null);
-  const [bootstrapHist, setBootstrapHist] = useState<any>(null);
+  // const [bootstrap, setBootstrap] = useState<any>(null);
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason });
+  const { currentEvent } = useCurrentEvent({ bootstrap });
+  const { nextEvent } = useNextEvent({ bootstrap });
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures(); 
+  // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   const [elementSummary, setElementSummary] = useState<any>(null);
-  const [currentEvent, setCurrentEvent] = useState<any>(null);
-  const [nextEvent, setNextEvent] = useState<any>(null);
-  const [fixtures, setFixtures] = useState<any>([]);
+  // const [currentEvent, setCurrentEvent] = useState<any>(null);
+  // const [nextEvent, setNextEvent] = useState<any>(null);
+  // const [fixtures, setFixtures] = useState<any>([]);
 
   const elementMapping = () =>
     bootstrap.elements.find((el: any) => el.id == elementId);
-  useEffect(() => {
-    if (!bootstrap) {
-      getBootstrapFromStorage().then((value: any) => {
-        setBootstrap(value);
-        const currentAndPreviousEvents = value.events
-          .filter(
-            (event: any) =>
-              new Date(event.deadline_time).getTime() <= new Date().getTime(),
-          );
-
-        const allNextEvents = value.events.filter(
-          (event: any) =>
-            new Date(event.deadline_time).getTime() > new Date().getTime(),
-        )[0];
-
-        setCurrentEvent(
-          currentAndPreviousEvents.length > 0
-            ? currentAndPreviousEvents.at(-1)
-            : 0,
-        );
-
-        setNextEvent(allNextEvents.length > 0 ? allNextEvents[0] : 39);
-
-        if (fixtures.length == 0) {
-          getFixtures().then((data: any) => setFixtures(data));
-        }
-      });
-    }
-
-    if (!bootstrapHist) {
-      getArchivedBootstrap(previousSeason).then((value: any) => {
-        setBootstrapHist(value);
-      });
-    }
-  });
-
-  if (!bootstrap) {
+  
+  
+  if (isLoadingBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -74,7 +60,7 @@ export const AppElementSummary = (props: any) => {
     );
   }
 
-  if (bootstrap && bootstrap.error) {
+  if (errorBootstrap) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
