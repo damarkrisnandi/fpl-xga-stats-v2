@@ -22,6 +22,9 @@ import AppSpinner from "./AppSpinner";
 import AppFailedToFetch from "./AppFailedToFetch";
 import { getExpectedPoints, getTeamLogoUrl, previousSeason } from "@/utils";
 import Image from "next/image";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useFixtures from "@/hooks/use-fixtures";
 
 const separateByPosition = [
     // { label: "FWD",  filter: (el: any) => el.element_type == 4 && el.minutes > 90 && Number(el.points_per_game) > 5, fill: '#8884d8' },
@@ -41,29 +44,18 @@ const separateByTeam = [
 ]
 
 function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
-  const { data: bootstrap, isLoading, error } = useQuery({
-    queryKey: ["bootstrap"],
-    queryFn: async () => await getBootstrapFromStorage()
-  });
+  const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap(); 
+  const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason }) 
+  const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures() 
 
-  const { data: bootstrapHist, isLoading: isLoadingHist, error: errorHist } = useQuery({
-    queryKey: ["bootstrapHist"],
-    queryFn: async () => await getArchivedBootstrap(previousSeason)
-  });
-
-  const { data: fixtures, isLoading: isLoadingFixtures, error: errorFixtures } = useQuery({
-    queryKey: ["fixtures"],
-    queryFn: async () => await getFixtures()
-  });
-
-  if (isLoading || isLoadingHist || isLoadingFixtures) {
+  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppSpinner />
       </div>
     );
   }
-  if (error || errorHist || errorFixtures) {
+  if (errorBootstrap || errorBootstrapHist || errorFixtures) {
     return (
       <div className="flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -105,7 +97,7 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
         <Legend />
         {(dataSeparation || separateByPosition).map((obj: any) => (
             <Scatter key={obj.label} name={obj.label} data={getElementsWithXP().filter(obj.filter)} fill={obj.fill}>
-                <LabelList dataKey="web_name" position="right"/>
+                <LabelList dataKey="web_name" position="left"/>
             </Scatter>
         ))}
         </ScatterChart>
