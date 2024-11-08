@@ -476,8 +476,8 @@ const NewsContainer = (props: any) => {
 
 function showExpected(props: string, position: number) {
   const allowance: any = {
-    "xG": [2, 3, 4],
-    "xA": [2 ,3, 4],
+    "xG": [],
+    "xA": [],
     "xGC": [],
     "xP": [1, 2, 3, 4],
     "CS": [],
