@@ -355,12 +355,12 @@ function statsMapping(code: string, value?:any): any {
     clean_sheets: <IconShieldShaded />,
     goals_conceded: <IconClipboardXFill className="text-red-500" />,
     own_goals: <IconBallFootballOff className="text-red-500"/>,
-    penalties_saved: "PS",
-    penalties_missed: "PM",
+    penalties_saved: <IconPSFootball />,
+    penalties_missed: <IconPMFootball />,
     yellow_cards: <IconCard className="text-yellow-500"/>,
     red_cards: <IconCard className="text-red-500" />,
     saves: <IconHands />,
-    bonus: <IconTrophyAward />,
+    bonus: <IconTrophyAward bonus={value}/>,
     bps: "BPS",
   };
   return stats[code] || "";
@@ -378,6 +378,46 @@ function IconBxFootball(props: any) {
       <path d="M19.071 4.929a9.936 9.936 0 00-7.07-2.938 9.943 9.943 0 00-7.072 2.938c-3.899 3.898-3.899 10.243 0 14.142a9.94 9.94 0 007.073 2.938 9.936 9.936 0 007.07-2.937c3.899-3.898 3.899-10.243-.001-14.143zM12.181 4h-.359c.061-.001.119-.009.18-.009s.118.008.179.009zm6.062 13H16l-1.258 2.516a7.956 7.956 0 01-2.741.493 7.96 7.96 0 01-2.746-.494L8 17.01H5.765a7.96 7.96 0 01-1.623-3.532L6 11 4.784 8.567a7.936 7.936 0 011.559-2.224 7.994 7.994 0 013.22-1.969L12 6l2.438-1.625a8.01 8.01 0 013.22 1.968 7.94 7.94 0 011.558 2.221L18 11l1.858 2.478A7.952 7.952 0 0118.243 17z" />
       <path d="M8.5 11l1.5 4h4l1.5-4L12 8.5z" />
     </svg>
+  );
+}
+
+function IconPMFootball(props: any) {
+  return (
+    <span className="text-red-500 flex items-start">
+      <p className="text-[0.8em]">P</p>
+      <svg
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        viewBox="0 0 24 24"
+        height="1.5em"
+        width="1.5em"
+        {...props}
+      >
+        <path stroke="none" d="M0 0h24v24H0z" />
+        <path d="M20.041 16.046A9 9 0 007.957 3.956M5.634 5.639a9 9 0 0012.726 12.73" />
+        <path d="M12 7l4.755 3.455-.566 1.743-.98 3.014L15 16H9l-1.755-5.545 1.86-1.351 2.313-1.681zM12 7V3M15 16l2.5 3M16.755 10.455L20.5 9M9.061 16.045L6.5 19M7.245 10.455L3.5 9M3 3l18 18" />
+      </svg>
+    </span>
+  );
+}
+
+function IconPSFootball(props: any) {
+  return (
+    <span className="text-green-500 flex items-start">
+      <p className="text-[0.8em]">P</p>
+      <svg
+        viewBox="0 0 512 512"
+        fill="currentColor"
+        height="1.5em"
+        width="1.5em"
+        {...props}
+      >
+        <path d="M154.9 162c.3.7.7 1.5 1.1 2.2l17.8 30.9c11.1-12.6 27.4-19.8 44.4-19.1l-20.7-35.8c-6.6-11.5-21.3-15.4-32.8-8.8-10.8 6.2-14.9 19.5-9.9 30.6zm173.6 47C399.7 231.7 448 297.8 448 372.5c0 1.5 0 3-.1 4.5 39.7-25.6 64.1-69.7 64.1-117.4V136c0-13.3-10.7-24-24-24s-24 10.7-24 24v81.7L347.8 16.5C341.2 5 326.5 1.1 315.1 7.7s-15.4 21.3-8.8 32.8l64 110.9c2.2 3.8.9 8.7-2.9 10.9s-8.7.9-10.9-2.9l-80-138.6c-6.7-11.5-21.4-15.4-32.9-8.8s-15.4 21.3-8.8 32.8l80 138.6c2.2 3.8.9 8.7-2.9 10.9s-8.7.9-10.9-2.9L237 80.5c-6.6-11.5-21.3-15.4-32.8-8.8s-15.4 21.3-8.8 32.8l44 76.2 89.1 28.3zM64 488c0 12.4 9.4 22.6 21.5 23.9.8.1 1.6.1 2.5.1h208c66.3 0 120-53.7 120-120 0-1.2 0-2.4-.1-3.6 0-1.2.1-2.5.1-3.7 0-68-44-128.2-108.9-148.9l-83.9-26.7c-12.6-4-26.1 3-30.1 15.6s3 26.1 15.6 30.1l53.9 17.2H56c-13.3 0-24 10.7-24 24s10.7 24 24 24h128c4.4 0 8 3.6 8 8s-3.6 8-8 8H24c-13.3 0-24 10.7-24 24s10.7 24 24 24h160c4.4 0 8 3.6 8 8s-3.6 8-8 8H56c-13.3 0-24 10.7-24 24s10.7 24 24 24h128c4.4 0 8 3.6 8 8s-3.6 8-8 8H88c-13.3 0-24 10.7-24 24z" />
+      </svg>
+    </span>
   );
 }
 
@@ -497,15 +537,18 @@ function IconBxTimeFive(props: any) {
 
 function IconTrophyAward(props: any) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      height="1em"
-      width="1em"
-      {...props}
-    >
-      <path d="M15.2 10.7l1.4 5.3-4.6-3.8L7.4 16l1.4-5.2-4.2-3.5L10 7l2-5 2 5 5.4.3-4.2 3.4M14 19h-1v-3l-1-1-1 1v3h-1c-1.1 0-2 .9-2 2v1h8v-1a2 2 0 00-2-2z" />
-    </svg>
+    <span className="text-yellow-500 flex items-start">
+      <p className="text-[0.8em]">{props?.bonus}</p>
+      <svg
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        height="1em"
+        width="1em"
+        {...props}
+      >
+        <path d="M15.2 10.7l1.4 5.3-4.6-3.8L7.4 16l1.4-5.2-4.2-3.5L10 7l2-5 2 5 5.4.3-4.2 3.4M14 19h-1v-3l-1-1-1 1v3h-1c-1.1 0-2 .9-2 2v1h8v-1a2 2 0 00-2-2z" />
+      </svg>
+    </span>
   );
 }
 
