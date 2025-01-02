@@ -1,29 +1,19 @@
 "use client";
-import { useEffect, useState } from "react";
-import AppInputMyTeam from "./AppInputMyTeam";
+import { useState } from "react";
 import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
 import {
-  getArchivedBootstrap,
-  getBootstrapFromStorage,
-  getFixtures,
-  getManagerData,
-  getPicksData,
-} from "@/services/index";
-
-import {
-  getExpectedPoints,
   optimizationProcess,
   positionMapping,
   previousSeason,
   getTeamLogoUrl
 } from "@/utils/index";
-import { Button } from "../ui/button";
+// import { Button } from "../ui/button";
 import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
 import { Badge } from "../ui/badge";
-import { Separator } from "@radix-ui/react-select";
+// import { Separator } from "@radix-ui/react-select";
 import {
   Card,
   CardContent,
@@ -44,7 +34,6 @@ import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
 
 const AppWildCardNextFixtures = () => {
-  const queryClient = new QueryClient();
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
@@ -56,7 +45,6 @@ const AppWildCardNextFixtures = () => {
 
   const {
     data: dataView,
-    isLoading: isLoadingDataView,
     error: errorDataView,
   } = useQuery({
     queryKey: ["dataView"],

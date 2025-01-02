@@ -24,22 +24,23 @@ import useCurrentEvent from "@/hooks/use-currentevent";
 import useNextEvent from "@/hooks/use-nextevent";
 import useFixtures from "@/hooks/use-fixtures";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-const queryClient = new QueryClient();
-export const AppElementSummary = (props: any) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AppElementSummaryContent {...props}/>
-    </QueryClientProvider>
-  )
-}
+import withQueryClientProvider from "../react-query/MainProvider";
+
+const AppElementSummaryWithProvider = (props: any) => {
+  return (<AppElementSummaryContent {...props}/>);
+};
+
+const AppElementSummary = withQueryClientProvider(AppElementSummaryWithProvider);
+
 const AppElementSummaryContent = (props: any) => {
 
+  console.log('cek props', props);
   const { elementId } = props;
 
   // const [bootstrap, setBootstrap] = useState<any>(null);
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason });
-  const { currentEvent } = useCurrentEvent({ bootstrap });
+  const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap });
   const { nextEvent } = useNextEvent({ bootstrap });
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures(); 
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
@@ -52,7 +53,10 @@ const AppElementSummaryContent = (props: any) => {
     bootstrap.elements.find((el: any) => el.id == elementId);
   
   
-  if (isLoadingBootstrap) {
+  const isLoading = isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingCurrentEvent;
+  const error = errorBootstrap || errorBootstrapHist || errorFixtures || errorCurrentEvent;
+
+  if (isLoading) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -60,18 +64,10 @@ const AppElementSummaryContent = (props: any) => {
     );
   }
 
-  if (errorBootstrap) {
+  if (error) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
-      </div>
-    );
-  }
-
-  if (!currentEvent) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
       </div>
     );
   }

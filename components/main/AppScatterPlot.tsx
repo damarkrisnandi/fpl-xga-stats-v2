@@ -78,7 +78,7 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
   }) || []
   
   return (
-    <ResponsiveContainer height="80%" width="100%" minHeight={300} minWidth={100}  aspect={1.0 / 1.0}>
+    <ResponsiveContainer height="100%" width="100%" minHeight={300} minWidth={100}  aspect={1.0 / 1.0}>
         <ScatterChart
         width={700}
         height={700}
@@ -90,8 +90,8 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
         }}
         >
         {/* <CartesianGrid strokeDasharray="3 3" /> */}
-        <XAxis {...dataX} />
-        <YAxis {...dataY} />
+        <XAxis {...dataX} domain={[0, 12]}/>
+        <YAxis {...dataY} domain={[0, 12]}/>
         
         <Tooltip cursor={{ strokeDasharray: "3 3" }} />
         <Legend />

@@ -27,20 +27,19 @@ import { Badge } from "../ui/badge";
 // import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
 // import Image from "next/image";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+// import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import useBootstrap from "@/hooks/use-bootstrap";
 import useBootstrapHist from "@/hooks/use-bootstraphist";
 import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
+import withQueryClientProvider from "../react-query/MainProvider";
 
-const queryClient = new QueryClient();
-const AppMyTeam = () => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AppMyTeamContent />
-    </QueryClientProvider>
-  )
-}
+const AppMyTeamWithProvider = () => {
+  return (<AppMyTeamContent />);
+};
+
+const AppMyTeam = withQueryClientProvider(AppMyTeamWithProvider);
+
 const AppMyTeamContent = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })

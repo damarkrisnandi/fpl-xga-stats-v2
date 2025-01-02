@@ -1,18 +1,17 @@
 'use client'
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+// import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import AppScatterPlot from "./AppScatterPlot";
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import withQueryClientProvider from "../react-query/MainProvider";
 
-const queryClient = new QueryClient();
-const AppDataViz = () => {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <DataVizContent />
-        </QueryClientProvider>
-    )
-}
+
+const AppDataVizWithProvider = () => {
+    return (<DataVizContent />);
+  };
+  
+  const AppDataViz = withQueryClientProvider(AppDataVizWithProvider);
 
 const dataXPpg = { dataKey: "points_per_game", type: "number", name: "pts/game", unit: "pts/game" };
 const dataXCurr = { dataKey: "event_points", type: "number", name: "Event Points", unit: "Pts" };

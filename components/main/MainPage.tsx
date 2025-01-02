@@ -15,16 +15,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import AppScatterPlot from "./AppScatterPlot";
 import useBootstrap from "@/hooks/use-bootstrap";
+import withQueryClientProvider from "../react-query/MainProvider";
 
-const queryClient = new QueryClient();
-const MainPage = () => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <MainPageContent />
-    </QueryClientProvider>
-  );
+
+const MainPageWithProvider = () => {
+  return (<MainPageContent />);
 };
 
+const MainPage = withQueryClientProvider(MainPageWithProvider);
 export default MainPage;
 
 const MainPageContent = () => { 
