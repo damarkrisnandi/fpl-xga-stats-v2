@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import AppScatterPlot from "./AppScatterPlot";
 import useBootstrap from "@/hooks/use-bootstrap";
 import withQueryClientProvider from "../react-query/MainProvider";
+import { Button } from "../ui/button";
 
 
 const MainPageWithProvider = () => {
@@ -68,6 +69,10 @@ const MainPageContent = () => {
         elements={bootstrap?.elements}
         element_stats={bootstrap?.element_stats}
       />
+
+      <div>
+        <Button variant="outline" onClick={() => localStorage.clear()}>Clear Storage</Button>
+      </div>
     </div>
   );
 };
