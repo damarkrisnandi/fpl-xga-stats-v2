@@ -42,18 +42,20 @@ import useBootstrap from "@/hooks/use-bootstrap"
 import useBootstrapHist from "@/hooks/use-bootstraphist"
 import useCurrentEvent from "@/hooks/use-currentevent"
 import useFixtures from "@/hooks/use-fixtures"
+import useTransfers from "@/hooks/use-transfers"
 
 export default function AppTransferDialog({ player, picks, tempBank, onHitTransfer }: any) {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason });
   const { currentEvent } = useCurrentEvent({ bootstrap });
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+  const { transfers: prevTransfer, isLoadingTransfers, errorTransfers } = useTransfers({ managerId: localStorage.getItem("manager_id_stored") || 0 });
   
   const [manager, setManager] = useState<any>(null);
   const [filterName, setFilterName] = useState<string>('');
   
   const [transferIn, setTransferIn] = useState<any>(null);
-  const [prevTransfer, setPrevTransfer] = useState<any[]>([]);
+  // const [prevTransfer, setPrevTransfer] = useState<any[]>([]);
 
   const [open, setOpen] = useState(false)
 
@@ -99,17 +101,17 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
         );
       }
 
-      if (prevTransfer.length == 0) {
-        getManagerTransferData(localStorage.getItem("manager_id_stored") || 0).then(
-            (value: any) => {
-                setPrevTransfer(value);
-            }
-        )
-      }
+      // if (prevTransfer.length == 0) {
+      //   getManagerTransferData(localStorage.getItem("manager_id_stored") || 0).then(
+      //       (value: any) => {
+      //           setPrevTransfer(value);
+      //       }
+      //   )
+      // }
 
   }, [bootstrap, bootstrapHist, fixtures, manager, prevTransfer]);
 
-  if (isLoadingBootstrap) {
+  if (isLoadingBootstrap || isLoadingTransfers) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
@@ -120,16 +122,6 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
   }
  
   if (!manager) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
-            <ArrowDownUp className="w-4 h-4" />
-        </Button>
-      </div>
-    );
-  }
-
-  if (prevTransfer.length == 0) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <Button className="bg-black text-white text-xs w-6 h-6 p-0" disabled={true}>
