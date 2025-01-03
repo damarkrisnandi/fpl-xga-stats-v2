@@ -708,3 +708,23 @@ const createVariables = (
       .filter(filterCat)
       .map((e: any) => [`player_${e.id}`, e]),
   );
+
+
+  export const getLocalStorageUsagePercentage = () => {
+    // Step 1: Calculate the total size of data stored in localStorage
+    let totalSize = 0;
+    for (let key in localStorage) {
+      if (localStorage.hasOwnProperty(key)) {
+        totalSize += (localStorage.getItem(key)?.length || 0) + key.length;
+      }
+    }
+
+    // Step 2: Define the maximum capacity of localStorage (in bytes)
+    // The maximum capacity of localStorage is typically around 5MB (5 * 1024 * 1024 bytes)
+    const maxCapacity = 5 * 1024 * 1024;
+
+    // Step 3: Calculate the usage percentage
+    const usagePercentage = (totalSize / maxCapacity) * 100;
+
+    return usagePercentage;
+  };

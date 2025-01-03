@@ -17,6 +17,8 @@ import AppScatterPlot from "./AppScatterPlot";
 import useBootstrap from "@/hooks/use-bootstrap";
 import withQueryClientProvider from "../react-query/MainProvider";
 import { Button } from "../ui/button";
+import { Progress } from "../ui/progress";
+import { getLocalStorageUsagePercentage } from "@/utils";
 
 
 const MainPageWithProvider = () => {
@@ -27,7 +29,17 @@ const MainPage = withQueryClientProvider(MainPageWithProvider);
 export default MainPage;
 
 const MainPageContent = () => { 
+  const [storageUsage, setStorageUsage] = useState<number>(0);
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
+  useEffect(() => {
+    setStorageUsage(getLocalStorageUsagePercentage());
+  })
+
+  const handleClearStorage = () => {
+    localStorage.clear();
+    setStorageUsage(getLocalStorageUsagePercentage());
+    window.location.reload();
+  };
   if (isLoadingBootstrap) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -70,8 +82,10 @@ const MainPageContent = () => {
         element_stats={bootstrap?.element_stats}
       />
 
-      <div>
-        <Button variant="outline" onClick={() => localStorage.clear()}>Clear Storage</Button>
+      <div className="flex flex-col space-y-1 justify-center items-center w-11/12 md:w-5/12 mb-2">
+        <p className="text-xs">storage usage</p>
+        <Progress  value={storageUsage}/>
+        <Button variant="outline" onClick={handleClearStorage}>Clear Storage &amp; Refresh</Button>
       </div>
     </div>
   );
