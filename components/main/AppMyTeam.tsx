@@ -76,7 +76,7 @@ const AppMyTeamContent = () => {
                       getExpectedPoints(
                         elementMapping(pick.element),
                         currentEvent.id,
-                        -1,
+                        0,
                         fixtures,
                         bootstrap?.teams,
                         bootstrapHist?.elements.find((elh: any) =>
@@ -86,7 +86,7 @@ const AppMyTeamContent = () => {
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
                       currentEvent.id,
-                      0,
+                      1,
                       fixtures,
                       bootstrap?.teams,
                       bootstrapHist?.elements.find((elh: any) =>
@@ -104,7 +104,7 @@ const AppMyTeamContent = () => {
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
                       currentEvent.id,
-                      0,
+                      1,
                       fixtures,
                       bootstrap?.teams,
                       bootstrapHist?.elements.find((elh: any) =>
@@ -447,7 +447,7 @@ const AppMyTeamContent = () => {
                         getExpectedPoints(
                           elementMapping(player.element),
                           currentEvent.id,
-                          -1,
+                          0,
                           fixtures,
                           bootstrap?.teams,
                           bootstrapHist?.elements.find((elh: any) =>
@@ -461,7 +461,7 @@ const AppMyTeamContent = () => {
                               getExpectedPoints(
                                 elementMapping(player.element),
                                 currentEvent.id,
-                                -1,
+                                0,
                                 fixtures,
                                 bootstrap?.teams,
                                 bootstrapHist?.elements.find((elh: any) =>
@@ -479,7 +479,7 @@ const AppMyTeamContent = () => {
                                 getExpectedPoints(
                                   elementMapping(player.element),
                                   currentEvent.id,
-                                  -1,
+                                  0,
                                   fixtures,
                                   bootstrap?.teams,
                                   bootstrapHist?.elements.find((elh: any) =>
@@ -515,7 +515,7 @@ const AppMyTeamContent = () => {
                     elh.code == elementMapping(player.element).code
                   )}
                   currentEvent={currentEvent}
-                  deltaEvent={0}
+                  deltaEvent={1}
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={player.multiplier}
