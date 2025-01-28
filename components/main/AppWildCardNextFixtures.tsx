@@ -247,7 +247,7 @@ const AppWildCardNextFixtures = () => {
                         elh.code == elementMapping(player.element).code,
                     )}
                     currentEvent={currentEvent}
-                    deltaEvent={0}
+                    deltaEvent={1}
                     fixtures={fixtures}
                     teams={bootstrap?.teams}
                     multiplier={player.multiplier}
