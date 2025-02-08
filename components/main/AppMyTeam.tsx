@@ -515,7 +515,7 @@ const AppMyTeamContent = () => {
                     elh.code == elementMapping(player.element).code
                   )}
                   currentEvent={currentEvent}
-                  deltaEvent={1}
+                  deltaEvent={0}
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={player.multiplier}
