@@ -8,6 +8,7 @@ const useCurrentEvent = ({ bootstrap }: any) => {
   } = useQuery({
     queryKey: ["currentEvent"],
     queryFn: () => {
+      
       const currentAndPreviousEvents = bootstrap.events.filter(
         (event: any) =>
           new Date(event.deadline_time).getTime() <= new Date().getTime(),

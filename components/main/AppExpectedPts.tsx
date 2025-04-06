@@ -78,6 +78,7 @@ const AppExpectedPts = (props: any) => {
     fixtures,
     teams,
     multiplier,
+    last5
   } = props;
   const [xPoints, setXPoints] = useState<any>(0);
 
@@ -90,6 +91,7 @@ const AppExpectedPts = (props: any) => {
         fixtures,
         teams,
         elementHist,
+        last5
       ),
     );
   }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist]);

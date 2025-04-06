@@ -1,5 +1,33 @@
 import { solve } from "yalps";
 
+
+type LiveStat = {
+  assists: number
+  bonus: number
+  bps: number
+  clean_sheets: number
+  creativity: string
+  expected_assists: string;
+  expected_goal_involvements: string;
+  expected_goals: string;
+  expected_goals_conceded: string;
+  goals_conceded: number
+  goals_scored: number
+  ict_index: string
+  in_dreamteam: boolean
+  influence: string
+  minutes: number
+  own_goals: number
+  penalties_missed: number
+  penalties_saved: number
+  red_cards: number
+  saves: number
+  starts: number
+  threat: string
+  total_points: number
+  yellow_cards: number
+}
+
 export const leaguesData = [];
 
 export const menuTree = [
@@ -184,6 +212,170 @@ const calculateBaseExpected = (element: any, fixturesLen: number) => {
   return xP;
 };
 
+const calculateBaseExpectedLast5 = (baseEl: any, stat5: { elements: {id: number, stats: LiveStat}[] }[] | null | undefined, fixturesLen: number) => {
+  let xP5 = 0;
+  let match = 0
+
+  if (!stat5) return 0;
+
+  for (let live of stat5.filter((el: any) => el.elements.find((e: any) => e.id === baseEl.id))) {
+    match++;
+    let xP = 0
+  const {
+    element_type,
+    
+  } = baseEl;
+
+  const {
+    // element_type,
+    bonus,
+    // expected_goals_per_90,
+    // expected_assists_per_90,
+    // starts_per_90,
+    // clean_sheets_per_90,
+    own_goals,
+    // expected_goals_conceded_per_90,
+    saves,
+    minutes,
+    bps,
+    yellow_cards,
+    red_cards,
+    goals_scored,
+    assists,
+    starts,
+    expected_goals,
+    expected_assists,
+    expected_goals_conceded,
+    clean_sheets
+  } = live.elements.find((el: any) => el.id === baseEl.id)?.stats || {} as LiveStat;
+
+  const indexPer90 = minutes / 90 //minutes > 0 ? (90 / minutes) : 0;
+  const xYC = (yellow_cards * indexPer90) * -1;
+  const xRC = (red_cards * indexPer90) * -2;
+  const pMP = starts >= 0.67 ? 2 : starts == 0 ? 0 : 1;
+  const xOG = (own_goals * indexPer90) * -1;
+  const goalp90 = goals_scored * indexPer90;
+  const assistp90 = assists * indexPer90;
+  if (element_type === 4) {
+    const xPG = ((Number(expected_goals) + goalp90) / 2) * 4;
+    const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
+    xP = xPG + xPA;
+  }
+  if (element_type === 3) {
+    const xPG = ((Number(expected_goals) + goalp90) / 2) * 5;
+    const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
+    const xCS = clean_sheets >= 0.67 ? clean_sheets : 0;
+    const xGC = Math.floor(Number(expected_goals_conceded) / 2) * -1;
+    xP = xPG + xPA + xGC + xCS;
+  }
+  if (element_type === 2) {
+    const xPG = ((Number(expected_goals) + goalp90) / 2) * 6;
+    const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
+    const xCS = starts >= 0.67
+      ? (clean_sheets >= 0.67 ? (4 * clean_sheets) : 0)
+      : 0;
+    const xGC = Math.floor(Number(expected_goals_conceded) / 2) * -1;
+    xP = xPG + xPA + xGC + xCS;
+  }
+
+  if (element_type === 1) {
+    const xPG = ((Number(expected_goals) + goalp90) / 2) * 10;
+    const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
+    const xCS = starts >= 0.67
+      ? (clean_sheets >= 0.67 ? (4 * clean_sheets) : 0)
+      : 0;
+    const xGC = Math.floor(Number(expected_goals_conceded) / 2) * -1;
+    const xSaves = Math.floor((saves * indexPer90) / 3);
+    xP = xPG +
+      xPA +
+      xGC +
+      xSaves +
+      xCS;
+  }
+
+  
+  xP += pMP + xOG + xYC + xRC;
+  const xMin = (minutes / (90 * fixturesLen))
+  // xP *= (xMin > 0.5) ? 1 : xMin;
+  
+  xP5 += xP;
+  }
+  
+  return xP5 / match;
+  
+}
+
+const getHomeAwayIndex = (
+  element: any,
+  teamData: any,
+  opponentData: any,
+  isHome: boolean,
+) => {
+  let haIdxValue = 1;
+
+  const homeOff = teamData.strength_attack_home;
+  const homeDef = teamData.strength_defence_home;
+  const awayOff = teamData.strength_attack_away;
+  const awayDef = teamData.strength_defence_away;
+
+  // const homeOvr = teamData.strength_overall_home;
+  // const awayOvr = teamData.strength_overall_away;
+
+  const homeOffOpp = opponentData.strength_attack_home;
+  const homeDefOpp = opponentData.strength_defence_home;
+  const awayOffOpp = opponentData.strength_attack_away;
+  const awayDefOpp = opponentData.strength_defence_away;
+
+  const homeOvrOpp = opponentData.strength_overall_home;
+  const awayOvrOpp = opponentData.strength_overall_away;
+
+  if (isHome) {
+    switch (element.element_type) {
+      case 4:
+        haIdxValue = (1 * (homeOff - awayDefOpp)) / awayOvrOpp +
+          (0 * (homeDef - awayOffOpp)) / awayOvrOpp;
+        break;
+      case 3:
+        haIdxValue = ((8 / 9) * (homeOff - awayDefOpp)) / awayOvrOpp +
+          ((1 / 9) * (homeDef - awayOffOpp)) / awayOvrOpp;
+        break;
+      case 2:
+        haIdxValue = ((9 / 15) * (homeOff - awayDefOpp)) / awayOvrOpp +
+          ((6 / 15) * (homeDef - awayOffOpp)) / awayOvrOpp;
+        break;
+      case 1:
+        haIdxValue = (0 * (homeOff - awayDefOpp)) / awayOvrOpp +
+          (1 * (homeDef - awayOffOpp)) / awayOvrOpp;
+        break;
+      default:
+        break;
+    }
+  } else {
+    switch (element.element_type) {
+      case 4:
+        haIdxValue = (1 * (awayOff - homeDefOpp)) / homeOvrOpp +
+          (0 * (awayDef - homeOffOpp)) / homeOvrOpp;
+        break;
+      case 3:
+        haIdxValue = ((8 / 9) * (awayOff - homeDefOpp)) / homeOvrOpp +
+          ((1 / 9) * (awayDef - homeOffOpp)) / homeOvrOpp;
+        break;
+      case 2:
+        haIdxValue = ((9 / 15) * (awayOff - homeDefOpp)) / homeOvrOpp +
+          ((6 / 15) * (awayDef - homeOffOpp)) / homeOvrOpp;
+        break;
+      case 1:
+        haIdxValue = (0 * (awayOff - homeDefOpp)) / homeOvrOpp +
+          (1 * (awayDef - homeOffOpp)) / homeOvrOpp;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return haIdxValue;
+};
+
 export const getExpectedPoints = (
   element: any,
   currentGameWeek: number,
@@ -191,6 +383,7 @@ export const getExpectedPoints = (
   fixtures: any,
   teams: any,
   elementHistory?: any,
+  last5?: { elements: {id: number, stats: LiveStat}[] }[] | undefined | null
 ) => {
   let gameWeek = currentGameWeek + deltaEvent;
 
@@ -205,10 +398,15 @@ export const getExpectedPoints = (
   const filteredFixtures = fixtures.filter(
     (fix: any) =>
       (element.team == fix.team_h || element.team == fix.team_a) &&
-      fix.event <= gameWeek,
+      fix.event <= gameWeek - 1,
   );
 
-  xP = calculateBaseExpected(element, filteredFixtures.length);
+  if (last5) {
+    xP = calculateBaseExpectedLast5(element, last5, 3);
+  } else {
+    xP = calculateBaseExpected(element, filteredFixtures.length);
+  }
+  
 
   let xPHistory = 0;
   if (elementHistory) {
@@ -247,77 +445,6 @@ export const getExpectedPoints = (
   );
 
   let totalXP = 0;
-
-  const getHomeAwayIndex = (
-    element: any,
-    teamData: any,
-    opponentData: any,
-    isHome: boolean,
-  ) => {
-    let haIdxValue = 1;
-
-    const homeOff = teamData.strength_attack_home;
-    const homeDef = teamData.strength_defence_home;
-    const awayOff = teamData.strength_attack_away;
-    const awayDef = teamData.strength_defence_away;
-
-    // const homeOvr = teamData.strength_overall_home;
-    // const awayOvr = teamData.strength_overall_away;
-
-    const homeOffOpp = opponentData.strength_attack_home;
-    const homeDefOpp = opponentData.strength_defence_home;
-    const awayOffOpp = opponentData.strength_attack_away;
-    const awayDefOpp = opponentData.strength_defence_away;
-
-    const homeOvrOpp = opponentData.strength_overall_home;
-    const awayOvrOpp = opponentData.strength_overall_away;
-
-    if (isHome) {
-      switch (element.element_type) {
-        case 4:
-          haIdxValue = (1 * (homeOff - awayDefOpp)) / awayOvrOpp +
-            (0 * (homeDef - awayOffOpp)) / awayOvrOpp;
-          break;
-        case 3:
-          haIdxValue = ((8 / 9) * (homeOff - awayDefOpp)) / awayOvrOpp +
-            ((1 / 9) * (homeDef - awayOffOpp)) / awayOvrOpp;
-          break;
-        case 2:
-          haIdxValue = ((9 / 15) * (homeOff - awayDefOpp)) / awayOvrOpp +
-            ((6 / 15) * (homeDef - awayOffOpp)) / awayOvrOpp;
-          break;
-        case 1:
-          haIdxValue = (0 * (homeOff - awayDefOpp)) / awayOvrOpp +
-            (1 * (homeDef - awayOffOpp)) / awayOvrOpp;
-          break;
-        default:
-          break;
-      }
-    } else {
-      switch (element.element_type) {
-        case 4:
-          haIdxValue = (1 * (awayOff - homeDefOpp)) / homeOvrOpp +
-            (0 * (awayDef - homeOffOpp)) / homeOvrOpp;
-          break;
-        case 3:
-          haIdxValue = ((8 / 9) * (awayOff - homeDefOpp)) / homeOvrOpp +
-            ((1 / 9) * (awayDef - homeOffOpp)) / homeOvrOpp;
-          break;
-        case 2:
-          haIdxValue = ((9 / 15) * (awayOff - homeDefOpp)) / homeOvrOpp +
-            ((6 / 15) * (awayDef - homeOffOpp)) / homeOvrOpp;
-          break;
-        case 1:
-          haIdxValue = (0 * (awayOff - homeDefOpp)) / homeOvrOpp +
-            (1 * (awayDef - homeOffOpp)) / homeOvrOpp;
-          break;
-        default:
-          break;
-      }
-    }
-
-    return haIdxValue;
-  };
 
   for (let fixture of filteredfixturesByGameweek) {
     if (element.team == fixture.team_h) {
@@ -522,6 +649,7 @@ export const optimizationProcess = (
   currentEvent: any,
   deltaEvent: number,
   picksData?: any,
+  last5?: any
 ) => {
   try {
     let picksData1;
@@ -581,6 +709,7 @@ export const optimizationProcess = (
               elementsHistory.find((eh: any) =>
                 elements.find((el: any) => el.id == p.element).code == eh.code
               ),
+              last5
             ),
           };
         })
@@ -611,6 +740,7 @@ export const optimizationProcess = (
               elements.find((el: any) => el.id == Number(v[0].split("_")[1]))
                 .code == eh.code
             ),
+            last5
           ),
         };
       }),

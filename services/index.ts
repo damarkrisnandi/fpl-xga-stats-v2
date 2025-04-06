@@ -9,7 +9,8 @@ export async function getBootstrap() {
 }
 
 export function getBootstrapFromStorage() {
-  return fromStorage("boostrap-static", `${API_URL}/bootstrap-static`, 7);
+  return getBootstrap() 
+  // return fromStorage("boostrap-static", `${API_URL}/bootstrap-static`, 7);
 }
 
 export function getFixtures() {
@@ -84,10 +85,11 @@ export function getArchivedLeague(
 }
 
 async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
-  // storageSizeCheck();
+  // console.log('test encode decode', '{"name": "damar", "id"}', lzw_encode('abcdefgh'), lzw_decode(lzw_encode('abcdefgh')))
+  storageSizeCheck();
   clearStorage(key, holdTime);
   if (localStorage.getItem(key)) {
-    return JSON.parse(localStorage.getItem(key) as string);
+    return JSON.parse(lzw_decode(localStorage.getItem(key) || '') as string);
   } else {
     const response = await fetch(urlFetch).then((res) =>
       res.ok ? res.json() : { error: true }
@@ -95,14 +97,14 @@ async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
       return { error: true };
     });
     if (response && !response.error) {
-      localStorage.setItem(key, JSON.stringify(response));
+      localStorage.setItem(key, lzw_encode(JSON.stringify(response)));
     } else {
       localStorage.removeItem(key);
       localStorage.removeItem(`expired_data_storage:${key}`);
       return { error: true };
     }
   }
-  return JSON.parse(localStorage.getItem(key) as string);
+  return JSON.parse(lzw_decode(localStorage.getItem(key) || '') as string);
 }
 
 function clearStorage(key: string, holdTime?: number) {
@@ -194,4 +196,57 @@ function storageSizeCheck() {
       ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
     css,
   );
+}
+
+function lzw_encode(s: string) {
+  var dict: any = {};
+  var data = (s + "").split("");
+  var out = [];
+  var currChar;
+  var phrase = data[0];
+  var code = 256;
+  for (var i=1; i<data.length; i++) {
+      currChar=data[i];
+      if (dict[phrase + currChar] != null) {
+          phrase += currChar;
+      }
+      else {
+          out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+          dict[phrase + currChar] = code;
+          code++;
+          phrase=currChar;
+      }
+  }
+  out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+  for (var i=0; i<out.length; i++) {
+      out[i] = String.fromCharCode(out[i]);
+  }
+  return out.join("");
+}
+
+// Decompress an LZW-encoded string
+function lzw_decode(s: string) {
+  if (s.length === 0) return "{}";
+  var dict: any = {};
+  var data = (s + "").split("");
+  var currChar = data[0];
+  var oldPhrase = currChar;
+  var out = [currChar];
+  var code = 256;
+  var phrase;
+  for (var i=1; i<data.length; i++) {
+      var currCode = data[i].charCodeAt(0);
+      if (currCode < 256) {
+          phrase = data[i];
+      }
+      else {
+         phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+      }
+      out.push(phrase);
+      currChar = phrase.charAt(0);
+      dict[code] = oldPhrase + currChar;
+      code++;
+      oldPhrase = phrase;
+  }
+  return out.join("");
 }

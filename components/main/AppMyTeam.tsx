@@ -33,6 +33,7 @@ import useBootstrapHist from "@/hooks/use-bootstraphist";
 import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
 import withQueryClientProvider from "../react-query/MainProvider";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const AppMyTeamWithProvider = () => {
   return (<AppMyTeamContent />);
@@ -44,8 +45,11 @@ const AppMyTeamContent = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
+  
 
   const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap }) 
+
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -82,6 +86,7 @@ const AppMyTeamContent = () => {
                         bootstrapHist?.elements.find((elh: any) =>
                           elh.code == elementMapping(pick.element).code
                         ),
+                        last5 as any
                       ),
                     xp: getExpectedPoints(
                       elementMapping(pick.element),
@@ -92,6 +97,7 @@ const AppMyTeamContent = () => {
                       bootstrapHist?.elements.find((elh: any) =>
                         elh.code == elementMapping(pick.element).code
                       ),
+                      last5 as any
                     ),
                   };
                 }),
@@ -110,6 +116,7 @@ const AppMyTeamContent = () => {
                       bootstrapHist?.elements.find((elh: any) =>
                         elh.code == elementMapping(pick.element).code
                       ),
+                      last5
                     ),
                   };
                 }),
@@ -159,7 +166,7 @@ const AppMyTeamContent = () => {
       }
     }
   }, [bootstrap, bootstrapHist, currentEvent, fixtures, manager, picks]);
-  if (isLoadingBootstrap) {
+  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -167,15 +174,15 @@ const AppMyTeamContent = () => {
     );
   }
 
-  if (isLoadingCurrentEvent) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
-      </div>
-    );
-  }
+  // if (isLoadingCurrentEvent) {
+  //   return (
+  //     <div className="w-full flex justify-center items-center h-screen">
+  //       <AppSpinner />
+  //     </div>
+  //   );
+  // }
 
-  if (errorBootstrap) {
+  if (errorBootstrap || errorBootstrapHist || errorCurrentEvent || errorFixtures || errorLast5) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -183,21 +190,21 @@ const AppMyTeamContent = () => {
     );
   }
 
-  if (isLoadingBootstrapHist) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppSpinner />
-      </div>
-    );
-  }
+  // if (isLoadingBootstrapHist) {
+  //   return (
+  //     <div className="w-full flex justify-center items-center h-screen">
+  //       <AppSpinner />
+  //     </div>
+  //   );
+  // }
 
-  if (errorBootstrapHist) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppFailedToFetch />
-      </div>
-    );
-  }
+  // if (errorBootstrapHist) {
+  //   return (
+  //     <div className="w-full flex justify-center items-center h-screen">
+  //       <AppFailedToFetch />
+  //     </div>
+  //   );
+  // }
 
   if (picks && picks.error) {
     return (
@@ -299,6 +306,7 @@ const AppMyTeamContent = () => {
                   currentEvent,
                   0,
                   picks,
+                  last5
                 ).map((dv: any) => {
                   const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
                   return {...dv, ...transfer}
@@ -436,6 +444,7 @@ const AppMyTeamContent = () => {
                       fixtures={fixtures}
                       teams={bootstrap?.teams}
                       multiplier={player.multiplier}
+                      last5={last5 as any}
                     />
                   )}
                 {currentFixtures(elementMapping(player.element))[0].started
@@ -453,6 +462,7 @@ const AppMyTeamContent = () => {
                           bootstrapHist?.elements.find((elh: any) =>
                             elh.code == elementMapping(player.element).code
                           ),
+                          last5
                         )
                       ).toFixed(2)}
                       className={`
@@ -468,6 +478,7 @@ const AppMyTeamContent = () => {
                                   elh.code ==
                                     elementMapping(player.element).code
                                 ),
+                                last5
                               ) >
                             0
                           ? "bg-green-200 text-green-700"
@@ -486,6 +497,7 @@ const AppMyTeamContent = () => {
                                     elh.code ==
                                       elementMapping(player.element).code
                                   ),
+                                  last5 as any
                                 ) <
                             0
                           ? "bg-red-200 text-red-700"
@@ -519,6 +531,7 @@ const AppMyTeamContent = () => {
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={player.multiplier}
+                  last5={last5 as any}
                 />
               </div>
             </div>

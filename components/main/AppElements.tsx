@@ -366,7 +366,7 @@ const PlayerCardStats = (props: any) => {
                   getExpectedPoints(
                     element,
                     currentEvent?.id,
-                    -1,
+                    0,
                     fixtures,
                     teams,
                   )).toFixed(2)}
@@ -376,7 +376,7 @@ const PlayerCardStats = (props: any) => {
                       getExpectedPoints(
                         element,
                         currentEvent?.id,
-                        -1,
+                        0,
                         fixtures,
                         teams,
                       )) > 0
@@ -389,7 +389,7 @@ const PlayerCardStats = (props: any) => {
                         getExpectedPoints(
                           element,
                           currentEvent.id,
-                          -1,
+                          0,
                           fixtures,
                           teams,
                         )) < 0

@@ -69,7 +69,7 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
         xp: getExpectedPoints(
             el,
             bootstrap?.events.find((evt: any) => evt.is_current)?.id,
-            0,
+            1,
             fixtures,
             bootstrap?.teams,
             bootstrapHist?.elements.find((elh: any) => elh.code == el.code),

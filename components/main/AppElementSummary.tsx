@@ -149,7 +149,7 @@ const AppElementSummaryContent = (props: any) => {
                     getExpectedPoints(
                       elementMapping(),
                       currentEvent.id,
-                      -1,
+                      0,
                       fixtures,
                       bootstrap?.teams,
                     )
@@ -160,7 +160,7 @@ const AppElementSummaryContent = (props: any) => {
                           getExpectedPoints(
                             elementMapping(),
                             currentEvent.id,
-                            -1,
+                            0,
                             fixtures,
                             bootstrap?.teams,
                           ) >
@@ -174,7 +174,7 @@ const AppElementSummaryContent = (props: any) => {
                             getExpectedPoints(
                               elementMapping(),
                               currentEvent.id,
-                              -1,
+                              0,
                               fixtures,
                               bootstrap?.teams,
                             ) <
