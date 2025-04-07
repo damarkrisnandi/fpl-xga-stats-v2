@@ -94,7 +94,7 @@ const AppExpectedPts = (props: any) => {
         last5
       ),
     );
-  }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist]);
+  }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist, last5]);
 
   if (xPoints < 2) {
     return (

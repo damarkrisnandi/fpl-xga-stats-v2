@@ -49,7 +49,7 @@ const AppMyTeamContent = () => {
 
   const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap }) 
 
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 10 });
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -61,6 +61,18 @@ const AppMyTeamContent = () => {
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
   const [transferPlan, setTransferPlan] = useState<any[]>([]);
+
+  const getXPByElement = (element: any, delta: number) => getExpectedPoints(
+    elementMapping(element),
+    currentEvent.id,
+    delta,
+    fixtures,
+    bootstrap?.teams,
+    bootstrapHist?.elements.find((elh: any) =>
+      elh.code == elementMapping(element).code
+    ),
+    last5 as any
+  )
   // const [tempBank, setTempBank] = useState<number>(0);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
@@ -76,29 +88,8 @@ const AppMyTeamContent = () => {
                 picks: pickData.picks.map((pick: any) => {
                   return {
                     ...pick,
-                    surplus_xp_prev: elementMapping(pick.element).event_points -
-                      getExpectedPoints(
-                        elementMapping(pick.element),
-                        currentEvent.id,
-                        0,
-                        fixtures,
-                        bootstrap?.teams,
-                        bootstrapHist?.elements.find((elh: any) =>
-                          elh.code == elementMapping(pick.element).code
-                        ),
-                        last5 as any
-                      ),
-                    xp: getExpectedPoints(
-                      elementMapping(pick.element),
-                      currentEvent.id,
-                      1,
-                      fixtures,
-                      bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) =>
-                        elh.code == elementMapping(pick.element).code
-                      ),
-                      last5 as any
-                    ),
+                    surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+                    xp: getXPByElement(pick.element, 1),
                   };
                 }),
               });
@@ -107,17 +98,7 @@ const AppMyTeamContent = () => {
                 pickData.picks.map((pick: any) => {
                   return {
                     ...pick,
-                    xp: getExpectedPoints(
-                      elementMapping(pick.element),
-                      currentEvent.id,
-                      1,
-                      fixtures,
-                      bootstrap?.teams,
-                      bootstrapHist?.elements.find((elh: any) =>
-                        elh.code == elementMapping(pick.element).code
-                      ),
-                      last5
-                    ),
+                    xp: getXPByElement(pick.element, 1),
                   };
                 }),
               );
@@ -129,6 +110,7 @@ const AppMyTeamContent = () => {
       },
     );
   };
+
   const totalXp = (picksData: any) => {
     if (!picksData || picksData.length == 0) {
       return 0;
@@ -136,7 +118,10 @@ const AppMyTeamContent = () => {
     let total = 0;
     for (let pick of picksData) {
       total += pick.xp * pick.multiplier;
+      console.log(pick, pick.xp * pick.multiplier, '>>', total, '+++', )
     }
+
+    console.log(total)
 
     return total;
   };
@@ -165,7 +150,7 @@ const AppMyTeamContent = () => {
         setDataPicks();
       }
     }
-  }, [bootstrap, bootstrapHist, currentEvent, fixtures, manager, picks]);
+  }, [bootstrap, bootstrapHist, currentEvent, fixtures, manager, picks, last5]);
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -174,13 +159,6 @@ const AppMyTeamContent = () => {
     );
   }
 
-  // if (isLoadingCurrentEvent) {
-  //   return (
-  //     <div className="w-full flex justify-center items-center h-screen">
-  //       <AppSpinner />
-  //     </div>
-  //   );
-  // }
 
   if (errorBootstrap || errorBootstrapHist || errorCurrentEvent || errorFixtures || errorLast5) {
     return (
@@ -189,22 +167,6 @@ const AppMyTeamContent = () => {
       </div>
     );
   }
-
-  // if (isLoadingBootstrapHist) {
-  //   return (
-  //     <div className="w-full flex justify-center items-center h-screen">
-  //       <AppSpinner />
-  //     </div>
-  //   );
-  // }
-
-  // if (errorBootstrapHist) {
-  //   return (
-  //     <div className="w-full flex justify-center items-center h-screen">
-  //       <AppFailedToFetch />
-  //     </div>
-  //   );
-  // }
 
   if (picks && picks.error) {
     return (
@@ -304,7 +266,7 @@ const AppMyTeamContent = () => {
                   fixtures,
                   bootstrap.teams,
                   currentEvent,
-                  0,
+                  1,
                   picks,
                   last5
                 ).map((dv: any) => {
@@ -430,7 +392,7 @@ const AppMyTeamContent = () => {
                   ? (
                     <StatItem
                       label={`GW${currentEvent.id}`}
-                      value={elementMapping(player.element).event_points}
+                      value={elementMapping(player.element)?.event_points || 0}
                     />
                   )
                   : (
@@ -440,65 +402,34 @@ const AppMyTeamContent = () => {
                         elh.code == elementMapping(player.element).code
                       )}
                       currentEvent={currentEvent}
-                      deltaEvent={-1}
+                      deltaEvent={0}
                       fixtures={fixtures}
                       teams={bootstrap?.teams}
                       multiplier={player.multiplier}
                       last5={last5 as any}
                     />
                   )}
+                  {/* GW onprogress */}
                 {currentFixtures(elementMapping(player.element))[0].started
                   ? (
                     <StatItem
                       label={`P${currentEvent.id}-xP${currentEvent.id}`}
                       value={(
-                        elementMapping(player.element).event_points -
-                        getExpectedPoints(
-                          elementMapping(player.element),
-                          currentEvent.id,
-                          0,
-                          fixtures,
-                          bootstrap?.teams,
-                          bootstrapHist?.elements.find((elh: any) =>
-                            elh.code == elementMapping(player.element).code
-                          ),
-                          last5
-                        )
+                        (elementMapping(player.element)?.event_points || 0) -
+                        getXPByElement(player.element, 0)
                       ).toFixed(2)}
                       className={`
                   ${
-                        elementMapping(player.element).event_points -
-                              getExpectedPoints(
-                                elementMapping(player.element),
-                                currentEvent.id,
-                                0,
-                                fixtures,
-                                bootstrap?.teams,
-                                bootstrapHist?.elements.find((elh: any) =>
-                                  elh.code ==
-                                    elementMapping(player.element).code
-                                ),
-                                last5
-                              ) >
+                        (elementMapping(player.element)?.event_points || 0) -
+                        getXPByElement(player.element, 0) >
                             0
                           ? "bg-green-200 text-green-700"
                           : ""
                       }
                   ${
                         elementMapping(player.element).event_points == 0 ||
-                          elementMapping(player.element).event_points -
-                                getExpectedPoints(
-                                  elementMapping(player.element),
-                                  currentEvent.id,
-                                  0,
-                                  fixtures,
-                                  bootstrap?.teams,
-                                  bootstrapHist?.elements.find((elh: any) =>
-                                    elh.code ==
-                                      elementMapping(player.element).code
-                                  ),
-                                  last5 as any
-                                ) <
+                          (elementMapping(player.element)?.event_points || 0) -
+                          getXPByElement(player.element, 1) <
                             0
                           ? "bg-red-200 text-red-700"
                           : ""
@@ -527,7 +458,7 @@ const AppMyTeamContent = () => {
                     elh.code == elementMapping(player.element).code
                   )}
                   currentEvent={currentEvent}
-                  deltaEvent={0}
+                  deltaEvent={1}
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={player.multiplier}

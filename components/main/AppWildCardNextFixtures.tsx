@@ -32,12 +32,14 @@ import useBootstrap from "@/hooks/use-bootstrap";
 import useBootstrapHist from "@/hooks/use-bootstraphist";
 import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const AppWildCardNextFixtures = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
   const { currentEvent } = useCurrentEvent({ bootstrap }) 
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 10 });
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
@@ -55,7 +57,9 @@ const AppWildCardNextFixtures = () => {
         fixtures,
         bootstrap?.teams,
         currentEvent,
-        0,
+        1,
+        null,
+        last5
       );
       const wildcardPicks = optimizationProcess(
         bootstrap?.elements,
@@ -63,12 +67,13 @@ const AppWildCardNextFixtures = () => {
         fixtures,
         bootstrap?.teams,
         currentEvent,
-        0,
+        1,
         { picks: wildCardDraft },
+        last5
       );
       return wildcardPicks;
     },
-    enabled: !!bootstrap && !!bootstrapHist && !!fixtures && !!currentEvent,
+    enabled: !!bootstrap && !!bootstrapHist && !!fixtures && !!currentEvent && !!last5,
   });
   const totalXp = (picksData: any) => {
     if (!picksData || picksData.length == 0) {
@@ -98,7 +103,8 @@ const AppWildCardNextFixtures = () => {
     isLoadingBootstrap ||
     isLoadingBootstrapHist ||
     isLoadingFixtures ||
-    !dataView
+    isLoadingLast5 ||
+    !dataView 
   ) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -115,7 +121,7 @@ const AppWildCardNextFixtures = () => {
     );
   }
 
-  if (errorBootstrap || errorBootstrapHist || errorFixtures || errorDataView) {
+  if (errorBootstrap || errorBootstrapHist || errorFixtures || errorDataView || errorLast5) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -247,10 +253,11 @@ const AppWildCardNextFixtures = () => {
                         elh.code == elementMapping(player.element).code,
                     )}
                     currentEvent={currentEvent}
-                    deltaEvent={0}
+                    deltaEvent={1}
                     fixtures={fixtures}
                     teams={bootstrap?.teams}
                     multiplier={player.multiplier}
+                    last5={last5}
                   />
                 </div>
               </div>
