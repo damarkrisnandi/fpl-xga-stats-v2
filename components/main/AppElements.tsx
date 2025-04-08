@@ -59,6 +59,7 @@ import useBootstrapHist from "@/hooks/use-bootstraphist";
 import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
 import useNextEvent from "@/hooks/use-nextevent";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const AppElements = (props: any) => {
   const queryClient = new QueryClient();
@@ -68,12 +69,14 @@ const AppElements = (props: any) => {
 
   const { currentEvent } = useCurrentEvent({ bootstrap })   
   const { nextEvent } = useNextEvent({ bootstrap });
+
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
   // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
   const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
 
   
-  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
+  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingLast5) {
     return (
       <Card className="w-11/12 md:w-5/12">
         <CardHeader>
@@ -85,7 +88,7 @@ const AppElements = (props: any) => {
     );
   }
 
-  if (errorBootstrap || errorBootstrapHist || errorFixtures) {
+  if (errorBootstrap || errorBootstrapHist || errorFixtures || errorLast5) {
     return <AppFailedToFetch />;
   }
   return (
@@ -132,6 +135,7 @@ const AppElements = (props: any) => {
                   currentEvent={currentEvent}
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
+                  last5={last5}
                 />
               </div>
             ))}
@@ -177,7 +181,7 @@ const SelectPosition = (props: any) => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>Teams</SelectLabel>
+          <SelectLabel>Position</SelectLabel>
           <SelectItem value={"0"} key={0}>All</SelectItem>
           <SelectItem value={`1`}>GKP</SelectItem>
           <SelectItem value={`2`}>DEF</SelectItem>
@@ -190,7 +194,7 @@ const SelectPosition = (props: any) => {
 };
 
 const PlayerCardStats = (props: any) => {
-  const { className, element, currentEvent, fixtures, teams, elementHist } =
+  const { className, element, currentEvent, fixtures, teams, elementHist, last5 } =
     props;
 
   const getTeamShort = (code: number) => {
@@ -353,10 +357,11 @@ const PlayerCardStats = (props: any) => {
                 element={element}
                 elementHist={elementHist}
                 currentEvent={currentEvent}
-                deltaEvent={-1}
+                deltaEvent={0}
                 fixtures={fixtures}
                 teams={teams}
                 multiplier={1}
+                last5={last5}
               />
 
               <StatItem label={" "} value={" "} />
@@ -369,6 +374,8 @@ const PlayerCardStats = (props: any) => {
                     0,
                     fixtures,
                     teams,
+                    elementHist,
+                    last5
                   )).toFixed(2)}
                 className={`
             ${
@@ -379,6 +386,8 @@ const PlayerCardStats = (props: any) => {
                         0,
                         fixtures,
                         teams,
+                        elementHist,
+                        last5
                       )) > 0
                     ? "bg-green-200 text-green-700"
                     : ""
@@ -392,6 +401,8 @@ const PlayerCardStats = (props: any) => {
                           0,
                           fixtures,
                           teams,
+                          elementHist,
+                          last5
                         )) < 0
                     ? "bg-red-200 text-red-700"
                     : ""
@@ -411,19 +422,11 @@ const PlayerCardStats = (props: any) => {
                 element={element}
                 elementHist={elementHist}
                 currentEvent={currentEvent}
-                deltaEvent={0}
-                fixtures={fixtures}
-                teams={teams}
-                multiplier={1}
-              />
-              <AppExpectedPts
-                element={element}
-                elementHist={elementHist}
-                currentEvent={currentEvent}
                 deltaEvent={1}
                 fixtures={fixtures}
                 teams={teams}
                 multiplier={1}
+                last5={last5}
               />
               <AppExpectedPts
                 element={element}
@@ -433,6 +436,17 @@ const PlayerCardStats = (props: any) => {
                 fixtures={fixtures}
                 teams={teams}
                 multiplier={1}
+                last5={last5}
+              />
+              <AppExpectedPts
+                element={element}
+                elementHist={elementHist}
+                currentEvent={currentEvent}
+                deltaEvent={3}
+                fixtures={fixtures}
+                teams={teams}
+                multiplier={1}
+                last5={last5}
               />
             </div>
           )}

@@ -25,6 +25,7 @@ import useNextEvent from "@/hooks/use-nextevent";
 import useFixtures from "@/hooks/use-fixtures";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import withQueryClientProvider from "../react-query/MainProvider";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const AppElementSummaryWithProvider = (props: any) => {
   return (<AppElementSummaryContent {...props}/>);
@@ -49,12 +50,14 @@ const AppElementSummaryContent = (props: any) => {
   // const [nextEvent, setNextEvent] = useState<any>(null);
   // const [fixtures, setFixtures] = useState<any>([]);
 
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+
   const elementMapping = () =>
     bootstrap.elements.find((el: any) => el.id == elementId);
   
   
-  const isLoading = isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingCurrentEvent;
-  const error = errorBootstrap || errorBootstrapHist || errorFixtures || errorCurrentEvent;
+  const isLoading = isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingCurrentEvent || isLoadingLast5;
+  const error = errorBootstrap || errorBootstrapHist || errorFixtures || errorCurrentEvent || errorLast5;
 
   if (isLoading) {
     return (
@@ -139,6 +142,7 @@ const AppElementSummaryContent = (props: any) => {
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={1}
+                  last5={last5}
                 />
 
                 <StatItem label={" "} value={" "} />
@@ -152,6 +156,10 @@ const AppElementSummaryContent = (props: any) => {
                       0,
                       fixtures,
                       bootstrap?.teams,
+                      bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping().code
+                      ),
+                      last5
                     )
                   ).toFixed(2)}
                   className={`
@@ -163,6 +171,10 @@ const AppElementSummaryContent = (props: any) => {
                             0,
                             fixtures,
                             bootstrap?.teams,
+                            bootstrapHist?.elements.find((elh: any) =>
+                              elh.code == elementMapping().code
+                            ),
+                            last5
                           ) >
                         0
                       ? "bg-green-200 text-green-700"
@@ -177,6 +189,10 @@ const AppElementSummaryContent = (props: any) => {
                               0,
                               fixtures,
                               bootstrap?.teams,
+                              bootstrapHist?.elements.find((elh: any) =>
+                                elh.code == elementMapping().code
+                              ),
+                              last5
                             ) <
                         0
                       ? "bg-red-200 text-red-700"
@@ -204,6 +220,7 @@ const AppElementSummaryContent = (props: any) => {
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={1}
+                  last5={last5}
                 />
                 <StatItem label={" "} value={" "} />
                 <StatItem label={" "} value={" "} />

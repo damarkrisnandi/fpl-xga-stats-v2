@@ -39,7 +39,7 @@ const AppWildCardNextFixtures = () => {
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
   const { currentEvent } = useCurrentEvent({ bootstrap }) 
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 10 });
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
@@ -139,15 +139,15 @@ const AppWildCardNextFixtures = () => {
     const defNum = dataView.filter(
       (dv: any, i: number) =>
         i < 12 && elementMapping(dv.element).element_type == 2,
-    ).length;
+    ).length || 4;
     const midNum = dataView.filter(
       (dv: any, i: number) =>
         i < 12 && elementMapping(dv.element).element_type == 3,
-    ).length;
+    ).length || 4;
     const fwdNum = dataView.filter(
       (dv: any, i: number) =>
         i < 12 && elementMapping(dv.element).element_type == 4,
-    ).length;
+    ).length || 2;
 
     return `${defNum}-${midNum}-${fwdNum}`;
   };

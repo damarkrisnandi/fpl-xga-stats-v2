@@ -44,7 +44,7 @@ import useCurrentEvent from "@/hooks/use-currentevent"
 import useFixtures from "@/hooks/use-fixtures"
 import useTransfers from "@/hooks/use-transfers"
 
-export default function AppTransferDialog({ player, picks, tempBank, onHitTransfer }: any) {
+export default function AppTransferDialog({ player, picks, tempBank, onHitTransfer, last5 }: any) {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason });
   const { currentEvent } = useCurrentEvent({ bootstrap });
@@ -109,7 +109,7 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
       //   )
       // }
 
-  }, [bootstrap, bootstrapHist, fixtures, manager, prevTransfer]);
+  }, [bootstrap, bootstrapHist, fixtures, manager, prevTransfer, last5]);
 
   if (isLoadingBootstrap || isLoadingTransfers) {
     return (
@@ -242,10 +242,11 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
                     elh.code == player.code
                   )}
                   currentEvent={currentEvent}
-                  deltaEvent={0}
+                  deltaEvent={1}
                   fixtures={fixtures}
                   teams={bootstrap?.teams}
                   multiplier={player.multiplier}
+                  last5={last5}
                 />
             </div>
         </div>
@@ -283,10 +284,11 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
                             elh.code == transferIn.code
                         )}
                         currentEvent={currentEvent}
-                        deltaEvent={0}
+                        deltaEvent={1}
                         fixtures={fixtures}
                         teams={bootstrap?.teams}
                         multiplier={transferIn.multiplier}
+                        last5={last5}
                         />
                     </div>
                 </div>
@@ -307,7 +309,13 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
             .map((player: any) => (
                 <div className="w-full flex justify-between bg-slate-200" key={player.id}>
                     <div className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}>
-                        <Button className="bg-green-600 text-white text-xs w-6 h-6 p-0" disabled={picks.map((pick: any) => pick.element).includes(player.id)} 
+                        <Button className="bg-green-600 text-white text-xs w-6 h-6 p-0" disabled={
+                          picks.map((pick: any) => pick.element).includes(player.id) && 
+                          bootstrap?.elements
+                          .filter((el: any) => el.team == player.team)
+                          .filter((el: any) => picks.map((pick: any) => pick.element).includes(el.id))
+                          .length >= 3
+                        } 
                         onClick={() => { setTransferIn(player) }}>
                             <MoveUp className="w-4 h-4" />
                         </Button>
@@ -346,10 +354,11 @@ export default function AppTransferDialog({ player, picks, tempBank, onHitTransf
                             elh.code == player.code
                         )}
                         currentEvent={currentEvent}
-                        deltaEvent={0}
+                        deltaEvent={1}
                         fixtures={fixtures}
                         teams={bootstrap?.teams}
                         multiplier={player.multiplier}
+                        last5={last5}
                         />
                     </div>
                 </div>

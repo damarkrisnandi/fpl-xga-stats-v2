@@ -49,7 +49,7 @@ const AppMyTeamContent = () => {
 
   const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap }) 
 
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 10 });
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -83,25 +83,19 @@ const AppMyTeamContent = () => {
         if (!picks) {
           if (value) {
             getPicksData(value.id, currentEvent.id).then((pickData) => {
+              const picks = pickData.picks.map((pick: any) => {
+                return {
+                  ...pick,
+                  surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+                  xp: getXPByElement(pick.element, 1),
+                };
+              })
+              setDataView(picks);
               setPicks({
                 ...pickData,
-                picks: pickData.picks.map((pick: any) => {
-                  return {
-                    ...pick,
-                    surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
-                    xp: getXPByElement(pick.element, 1),
-                  };
-                }),
+                picks,
               });
-
-              setDataView(
-                pickData.picks.map((pick: any) => {
-                  return {
-                    ...pick,
-                    xp: getXPByElement(pick.element, 1),
-                  };
-                }),
-              );
+              
 
               setIsOptimize(false);
             });
@@ -145,7 +139,7 @@ const AppMyTeamContent = () => {
       if (
         currentEvent &&
         localStorage.getItem("manager_id_stored") &&
-        !manager
+        (!picks || !dataView)
       ) {
         setDataPicks();
       }
@@ -330,7 +324,7 @@ const AppMyTeamContent = () => {
               >
                 <div>
                   { !player.transfer ?
-                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer} tempBank={setValueTempBank()}/> :
+                    <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer} tempBank={setValueTempBank()} last5={last5}/> :
                     <Button className="bg-red-600 text-white text-xs w-6 h-6 p-0" onClick={() => { onClearTransfer(player) }}>
                       <X className="w-4 h-4" />
                     </Button>

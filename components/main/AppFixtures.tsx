@@ -123,7 +123,7 @@ const AppFixtures = (props: any) => {
                               <p className="font-semibold">
                                 {element_stats.find(
                                   (es: any) => es.name == stat.identifier,
-                                ).label}
+                                )?.label || '-'}
                               </p>
                             </div>
                             <div className="w-full flex justify-between m-auto">
@@ -143,7 +143,7 @@ const AppFixtures = (props: any) => {
                                       <p>
                                         {elements.find(
                                           (el: any) => el.id == home.element,
-                                        ).web_name}
+                                        )?.web_name || '-'}
                                       </p>
                                       <p className="ml-1">({home.value})</p>
                                     </div>
@@ -166,7 +166,7 @@ const AppFixtures = (props: any) => {
                                       <p>
                                         {elements.find(
                                           (el: any) => el.id == away.element,
-                                        ).web_name}
+                                        )?.web_name || '-'}
                                       </p>
                                     </div>
                                   ))}

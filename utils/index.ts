@@ -501,10 +501,12 @@ export const getExpectedPoints = (
 
 const wildcardOptimizationModel = (
   elements: any,
+  elementsHistory: any,
   fixtures: any,
   teams: any,
   currentEvent: any,
   deltaEvent: number,
+  last5?: any
 ) => {
   elements.sort((a: any, b: any) => a.element_type - b.element_type);
 
@@ -526,6 +528,7 @@ const wildcardOptimizationModel = (
   // variables
   const fplVariables2 = createVariables(
     elements,
+    elementsHistory,
     fixtures,
     teams,
     "",
@@ -533,10 +536,9 @@ const wildcardOptimizationModel = (
       return v;
     },
     [],
-    currentEvent.id + deltaEvent,
+    currentEvent.id,
+    last5
   );
-  // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
-
   // constraints
   const maxPick2 = Object.fromEntries(
     elements.map((e: any) => [`player_${e.id}`, { max: 1, min: 0 }]),
@@ -570,11 +572,13 @@ const wildcardOptimizationModel = (
 
 const picksOptimizationModel = (
   elements: any,
+  elementsHistory: any,
   fixtures: any,
   teams: any,
   currentEvent: any,
   deltaEvent: number,
   picksData?: any,
+  last5?: any
 ) => {
   elements.sort((a: any, b: any) => a.element_type - b.element_type);
   const elements1 = elements.filter((el: any) =>
@@ -598,6 +602,7 @@ const picksOptimizationModel = (
   // variables
   const fplVariables2 = createVariables(
     elements1,
+    elementsHistory,
     fixtures,
     teams,
     "",
@@ -605,9 +610,9 @@ const picksOptimizationModel = (
       return v;
     },
     [],
-    currentEvent.id + deltaEvent,
+    currentEvent.id,
+    last5
   );
-  // const fplCaptaincyVariables2 = createVariables('*', (v) => optimizedSquad.includes(v.web_name), [[`capt_check`, 1],], checkGw)
 
   // constraints
   const maxPick2 = Object.fromEntries(
@@ -664,19 +669,23 @@ export const optimizationProcess = (
     }
     let model: any = picksOptimizationModel(
       elements,
+      elementsHistory,
       fixtures,
       teams,
       currentEvent,
       deltaEvent,
       picksData1,
+      last5
     );
     if (!picksData) {
       model = wildcardOptimizationModel(
         elements,
+        elementsHistory,
         fixtures,
         teams,
         currentEvent,
         deltaEvent,
+        last5
       );
     }
 
@@ -787,12 +796,14 @@ export const optimizationProcess = (
  */
 const createVariables = (
   elements: any,
+  elementsHistory: any,
   fixtures: any,
   teams: any,
   suffix: any,
   filterCat: any,
   addEntries: any,
   inputGw?: any,
+  last5?: any
 ) =>
   Object.fromEntries(
     elements
@@ -806,6 +817,8 @@ const createVariables = (
           ],
         };
 
+        const elementHist = elementsHistory.find((eh: any) => e.code == eh.code)
+
         let entries = Object.fromEntries([
           [`player_${e.id}`, 1],
           ...addEntries,
@@ -813,18 +826,18 @@ const createVariables = (
           ["mid", e.element_type == 3 ? 1 : 0],
           ["def", e.element_type == 2 ? 1 : 0],
           ["gkp", e.element_type == 1 ? 1 : 0],
-          ["xp", getExpectedPoints(e, inputGw, 0, fixtures, teams)],
-          ["xp_next_2", getExpectedPoints(e, inputGw, 1, fixtures, teams)],
-          ["xp_next_3", getExpectedPoints(e, inputGw, 2, fixtures, teams)],
+          ["xp", getExpectedPoints(e, inputGw, 1, fixtures, teams, elementHist, last5)],
+          ["xp_next_2", getExpectedPoints(e, inputGw, 2, fixtures, teams, elementHist, last5)],
+          ["xp_next_3", getExpectedPoints(e, inputGw, 3, fixtures, teams, elementHist, last5)],
           [
             "xp_sigm_3",
-            getExpectedPoints(e, inputGw, 0, fixtures, teams) +
-            getExpectedPoints(e, inputGw, 1, fixtures, teams) +
-            getExpectedPoints(e, inputGw, 2, fixtures, teams),
+            getExpectedPoints(e, inputGw, 1, fixtures, teams, elementHist, last5) +
+            getExpectedPoints(e, inputGw, 2, fixtures, teams, elementHist, last5) +
+            getExpectedPoints(e, inputGw, 3, fixtures, teams, elementHist, last5),
           ],
           [
             "surplus_point",
-            e.event_points - getExpectedPoints(e, inputGw, 0, fixtures, teams),
+            e.event_points - getExpectedPoints(e, inputGw, 0, fixtures, teams, elementHist, last5),
           ],
 
           [`team_${e.team_code}`, 1],
