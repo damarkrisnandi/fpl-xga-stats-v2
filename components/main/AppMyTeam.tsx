@@ -349,7 +349,7 @@ const AppMyTeamContent = () => {
                       player.transfer &&
                       <div className="flex items-center space-x-1 text-xs md:text-sm text-red-400">
                         <ArrowRightLeft  className="w-3 h-3" />
-                        <p>{ elementMapping(player.element_out).web_name }</p>
+                        <p className="text-ellipsis">{ elementMapping(player.element_out).web_name }</p>
                       </div>
                     }
                   </div>
@@ -382,7 +382,7 @@ const AppMyTeamContent = () => {
                 
               </div>
               <div className="flex justify-end">
-                {currentFixtures(elementMapping(player.element))[0].started
+                {/* {currentFixtures(elementMapping(player.element))[0].started
                   ? (
                     <StatItem
                       label={`GW${currentEvent.id}`}
@@ -402,7 +402,7 @@ const AppMyTeamContent = () => {
                       multiplier={player.multiplier}
                       last5={last5 as any}
                     />
-                  )}
+                  )} */}
                   {/* GW onprogress */}
                 {currentFixtures(elementMapping(player.element))[0].started
                   ? (
