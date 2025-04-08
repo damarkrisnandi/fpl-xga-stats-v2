@@ -12,9 +12,9 @@ import {
 const Changes = (props: any) => {
   const { changes } = props;
   if ( changes > 0 ) {
-    return (<p className="text-[0.6rem] md:text-[0.7rem] bg-green-400 text-white py-[0.1em] px-2">{changes > 0 ? '+' + changes : changes}&#37;</p>)
+    return (<p className="text-[0.6rem] md:text-[0.7rem] bg-green-400 text-white py-[0.1em] px-[0.2em]">{changes > 0 ? '+' + changes : changes}&#37;</p>)
   } else if ( changes < 0 ) {
-    return (<p className="text-[0.6rem] md:text-[0.7rem] bg-red-400 text-white py-[0.1em] px-2">{changes > 0 ? '+' + changes : changes}&#37;</p>)
+    return (<p className="text-[0.6rem] md:text-[0.7rem] bg-red-400 text-white py-[0.1em] px-[0.2em]">{changes > 0 ? '+' + changes : changes}&#37;</p>)
   }
 
   return (
