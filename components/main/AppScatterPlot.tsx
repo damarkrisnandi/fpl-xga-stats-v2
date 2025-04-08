@@ -25,6 +25,7 @@ import Image from "next/image";
 import useBootstrapHist from "@/hooks/use-bootstraphist";
 import useBootstrap from "@/hooks/use-bootstrap";
 import useFixtures from "@/hooks/use-fixtures";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const separateByPosition = [
     // { label: "FWD",  filter: (el: any) => el.element_type == 4 && el.minutes > 90 && Number(el.points_per_game) > 5, fill: '#8884d8' },
@@ -47,6 +48,7 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap(); 
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason }) 
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures() 
+  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: bootstrap?.events.find((evt: any) => evt.is_current), n: 5 });
 
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures) {
     return (
@@ -73,6 +75,7 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
             fixtures,
             bootstrap?.teams,
             bootstrapHist?.elements.find((elh: any) => elh.code == el.code),
+            last5
           ).toFixed(2),
     }
   }) || []
