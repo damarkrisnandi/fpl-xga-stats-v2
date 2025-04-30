@@ -84,6 +84,12 @@ export function getArchivedLeague(
   ).then((res) => res.json());
 }
 
+export function getArchivedLiveEventData(season: string, event: number) {
+  return fetch(`${ARCHIVED_API_URL}/${season}/live-event/$${event}.json`).then(
+    (res) => res.json(),
+  );
+}
+
 async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
   // console.log('test encode decode', '{"name": "damar", "id"}', lzw_encode('abcdefgh'), lzw_decode(lzw_encode('abcdefgh')))
   storageSizeCheck();
