@@ -85,7 +85,7 @@ export function getArchivedLeague(
 }
 
 export function getArchivedLiveEventData(season: string, event: number) {
-  return fetch(`${ARCHIVED_API_URL}/${season}/live-event/$${event}.json`).then(
+  return fetch(`${ARCHIVED_API_URL}/${season}/live-event/${event}.json`).then(
     (res) => res.json(),
   );
 }
