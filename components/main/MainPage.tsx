@@ -18,8 +18,7 @@ import useBootstrap from "@/hooks/use-bootstrap";
 import withQueryClientProvider from "../react-query/MainProvider";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
-import { getLocalStorageUsagePercentage } from "@/utils";
-
+import { getLocalStorageUsagePercentage, sectionClassName } from "@/utils";
 
 const MainPageWithProvider = () => {
   return (<MainPageContent />);
@@ -57,9 +56,11 @@ const MainPageContent = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <AppTransferDeadline bootstrap={bootstrap} />
+      <div className={sectionClassName}>
+        <AppTransferDeadline bootstrap={bootstrap} />
+      </div>
 
-      <Tabs defaultValue="wildcard" className="w-11/12 md:w-5/12 mb-2">
+      <Tabs defaultValue="wildcard" className={sectionClassName}>
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="wildcard">Wildcard</TabsTrigger>
           <TabsTrigger value="stats">Player Stats</TabsTrigger>
@@ -75,17 +76,21 @@ const MainPageContent = () => {
         </TabsContent>
       </Tabs>
 
-      <AppFixtures
-        teams={bootstrap?.teams}
-        events={bootstrap?.events}
-        elements={bootstrap?.elements}
-        element_stats={bootstrap?.element_stats}
-      />
+      <div className={sectionClassName}>
+        <AppFixtures
+          teams={bootstrap?.teams}
+          events={bootstrap?.events}
+          elements={bootstrap?.elements}
+          element_stats={bootstrap?.element_stats}
+        />
+      </div>
 
-      <div className="flex flex-col space-y-1 justify-center items-center w-11/12 md:w-5/12 mb-2">
-        <p className="text-xs">storage usage</p>
-        <Progress  value={storageUsage}/>
-        <Button variant="outline" onClick={handleClearStorage}>Clear Storage &amp; Refresh</Button>
+      <div className={sectionClassName}>
+        <div className="flex flex-col space-y-1 justify-center items-center">
+          <p className="text-xs">storage usage</p>
+          <Progress  value={storageUsage}/>
+          <Button variant="outline" onClick={handleClearStorage}>Clear Storage &amp; Refresh</Button>
+        </div>
       </div>
     </div>
   );

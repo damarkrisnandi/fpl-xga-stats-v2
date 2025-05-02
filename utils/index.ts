@@ -67,6 +67,8 @@ export function getTeamLogoUrl(id: number): string {
   return `https://resources.premierleague.com/premierleague/badges/70/t${id}.png`;
 }
 
+export const sectionClassName = "w-11/12 md:w-10/12 lg:w-7/12 mb-2";
+
 export function difficultyColor(code: number): string {
   let className = "";
   const classArr = [

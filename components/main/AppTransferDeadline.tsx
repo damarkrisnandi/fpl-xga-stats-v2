@@ -46,7 +46,7 @@ const AppTransferDeadline = (props: any) => {
   }
 
   return (
-    <Card className="w-11/12 md:w-5/12 mb-2">
+    <Card className="w-full mb-2">
       <CardHeader>
         <CardTitle className="flex items-center">
           {event?.name}

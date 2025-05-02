@@ -56,7 +56,7 @@ const AppFixtures = (props: any) => {
   }
 
   return (
-    <Tabs defaultValue="current" className="w-11/12 md:w-5/12 mb-2">
+    <Tabs defaultValue="current" className="w-full mb-2">
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="current">Current</TabsTrigger>
         {nextEvent ? <TabsTrigger value="next">Next</TabsTrigger> : null}

@@ -20,7 +20,7 @@ const AppHeader = () => {
   return (
     <nav className="bg-[#37003c] h-16 w-full p-5 flex space-x-6 items-center fixed top-0 shadow-md z-10">
       <Sheet>
-        <SheetTrigger className="md:hidden">
+        <SheetTrigger>
           <AlignJustify className="h-4 w-4 text-white" />
         </SheetTrigger>
         <SheetContent side={"left"} className="pt-12">

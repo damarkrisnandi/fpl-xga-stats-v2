@@ -35,6 +35,8 @@ import useCurrentEvent from "@/hooks/use-currentevent";
 import withQueryClientProvider from "../react-query/MainProvider";
 import useLastFiveGw from "@/hooks/use-lastfivegw";
 
+import { sectionClassName } from "@/utils"
+
 const AppMyTeamWithProvider = () => {
   return (<AppMyTeamContent />);
 };
@@ -241,7 +243,7 @@ const AppMyTeamContent = () => {
     return manBank
   }
   return (
-    <div className="w-11/12 md:w-5/12">
+    <div className={sectionClassName}>
       <AppInputMyTeam
         onFindMyTeam={handleFindMyTeam}
         onRemoveMyTeam={handleRemoveMyTeam}
