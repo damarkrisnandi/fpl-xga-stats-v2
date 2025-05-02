@@ -72,7 +72,7 @@ const useLastFiveGw = ({ bootstrap, event, n }: any) => {
   } = useQuery({
     queryKey: ["last5"],
     queryFn: async () => await Promise.all(Array.from({ length: n ? n : 5 }, (_, i: number) => {
-      return getLiveEventData(event.id - i)
+      return i == 0 ? getLiveEventData(event.id - i) : getArchivedLiveEventData(currentSeason, event.id - i)
     })),
     
     // {

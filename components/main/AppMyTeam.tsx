@@ -64,6 +64,8 @@ const AppMyTeamContent = () => {
   const [dataView, setDataView] = useState<any>([]);
   const [transferPlan, setTransferPlan] = useState<any[]>([]);
 
+  const [chip, setChip] = useState<string>('');
+
   const getXPByElement = (element: any, delta: number) => getExpectedPoints(
     elementMapping(element),
     currentEvent.id,
@@ -82,25 +84,48 @@ const AppMyTeamContent = () => {
     getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
       (value: any) => {
         setManager(value);
-        if (!picks) {
+        if (!picks || !dataView) {
           if (value) {
+            
             getPicksData(value.id, currentEvent.id).then((pickData) => {
-              const picks = pickData.picks.map((pick: any) => {
-                return {
-                  ...pick,
-                  surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
-                  xp: getXPByElement(pick.element, 1),
-                };
-              })
-              setDataView(picks);
-              setPicks({
-                ...pickData,
-                picks,
-              });
+              setChip(pickData.active_chip);
+
+              if (pickData.active_chip == 'freehit') {
+                getPicksData(value.id, currentEvent.id - 1).then((pickDataPrev) => {
+                  const picks = pickDataPrev.picks.map((pick: any) => {
+                    return {
+                      ...pick,
+                      surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+                      xp: getXPByElement(pick.element, 1),
+                    };
+                  })
+                  setDataView(picks);
+                  setPicks({
+                    ...pickDataPrev,
+                    picks,
+                  });
+                  setIsOptimize(false);
+                })
+              } else {
+                const picks = pickData.picks.map((pick: any) => {
+                  return {
+                    ...pick,
+                    surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+                    xp: getXPByElement(pick.element, 1),
+                  };
+                })
+                setDataView(picks);
+                setPicks({
+                  ...pickData,
+                  picks,
+                });
+                setIsOptimize(false);
+
+              }
+              
+            });
               
 
-              setIsOptimize(false);
-            });
           }
         }
       },
@@ -309,6 +334,16 @@ const AppMyTeamContent = () => {
           />
         </div>
       )}
+
+      <div className="w-full mb-2">
+        {chip.length > 0 && 
+        <div className="flex justify-center">
+          <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"> {chip} </Badge>
+
+        </div>
+        }
+        
+      </div>
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
           <div className="w-full" key={index}>
@@ -406,7 +441,14 @@ const AppMyTeamContent = () => {
                     />
                   )} */}
                   {/* GW onprogress */}
-                {currentFixtures(elementMapping(player.element))[0].started
+                  {currentFixtures(elementMapping(player.element)).length === 0 ? 
+                    <StatItem
+                    label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                    value="-"
+                    />
+                  :
+                  <>
+                  {currentFixtures(elementMapping(player.element))[0].started
                   ? (
                     <StatItem
                       label={`P${currentEvent.id}-xP${currentEvent.id}`}
@@ -442,6 +484,9 @@ const AppMyTeamContent = () => {
                       )}
                     />
                   )}
+                  </>
+                  }
+                
                 <AppNextFixtures
                   teams={bootstrap?.teams}
                   element={elementMapping(player.element)}
