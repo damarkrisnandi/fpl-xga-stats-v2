@@ -160,7 +160,7 @@ const AppElements = (props: any) => {
               1,
               fixtures,
               bootstrap?.teams,
-              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              bootstrapHist?.elements?.find((elh: any) => elh.code == el.code),
               last5
             ).toFixed(2),
             isRender: false,
@@ -177,7 +177,7 @@ const AppElements = (props: any) => {
               2,
               fixtures,
               bootstrap?.teams,
-              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              bootstrapHist?.elements?.find((elh: any) => elh.code == el.code),
               last5
             ).toFixed(2),
             isRender: false,
@@ -194,7 +194,7 @@ const AppElements = (props: any) => {
               3,
               fixtures,
               bootstrap?.teams,
-              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              bootstrapHist?.elements?.find((elh: any) => elh.code == el.code),
               last5
             ).toFixed(2),
             isRender: false,
