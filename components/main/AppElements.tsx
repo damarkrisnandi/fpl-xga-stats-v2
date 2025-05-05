@@ -100,7 +100,7 @@ const AppElements = (props: any) => {
             field: 'web_name',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.web_name,
+            transform: (el: any) => el.web_name,
             type: 'name',
             isRender: true,
           },
@@ -109,7 +109,7 @@ const AppElements = (props: any) => {
             field: 'status',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.status,
+            transform: (el: any) => el.status,
             isRender: true,
             type: 'status'
           },
@@ -118,34 +118,34 @@ const AppElements = (props: any) => {
             field: 'minutes',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.minutes,
+            transform: (el: any) => el.minutes,
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'xG',
             field: 'expected_goals',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.expected_goals,
+            transform: (el: any) => el.expected_goals,
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'xA',
             field: 'expected_assists',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.expected_assists,
+            transform: (el: any) => el.expected_assists,
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'Next',
             field: '',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.id,
+            transform: (el: any) => el.id,
             isRender: true,
             type: 'nextFixtures'
           },
@@ -154,7 +154,7 @@ const AppElements = (props: any) => {
             field: '',
             class_td: '',
             isTransform: true,
-            transform: (el) => getExpectedPoints(
+            transform: (el: any) => getExpectedPoints(
               el,
               (currentEvent?.id || 0),
               1,
@@ -164,14 +164,14 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'xP' + ((currentEvent?.id || 0) + 2),
             field: '',
             class_td: '',
             isTransform: true,
-            transform: (el) => getExpectedPoints(
+            transform: (el: any) => getExpectedPoints(
               el,
               (currentEvent?.id || 0),
               2,
@@ -181,14 +181,14 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'xP' + ((currentEvent?.id || 0) + 3),
             field: '',
             class_td: '',
             isTransform: true,
-            transform: (el) => getExpectedPoints(
+            transform: (el: any) => getExpectedPoints(
               el,
               (currentEvent?.id || 0),
               3,
@@ -198,14 +198,14 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el) => null
+            render: (el: any) => null
           },
           {
             header: 'Action',
             field: '',
             class_td: '',
             isTransform: false,
-            transform: (el) => el.web_name,
+            transform: (el: any) => el.web_name,
             type: 'action',
             isRender: true,
           },
