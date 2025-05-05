@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { useEffect, useState } from "react";
+import { createElement, useEffect, useState } from "react";
 import AppFailedToFetch from "./AppFailedToFetch";
 import { Skeleton } from "../ui/skeleton";
 import {
@@ -61,19 +61,149 @@ import useCurrentEvent from "@/hooks/use-currentevent";
 import useNextEvent from "@/hooks/use-nextevent";
 import useLastFiveGw from "@/hooks/use-lastfivegw";
 
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
+
 const AppElements = (props: any) => {
   const queryClient = new QueryClient();
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
 
-  const { currentEvent } = useCurrentEvent({ bootstrap })   
+  const { currentEvent } = useCurrentEvent({ bootstrap })  
   const { nextEvent } = useNextEvent({ bootstrap });
 
   const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
   // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
   const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
+
+  const [columns, setColumns] = useState<any[]>([])
+
+  useEffect(() => {
+    console.log(fixtures)
+    if (columns.length == 0 && fixtures && fixtures.length > 0 && last5 && last5.length > 0) {
+      setColumns(
+        [
+          {
+            header: 'Name',
+            field: 'web_name',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.web_name,
+            type: 'name',
+            isRender: true,
+          },
+          {
+            header: 'Minutes',
+            field: 'minutes',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.minutes,
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'xG',
+            field: 'expected_goals',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.expected_goals,
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'xA',
+            field: 'expected_assists',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.expected_assists,
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'Next',
+            field: '',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.id,
+            isRender: true,
+            type: 'nextFixtures'
+          },
+          {
+            header: 'xP' + ((currentEvent?.id || 0) + 1),
+            field: '',
+            class_td: '',
+            isTransform: true,
+            transform: (el) => getExpectedPoints(
+              el,
+              (currentEvent?.id || 0),
+              1,
+              fixtures,
+              bootstrap?.teams,
+              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              last5
+            ).toFixed(2),
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'xP' + ((currentEvent?.id || 0) + 2),
+            field: '',
+            class_td: '',
+            isTransform: true,
+            transform: (el) => getExpectedPoints(
+              el,
+              (currentEvent?.id || 0),
+              2,
+              fixtures,
+              bootstrap?.teams,
+              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              last5
+            ).toFixed(2),
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'xP' + ((currentEvent?.id || 0) + 3),
+            field: '',
+            class_td: '',
+            isTransform: true,
+            transform: (el) => getExpectedPoints(
+              el,
+              (currentEvent?.id || 0),
+              3,
+              fixtures,
+              bootstrap?.teams,
+              bootstrapHist?.elements?.find(elh => elh.code == el.code),
+              last5
+            ).toFixed(2),
+            isRender: false,
+            render: (el) => null
+          },
+          {
+            header: 'Action',
+            field: '',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.web_name,
+            type: 'action',
+            isRender: true,
+          },
+        ]
+      )
+    }
+  }, [bootstrap, bootstrapHist, currentEvent, fixtures, last5])
 
   
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingLast5) {
@@ -112,6 +242,70 @@ const AppElements = (props: any) => {
           className="mb-2"
         />
         <ScrollArea className="h-[600px] w-full rounded-md border p-4">
+        <Table>
+        <TableCaption>A list of your recent invoices.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            {
+              columns.map((col: any) => (
+                <TableHead key={col.header} className="">{col.header}</TableHead>
+              ))
+            }
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+        {bootstrap.elements
+            .toSorted(
+              (a: any, b: any) =>
+                b.total_points -
+                a.total_points,
+            )
+            .filter((el: any) => filterByTeam ? el.team == filterByTeam : el)
+            .filter((el: any) =>
+              filterByPosition ? el.element_type == filterByPosition : el
+            )
+            .map((el: any) => (
+            <TableRow key={el.id}>
+              {
+              columns.map((col: any) => {
+                return (
+                <TableCell key={col.header} className={col.class_td}>
+                  {
+                    col.isRender ? <ColsRenderer {...col} el={el} teams={bootstrap.teams} fixtures={fixtures} currentEvent={currentEvent}/> : col.transform(el) 
+                  }
+                </TableCell>
+              )}
+              )
+              }
+              {/* <TableCell className="font-medium">
+                <div className="flex gap-2 items-center">
+                  <div className="relative w-6 h-6 md:w-8 md:h-8">
+                    <Image
+                      src={getTeamLogoUrl(el.team_code)}
+                      fill={true}
+                      className="w-6 h-6 md:w-8 md:h-8"
+                      sizes="20"
+                      alt={`t${el.team_code}`}
+                    />`
+
+                  </div>
+                {el.web_name}
+                </div>
+              </TableCell>
+              <TableCell>{el.event_points}</TableCell>
+              <TableCell>{el.total_points}</TableCell>
+              <TableCell className="text-right">{el.selected_by_percent}</TableCell> */}
+            </TableRow>
+            ))}
+          
+        </TableBody>
+        {/* <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>Total</TableCell>
+            <TableCell className="text-right">$2,500.00</TableCell>
+          </TableRow>
+        </TableFooter> */}
+      </Table>
           {bootstrap.elements
             .toSorted(
               (a: any, b: any) =>
@@ -127,6 +321,7 @@ const AppElements = (props: any) => {
                 key={el.id}
                 className="flex flex-col items-center justify-center space-y-2"
               >
+
                 <PlayerCardStats
                   element={el}
                   elementHist={bootstrapHist?.elements.find((elh: any) =>
@@ -146,6 +341,53 @@ const AppElements = (props: any) => {
 };
 
 export default AppElements;
+
+const ColsRenderer = (props: any) => {
+  switch (props.type) {
+    case 'name':
+      return (
+      <div className="flex gap-2 items-center">
+        <div className="relative w-6 h-6 md:w-8 md:h-8">
+          <Image
+            src={getTeamLogoUrl(props.el.team_code)}
+            fill={true}
+            className="w-6 h-6 md:w-8 md:h-8"
+            sizes="20"
+            alt={`t${props.el.team_code}`}
+          />`
+        </div>
+        {props.el.web_name}
+      </div>
+      );
+    case 'nextFixtures':
+      const getTeamShort = (code: number) => {
+        return props.teams.find((team: any) => team.id === code)?.short_name || "";
+      };
+    
+      const nextFixtures = () =>
+        props.fixtures.filter((fix: any) =>
+          fix.event == props.currentEvent.id + 1 &&
+          (fix.team_h == props.el.team || fix.team_a == props.el.team)
+        );
+      return <AppNextFixtures
+        teams={props.teams}
+        element={props.el}
+        nextFixtures={nextFixtures()}
+        isSimplify={true}
+      />
+    case 'xP':
+      return <></>
+    case 'action':
+      return <Button asChild variant={"outline"}>
+      <Link href={`player/${props.el.id}`} className="font-semibold">
+        Show Player Details
+      </Link>
+    </Button>
+
+    default:
+      break;
+  }
+}
 
 const SelectTeam = (props: any) => {
   const handleOnSelect = (value: any) => {

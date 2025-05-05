@@ -26,7 +26,7 @@ import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft, X
 import { Badge } from "../ui/badge";
 // import { Separator } from "@radix-ui/react-select";
 import AppTransferDialog from "./AppTransferDialog";
-// import Image from "next/image";
+import Image from "next/image";
 // import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import useBootstrap from "@/hooks/use-bootstrap";
 import useBootstrapHist from "@/hooks/use-bootstraphist";

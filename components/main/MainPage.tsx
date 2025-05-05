@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import AppElements from "./AppElements";
+import AppElementList from "./AppElementList";
 import AppFixtures from "./AppFixtures";
 import AppTransferDeadline from "./AppTransferDeadline";
 import { getBootstrapFromStorage } from "@/services";
@@ -19,6 +20,7 @@ import withQueryClientProvider from "../react-query/MainProvider";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { getLocalStorageUsagePercentage, sectionClassName } from "@/utils";
+import { AppNextFixturesSimplify } from './AppNextFixtures'
 
 const MainPageWithProvider = () => {
   return (<MainPageContent />);
@@ -60,21 +62,14 @@ const MainPageContent = () => {
         <AppTransferDeadline bootstrap={bootstrap} />
       </div>
 
-      <Tabs defaultValue="wildcard" className={sectionClassName}>
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="wildcard">Wildcard</TabsTrigger>
-          <TabsTrigger value="stats">Player Stats</TabsTrigger>
-        </TabsList>
-        <TabsContent
-          value="wildcard"
-          className="flex flex-col items-center w-full"
-        >
-          <AppWildCardNextFixtures />
-        </TabsContent>
-        <TabsContent value="stats">
-          <AppElements className="w-full" />
-        </TabsContent>
-      </Tabs>
+      <div className={sectionClassName}>
+        <AppWildCardNextFixtures />
+      </div>
+
+      <div className={sectionClassName}>
+        <AppElements className="w-full" />
+        {/* <AppElementList className="w-full" bootstrap={bootstrap} /> */}
+      </div>
 
       <div className={sectionClassName}>
         <AppFixtures
