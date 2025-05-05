@@ -105,15 +105,6 @@ const AppElements = (props: any) => {
             isRender: true,
           },
           {
-            header: 'S',
-            field: 'status',
-            class_td: '',
-            isTransform: false,
-            transform: (el: any) => el.status,
-            isRender: true,
-            type: 'status'
-          },
-          {
             header: 'Minutes',
             field: 'minutes',
             class_td: '',
@@ -366,6 +357,11 @@ const ColsRenderer = (props: any) => {
           />`
         </div>
         {props.el.web_name}
+        <div>
+          {
+            props.el.status == 'a' ? <Check className="w-4 h-4" /> : <TriangleAlert className="w-4 h-4 text-orange-500" />
+          }
+        </div>
       </div>
       );
     case 'nextFixtures':
@@ -384,8 +380,6 @@ const ColsRenderer = (props: any) => {
         nextFixtures={nextFixtures()}
         isSimplify={true}
       />
-      case 'status':
-        return props.el.status == 'a' ? <Check className="w-6 h-6" /> : <TriangleAlert className="w-6 h-6 text-orange-500" />
     case 'xP':
       return <></>
     case 'action':
