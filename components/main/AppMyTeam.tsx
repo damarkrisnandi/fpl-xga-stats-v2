@@ -337,7 +337,7 @@ const AppMyTeamContent = () => {
       )}
 
       <div className="w-full mb-2">
-        {chip.length > 0 && 
+        {chip && chip.length > 0 && 
         <div className="flex justify-center">
           <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"> {chip} </Badge>
 
