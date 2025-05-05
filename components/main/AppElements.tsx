@@ -241,9 +241,8 @@ const AppElements = (props: any) => {
           }}
           className="mb-2"
         />
-        <ScrollArea className="h-[600px] w-full rounded-md border p-4">
+        {/* <ScrollArea className="h-[600px] w-full rounded-md border p-4"> */}
         <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
             {
@@ -334,7 +333,7 @@ const AppElements = (props: any) => {
                 />
               </div>
             ))}
-        </ScrollArea>
+        {/* </ScrollArea> */}
       </CardContent>
     </Card>
   );
