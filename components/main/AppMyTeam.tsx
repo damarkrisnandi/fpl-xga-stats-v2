@@ -139,10 +139,8 @@ const AppMyTeamContent = () => {
     let total = 0;
     for (let pick of picksData) {
       total += pick.xp * pick.multiplier;
-      console.log(pick, pick.xp * pick.multiplier, '>>', total, '+++', )
     }
 
-    console.log(total)
 
     return total;
   };

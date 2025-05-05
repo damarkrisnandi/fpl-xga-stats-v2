@@ -35,7 +35,6 @@ const AppElementSummary = withQueryClientProvider(AppElementSummaryWithProvider)
 
 const AppElementSummaryContent = (props: any) => {
 
-  console.log('cek props', props);
   const { elementId } = props;
 
   // const [bootstrap, setBootstrap] = useState<any>(null);
@@ -83,7 +82,7 @@ const AppElementSummaryContent = (props: any) => {
     );
 
   return (
-    <div className="w-11/12 md:w-5/12">
+    <div className="w-11/12 md:w-10/12 lg:w-7/12">
       <div className="flex flex-col items-center space-y-2">
         <div className="relative w-32 h-32 md:w-40 md:h-40">
           <Image

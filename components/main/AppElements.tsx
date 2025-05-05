@@ -31,6 +31,7 @@ import {
   PoundSterling,
   RefreshCw,
   TriangleAlert,
+  Check
 } from "lucide-react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import {
@@ -91,7 +92,6 @@ const AppElements = (props: any) => {
   const [columns, setColumns] = useState<any[]>([])
 
   useEffect(() => {
-    console.log(fixtures)
     if (columns.length == 0 && fixtures && fixtures.length > 0 && last5 && last5.length > 0) {
       setColumns(
         [
@@ -103,6 +103,15 @@ const AppElements = (props: any) => {
             transform: (el) => el.web_name,
             type: 'name',
             isRender: true,
+          },
+          {
+            header: 'S',
+            field: 'status',
+            class_td: '',
+            isTransform: false,
+            transform: (el) => el.status,
+            isRender: true,
+            type: 'status'
           },
           {
             header: 'Minutes',
@@ -208,7 +217,7 @@ const AppElements = (props: any) => {
   
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingLast5) {
     return (
-      <Card className="w-11/12 md:w-5/12">
+      <Card className="w-11/12 md:w-10/12 lg:w-7/12">
         <CardHeader>
           <Skeleton className="h-8 w-5/12" />
           <Skeleton className="h-4 w-3/12" />
@@ -375,6 +384,8 @@ const ColsRenderer = (props: any) => {
         nextFixtures={nextFixtures()}
         isSimplify={true}
       />
+      case 'status':
+        return props.el.status == 'a' ? <Check className="w-6 h-6" /> : <TriangleAlert className="w-6 h-6 text-orange-500" />
     case 'xP':
       return <></>
     case 'action':

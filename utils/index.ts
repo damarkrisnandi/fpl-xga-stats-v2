@@ -777,11 +777,9 @@ export const optimizationProcess = (
       };
     });
 
-    console.log(result);
 
     return result;
   } catch (error) {
-    console.log(error);
     // willReplace += 1;
     // console.log(`replace + 1 = ${willReplace}`)
   }

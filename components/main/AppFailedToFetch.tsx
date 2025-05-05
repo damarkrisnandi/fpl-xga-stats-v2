@@ -10,7 +10,7 @@ import { CircleX } from "lucide-react";
 
 const AppFailedToFetch = () => {
   return (
-    <Card className="w-11/12 md:w-5/12 mb-2">
+    <Card className="w-11/12 md:w-10/12 lg:w-7/12 mb-2">
       <CardHeader></CardHeader>
       <CardContent>
         <div className="flex flex-col justify-center items-center space-y-5 w-full">

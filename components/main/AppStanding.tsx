@@ -41,7 +41,7 @@ const AppStandings = (props: any) => {
 
   return (
     <div className="pt-24 flex justify-center">
-      <Card className="w-11/12 md:w-5/12">
+      <Card className="w-11/12 md:w-10/12 lg:w-7/12">
         <CardHeader>
           <Button asChild variant={"outline"} className="mb-7">
             <Link href={`/`}>
@@ -124,7 +124,7 @@ async function getLeague(leagueId: string) {
 const ErrorFetch = () => {
   return (
     <div className="pt-24 flex justify-center">
-      <Card className="w-11/12 md:w-5/12">
+      <Card className="w-11/12 md:w-10/12 lg:w-7/12">
         <CardHeader>
           <Button asChild variant={"outline"} className="mb-7">
             <Link href={`/`}>

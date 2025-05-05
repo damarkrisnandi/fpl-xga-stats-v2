@@ -72,7 +72,7 @@ export default AppTransferDeadline;
 
 function SkeletonCard() {
   return (
-    <Card className="w-11/12 md:w-5/12 mb-2">
+    <Card className="w-11/12 md:w-10/12 lg:w-7/12 mb-2">
       <CardHeader>
         <Skeleton className="w-4/5 h-5" />
         <Skeleton className="w-2/5 h-2" />

@@ -43,7 +43,7 @@ const DataVizContent = () => {
         }
     })
     return (
-        <div className="w-11/12 md:w-5/12">
+        <div className="w-11/12 md:w-10/12 lg:w-7/12">
             <h1 className="text-2xl font-bold">Points per Game / Current Event Points vs Expected Points</h1>
             <Tabs defaultValue="ppg" className="w-full h-full">
                 <TabsList className="grid w-full grid-cols-2">
