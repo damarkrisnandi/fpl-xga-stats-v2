@@ -20,7 +20,6 @@ import withQueryClientProvider from "../react-query/MainProvider";
 import { Button } from "../ui/button";
 import { Progress } from "../ui/progress";
 import { getLocalStorageUsagePercentage, sectionClassName } from "@/utils";
-import { AppNextFixturesSimplify } from './AppNextFixtures'
 
 const MainPageWithProvider = () => {
   return (<MainPageContent />);
