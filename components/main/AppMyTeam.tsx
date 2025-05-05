@@ -274,64 +274,65 @@ const AppMyTeamContent = () => {
         onRemoveMyTeam={handleRemoveMyTeam}
       />
       {manager && (
-        <div className="flex space-x-1 w-full mt-1">
-          <Button
-            className="text-xs flex space-x-5"
-            variant={"outline"}
-            disabled={isOptimize}
-            onClick={(event: any) => {
-              setDataView(
-                optimizationProcess(
-                  bootstrap.elements,
-                  bootstrapHist.elements,
-                  fixtures,
-                  bootstrap.teams,
-                  currentEvent,
-                  1,
-                  picks,
-                  last5
-                ).map((dv: any) => {
-                  const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
-                  return {...dv, ...transfer}
-                })
-              );
-              setIsOptimize(true);
-            }}
-          >
-            <Sparkles className="w-4 h-4" />
-            &nbsp;Optimize
-          </Button>
-          <Button
-            className="text-xs"
-            variant={"outline"}
-            disabled={!isOptimize}
-            onClick={() => {
-              setDataView(picks.picks);
-              setIsOptimize(false);
-            }}
-          >
-            <RefreshCcw className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
-      {manager && (
-        <div className="w-full flex justify-end my-3">
-          <StatItem
-            label={`P${currentEvent.id} - xP${currentEvent.id}`}
-            value={totalSurplusXpPrev(picks).toFixed(2)}
-            className={`
-            ${
-              totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : ""
-            }
-            ${totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : ""}
-          `}
-          />
-          <StatItem
-            label={isOptimize
-              ? `ΣxP${currentEvent.id + 1}*`
-              : `ΣxP${currentEvent.id + 1}`}
-            value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
-          />
+        <div>
+          <div className="flex space-x-1 w-full mt-1">
+            <Button
+              className="text-xs flex space-x-5"
+              variant={"outline"}
+              disabled={isOptimize}
+              onClick={(event: any) => {
+                setDataView(
+                  optimizationProcess(
+                    bootstrap.elements,
+                    bootstrapHist.elements,
+                    fixtures,
+                    bootstrap.teams,
+                    currentEvent,
+                    1,
+                    picks,
+                    last5
+                  ).map((dv: any) => {
+                    const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
+                    return {...dv, ...transfer}
+                  })
+                );
+                setIsOptimize(true);
+              }}
+            >
+              <Sparkles className="w-4 h-4" />
+              &nbsp;Optimize
+            </Button>
+            <Button
+              className="text-xs"
+              variant={"outline"}
+              disabled={!isOptimize}
+              onClick={() => {
+                setDataView(picks.picks);
+                setIsOptimize(false);
+              }}
+            >
+              <RefreshCcw className="w-4 h-4" />
+            </Button>
+          </div>
+          <div className="w-full flex justify-end my-3">
+            <StatItem
+              label={`P${currentEvent.id} - xP${currentEvent.id}`}
+              value={totalSurplusXpPrev(picks).toFixed(2)}
+              className={`
+              ${
+                totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : ""
+              }
+              ${totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : ""}
+            `}
+            />
+            <StatItem
+              label={isOptimize
+                ? `ΣxP${currentEvent.id + 1}*`
+                : `ΣxP${currentEvent.id + 1}`}
+              value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
+            />
+          </div>
+
         </div>
       )}
 
@@ -367,7 +368,7 @@ const AppMyTeamContent = () => {
                     </Button>
                   }
                 </div>
-                {/* <div className="relative w-6 h-6 md:w-12 md:h-12">
+                <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
                     src={getTeamLogoUrl(elementMapping(player.element).team_code)}
                     fill={true}
@@ -375,8 +376,7 @@ const AppMyTeamContent = () => {
                     sizes="20"
                     alt={`t${elementMapping(player.element).team_code}`}
                   />
-                </div> */}
-                {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
+                </div>
                 <div>
                   <div>
                     <p className="text-xs md:text-sm font-semibold">
