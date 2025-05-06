@@ -105,29 +105,11 @@ const AppElements = (props: any) => {
             isRender: true,
           },
           {
-            header: 'Minutes',
-            field: 'minutes',
+            header: '%',
+            field: 'selected_by_percent',
             class_td: '',
-            isTransform: false,
-            transform: (el: any) => el.minutes,
-            isRender: false,
-            render: (el: any) => null
-          },
-          {
-            header: 'xG',
-            field: 'expected_goals',
-            class_td: '',
-            isTransform: false,
-            transform: (el: any) => el.expected_goals,
-            isRender: false,
-            render: (el: any) => null
-          },
-          {
-            header: 'xA',
-            field: 'expected_assists',
-            class_td: '',
-            isTransform: false,
-            transform: (el: any) => el.expected_assists,
+            isTransform: true,
+            transform: (el: any) => el.selected_by_percent + '%',
             isRender: false,
             render: (el: any) => null
           },
@@ -241,7 +223,7 @@ const AppElements = (props: any) => {
           }}
           className="mb-2"
         />
-        {/* <ScrollArea className="h-[600px] w-full rounded-md border p-4"> */}
+        <ScrollArea className="h-[600px] w-full rounded-md border p-4">
         <Table>
         <TableHeader>
           <TableRow>
@@ -305,35 +287,8 @@ const AppElements = (props: any) => {
           </TableRow>
         </TableFooter> */}
       </Table>
-          {bootstrap.elements
-            .toSorted(
-              (a: any, b: any) =>
-                b.total_points -
-                a.total_points,
-            )
-            .filter((el: any) => filterByTeam ? el.team == filterByTeam : el)
-            .filter((el: any) =>
-              filterByPosition ? el.element_type == filterByPosition : el
-            )
-            .map((el: any) => (
-              <div
-                key={el.id}
-                className="flex flex-col items-center justify-center space-y-2"
-              >
 
-                <PlayerCardStats
-                  element={el}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == el.code
-                  )}
-                  currentEvent={currentEvent}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  last5={last5}
-                />
-              </div>
-            ))}
-        {/* </ScrollArea> */}
+        </ScrollArea>
       </CardContent>
     </Card>
   );
