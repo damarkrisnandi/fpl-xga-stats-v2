@@ -55,8 +55,8 @@ export const menuTree = [
   },
 ];
 
-export const currentSeason = "2024-2025";
-export const previousSeason = "2023-2024";
+export const currentSeason = "2025-2026";
+export const previousSeason = "2024-2025";
 
 export function getPlayerPhotoUrl(photo: string): string {
   const imageId = photo?.split(".")[0] || "";
