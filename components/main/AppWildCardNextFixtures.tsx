@@ -38,7 +38,7 @@ const AppWildCardNextFixtures = () => {
   const { currentEvent } = useCurrentEvent({ bootstrap })
   const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
 
-  const [isOptimize, setIsOptimize] = useState<boolean>(false);
+  const [isOptimize, _setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
 
@@ -48,26 +48,22 @@ const AppWildCardNextFixtures = () => {
   } = useQuery({
     queryKey: ["dataView"],
     queryFn: () => {
-      const wildCardDraft = optimizationProcess(
-        bootstrap?.elements,
-        bootstrapHist?.elements,
+      const wildCardDraft = optimizationProcess({
+        bootstrap: bootstrap!,
+        bootstrapHistory: bootstrapHist!,
         fixtures,
-        bootstrap?.teams,
-        currentEvent,
-        1,
-        null,
-        last5
-      );
-      const wildcardPicks = optimizationProcess(
-        bootstrap?.elements,
-        bootstrapHist?.elements,
+        last5,
+        picksData: undefined,
+        deltaEvent: 1
+      });
+      const wildcardPicks = optimizationProcess({
+        bootstrap: bootstrap!,
+        bootstrapHistory: bootstrapHist!,
         fixtures,
-        bootstrap?.teams,
-        currentEvent,
-        1,
-        { picks: wildCardDraft },
-        last5
-      );
+        last5,
+        picksData: { picks: wildCardDraft } as any,
+        deltaEvent: 1
+      });
       return wildcardPicks;
     },
     enabled: !!bootstrap && !!bootstrapHist && !!fixtures && !!currentEvent && !!last5,

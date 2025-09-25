@@ -57,7 +57,7 @@ const AppMyTeamContent = () => {
   const [totalXp, setTotalXp] = useState<number>(0);
   const [totalSurplusXpPrev, setTotalSurplusXpPrev] = useState<number>(0);
 
-  const [chip, setChip] = useState<string>('');
+  const [chip, _setChip] = useState<string>('');
 
   const getXPByElement = (element: any, delta: number) => getExpectedPoints(
     elementMapping(element),
@@ -73,7 +73,7 @@ const AppMyTeamContent = () => {
   // const [tempBank, setTempBank] = useState<number>(0);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
-  const setDataPicks = () => {
+  const _setDataPicks = () => {
     setPicksData(currentEvent.id)
     // getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
     //   (value: any) => {
@@ -153,7 +153,7 @@ const AppMyTeamContent = () => {
 
   useEffect(() => {
 
-    setManager();
+    setManager(null);
     if (currentEvent) {
       setPicksData(currentEvent.id);
     }
@@ -198,21 +198,15 @@ const AppMyTeamContent = () => {
     );
   }
 
-  if (picks && picks.error) {
-    return (
-      <div className="w-full flex justify-center items-center h-screen">
-        <AppFailedToFetch />
-      </div>
-    );
-  }
+
   const handleFindMyTeam = (event: any) => {
     localStorage.setItem(`manager_id_stored`, event);
     setTimeout(() => {
-      setManager();
+      setManager(null);
     }, 300);
   };
 
-  const handleRemoveMyTeam = (event: any) => {
+  const handleRemoveMyTeam = (_event: any) => {
     // setPicks(null);
     setDataView([]);
   };
@@ -231,7 +225,7 @@ const AppMyTeamContent = () => {
         (element.team == fix.team_h || element.team == fix.team_a),
     );
 
-  const onHitTransfer = ({ element_out, element, transfer, bank }: any) => {
+  const _onHitTransfer = ({ element_out, element, transfer, bank }: any) => {
     setTransferPlan([...transferPlan, { element_out, element, transfer, bank }])
     // setDataPicks()
     // setPicks({...picks, picks: picks.picks.map((dv: any) => {
@@ -249,7 +243,7 @@ const AppMyTeamContent = () => {
 
   }
 
-  const onClearTransfer = (player: any) => {
+  const _onClearTransfer = (player: any) => {
     setTransferPlan(transferPlan.filter((tp: any) => tp.element !== player.element))
     // setDataPicks()
     // setPicks({...picks, picks: picks.picks.map((dv: any) => {
@@ -267,8 +261,8 @@ const AppMyTeamContent = () => {
 
   }
 
-  const setValueTempBank = () => {
-    let manBank = manager.last_deadline_bank;
+  const _setValueTempBank = () => {
+    let manBank = picks?.entry_history?.bank || 0;
     for (let tp of transferPlan) {
       manBank += tp.bank;
     }
@@ -288,18 +282,16 @@ const AppMyTeamContent = () => {
               className="text-xs flex space-x-5"
               variant={"outline"}
               disabled={isOptimize}
-              onClick={(event: any) => {
+              onClick={(_event: any) => {
                 setDataView(
-                  optimizationProcess(
-                    bootstrap.elements,
-                    bootstrapHist.elements,
+                  optimizationProcess({
+                    bootstrap,
+                    bootstrapHistory: bootstrapHist,
                     fixtures,
-                    bootstrap.teams,
-                    currentEvent,
-                    1,
-                    picks,
-                    last5
-                  ).map((dv: any) => {
+                    last5,
+                    picksData: picks || undefined,
+                    deltaEvent: 1
+                  }).map((dv: any) => {
                     const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
                     return { ...dv, ...transfer }
                   })
@@ -315,7 +307,7 @@ const AppMyTeamContent = () => {
               variant={"outline"}
               disabled={!isOptimize}
               onClick={() => {
-                setDataView(picks.picks);
+                setDataView(picks?.picks || []);
                 setIsOptimize(false);
               }}
             >
