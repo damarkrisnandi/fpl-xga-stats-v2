@@ -3,6 +3,7 @@
 import {
   LabelList,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
   Scatter,
   ScatterChart,
@@ -77,8 +78,8 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
   }) || []
 
 
-  const PpGs = getElementsWithXP().map((el: Element) => Number(el.points_per_game)).filter(val => !isNaN(val) && val !== null && val !== undefined)
-  const xpo5s = getElementsWithXP().map((el: Element) => (el.xp ?? 0)).filter(val => !isNaN(val) && val !== null && val !== undefined);
+  const PpGs = getElementsWithXP().map((el: Element) => Number(el.points_per_game)).filter((val: number) => !isNaN(val) && val !== null && val !== undefined)
+  const xpo5s = getElementsWithXP().map((el: Element) => (el.xp ?? 0)).filter((val: number) => !isNaN(val) && val !== null && val !== undefined);
   const maxPpG = PpGs.length > 0 ? Math.max(...PpGs.map(ppg => Number(ppg))) : 0
   const maxXpo5 = xpo5s.length > 0 ? Math.max(...xpo5s.map(ppg => Number(ppg))) : 0
 
@@ -111,6 +112,17 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
 
             <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Legend />
+            <ReferenceLine
+              segment={[
+                { x: 0, y: 0 },
+                { x: bound, y: bound }
+              ]}
+              stroke="red"
+              strokeDasharray="5 5"
+              strokeWidth={isMobile ? 1 : 2}
+              opacity={0.7}
+            />
+
             {(dataSeparation || separateByPosition).map((obj: any) => (
               <Scatter key={obj.label} name={obj.label} data={getElementsWithXP().filter(obj.filter)} fill={obj.fill}>
                 <LabelList dataKey="web_name" position="left" />
