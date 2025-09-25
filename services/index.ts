@@ -9,7 +9,7 @@ export async function getBootstrap() {
 }
 
 export function getBootstrapFromStorage() {
-  return getBootstrap() 
+  return getBootstrap()
   // return fromStorage("boostrap-static", `${API_URL}/bootstrap-static`, 7);
 }
 
@@ -78,8 +78,7 @@ export function getArchivedLeague(
   page?: number,
 ) {
   return fetch(
-    `${ARCHIVED_API_URL}/${season}/leagues-classic/fplmgm/${league}/${
-      page || 1
+    `${ARCHIVED_API_URL}/${season}/leagues-classic/fplmgm/${league}/${page || 1
     }.json`,
   ).then((res) => res.json());
 }
@@ -99,7 +98,7 @@ async function fromStorage(key: string, urlFetch: string, holdTime?: number) {
   } else {
     const response = await fetch(urlFetch).then((res) =>
       res.ok ? res.json() : { error: true }
-    ).catch((err) => {
+    ).catch(() => {
       return { error: true };
     });
     if (response && !response.error) {
@@ -131,7 +130,7 @@ function checkExpired(key: string) {
   return (
     localStorage.getItem(`expired_data_storage:${key}`) &&
     new Date().getTime() >=
-      Number(localStorage.getItem(`expired_data_storage:${key}`))
+    Number(localStorage.getItem(`expired_data_storage:${key}`))
   );
 }
 
@@ -163,9 +162,9 @@ function storageSizeCheck() {
   /* eslint-disable-next-line no-console */
   console.log(
     "%c LocalStorage Total = " +
-      (_lsTotal / 1024).toFixed(2) +
-      " KB" +
-      ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
+    (_lsTotal / 1024).toFixed(2) +
+    " KB" +
+    ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
     css,
   );
 
@@ -197,9 +196,9 @@ function storageSizeCheck() {
   /* eslint-disable-next-line no-console */
   console.log(
     "%c SessionStorage Total = " +
-      (_lsTotal / 1024).toFixed(2) +
-      " KB" +
-      ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
+    (_lsTotal / 1024).toFixed(2) +
+    " KB" +
+    ` (${((_lsTotal * 100) / (5 * 1000 * 1024)).toFixed(2)}%)`,
     css,
   );
 }
@@ -211,21 +210,21 @@ function lzw_encode(s: string) {
   var currChar;
   var phrase = data[0];
   var code = 256;
-  for (var i=1; i<data.length; i++) {
-      currChar=data[i];
-      if (dict[phrase + currChar] != null) {
-          phrase += currChar;
-      }
-      else {
-          out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-          dict[phrase + currChar] = code;
-          code++;
-          phrase=currChar;
-      }
+  for (var i = 1; i < data.length; i++) {
+    currChar = data[i];
+    if (dict[phrase + currChar] != null) {
+      phrase += currChar;
+    }
+    else {
+      out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
+      dict[phrase + currChar] = code;
+      code++;
+      phrase = currChar;
+    }
   }
   out.push(phrase.length > 1 ? dict[phrase] : phrase.charCodeAt(0));
-  for (var i=0; i<out.length; i++) {
-      out[i] = String.fromCharCode(out[i]);
+  for (var i = 0; i < out.length; i++) {
+    out[i] = String.fromCharCode(out[i]);
   }
   return out.join("");
 }
@@ -240,19 +239,19 @@ function lzw_decode(s: string) {
   var out = [currChar];
   var code = 256;
   var phrase;
-  for (var i=1; i<data.length; i++) {
-      var currCode = data[i].charCodeAt(0);
-      if (currCode < 256) {
-          phrase = data[i];
-      }
-      else {
-         phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
-      }
-      out.push(phrase);
-      currChar = phrase.charAt(0);
-      dict[code] = oldPhrase + currChar;
-      code++;
-      oldPhrase = phrase;
+  for (var i = 1; i < data.length; i++) {
+    var currCode = data[i].charCodeAt(0);
+    if (currCode < 256) {
+      phrase = data[i];
+    }
+    else {
+      phrase = dict[currCode] ? dict[currCode] : (oldPhrase + currChar);
+    }
+    out.push(phrase);
+    currChar = phrase.charAt(0);
+    dict[code] = oldPhrase + currChar;
+    code++;
+    oldPhrase = phrase;
   }
   return out.join("");
 }

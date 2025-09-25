@@ -1,19 +1,28 @@
 "use client";
+import {
+  getTeamLogoUrl,
+  optimizationProcess,
+  positionMapping,
+  previousSeason
+} from "@/utils/index";
 import { useState } from "react";
-import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
-import {
-  optimizationProcess,
-  positionMapping,
-  previousSeason,
-  getTeamLogoUrl
-} from "@/utils/index";
+import AppSpinner from "./AppSpinner";
 // import { Button } from "../ui/button";
-import { Armchair, RefreshCcw, Sparkle, Sparkles } from "lucide-react";
+import { Armchair } from "lucide-react";
 import { Badge } from "../ui/badge";
 // import { Separator } from "@radix-ui/react-select";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useCurrentEvent from "@/hooks/use-currentevent";
+import useFixtures from "@/hooks/use-fixtures";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
+import {
+  useQuery
+} from "@tanstack/react-query";
+import Image from 'next/image';
 import {
   Card,
   CardContent,
@@ -21,25 +30,13 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQueries,
-  useQuery,
-} from "@tanstack/react-query";
-import Image from 'next/image'
-import useBootstrap from "@/hooks/use-bootstrap";
-import useBootstrapHist from "@/hooks/use-bootstraphist";
-import useFixtures from "@/hooks/use-fixtures";
-import useCurrentEvent from "@/hooks/use-currentevent";
-import useLastFiveGw from "@/hooks/use-lastfivegw";
 
 const AppWildCardNextFixtures = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
-  const { currentEvent } = useCurrentEvent({ bootstrap }) 
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+  const { currentEvent } = useCurrentEvent({ bootstrap })
+  const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const elementMapping = (id: number) =>
@@ -104,7 +101,7 @@ const AppWildCardNextFixtures = () => {
     isLoadingBootstrapHist ||
     isLoadingFixtures ||
     isLoadingLast5 ||
-    !dataView 
+    !dataView
   ) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -190,14 +187,14 @@ const AppWildCardNextFixtures = () => {
                   className={`w-full h-14 md:w-72 md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
                 >
                   <div className="relative w-6 h-6 md:w-12 md:h-12">
-                  <Image
-                    src={getTeamLogoUrl(elementMapping(player.element).team_code)}
-                    fill={true}
-                    className="w-6 h-6 md:w-12 md:h-12"
-                    sizes="20"
-                    alt={`t${elementMapping(player.element).team_code}`}
-                  />
-                </div>
+                    <Image
+                      src={getTeamLogoUrl(elementMapping(player.element).team_code)}
+                      fill={true}
+                      className="w-6 h-6 md:w-12 md:h-12"
+                      sizes="20"
+                      alt={`t${elementMapping(player.element).team_code}`}
+                    />
+                  </div>
                   {/* {index >= 11 ? <Armchair className="w-3 h-3 md:m-2" /> : null} */}
                   <div>
                     <p className="text-xs md:text-sm font-semibold">
@@ -211,25 +208,25 @@ const AppWildCardNextFixtures = () => {
                     </p>
                   </div>
                   {player.is_captain
-                  ? (
-                    player.multiplier == 2
-                      ? (
-                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                          C
-                        </div>
-                      )
-                      : (
-                        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                          C
-                        </div>
-                      )
-                  )
-                  : null}
-                {player.is_vice_captain && (
-                  <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
-                    V
-                  </div>
-                )}
+                    ? (
+                      player.multiplier == 2
+                        ? (
+                          <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                            C
+                          </div>
+                        )
+                        : (
+                          <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                            C
+                          </div>
+                        )
+                    )
+                    : null}
+                  {player.is_vice_captain && (
+                    <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                      V
+                    </div>
+                  )}
                 </div>
                 <div className="flex justify-end">
                   <StatItem
@@ -274,9 +271,8 @@ const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
     <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${
-        className || ""
-      } bg-slate-200`}
+      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${className || ""
+        } bg-slate-200`}
     >
       <p className="text-[0.6em] md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>

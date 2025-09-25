@@ -1,41 +1,33 @@
 "use client";
 import { useEffect, useState } from "react";
-import AppInputMyTeam from "./AppInputMyTeam";
-import AppSpinner from "./AppSpinner";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
-import AppNextFixtures from "./AppNextFixtures";
-import { AppCurrentFixtures } from "./AppNextFixtures";
-import {
-  getArchivedBootstrap,
-  // getBootstrapFromStorage,
-  getFixtures,
-  getManagerData,
-  getPicksData,
-} from "@/services/index";
+import AppInputMyTeam from "./AppInputMyTeam";
+import AppNextFixtures, { AppCurrentFixtures } from "./AppNextFixtures";
+import AppSpinner from "./AppSpinner";
 
 import {
   getExpectedPoints,
+  getTeamLogoUrl,
   optimizationProcess,
   positionMapping,
-  previousSeason,
-  getTeamLogoUrl
+  previousSeason
 } from "@/utils/index";
-import { Button } from "../ui/button";
-import { Armchair, RefreshCcw, Sparkle, Sparkles, ArrowDownUp, ArrowRightLeft, X } from "lucide-react";
+import { Armchair, ArrowRightLeft, RefreshCcw, Sparkles } from "lucide-react";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 // import { Separator } from "@radix-ui/react-select";
-import AppTransferDialog from "./AppTransferDialog";
 import Image from "next/image";
 // import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import useBootstrap from "@/hooks/use-bootstrap";
 import useBootstrapHist from "@/hooks/use-bootstraphist";
-import useFixtures from "@/hooks/use-fixtures";
 import useCurrentEvent from "@/hooks/use-currentevent";
-import withQueryClientProvider from "../react-query/MainProvider";
+import useFixtures from "@/hooks/use-fixtures";
 import useLastFiveGw from "@/hooks/use-lastfivegw";
+import withQueryClientProvider from "../react-query/MainProvider";
 
-import { sectionClassName } from "@/utils"
+import useMgrAndPicks from "@/hooks/use-mgr-picks";
+import { sectionClassName } from "@/utils";
 
 const AppMyTeamWithProvider = () => {
   return (<AppMyTeamContent />);
@@ -47,22 +39,23 @@ const AppMyTeamContent = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
-  
+  const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap })
 
-  const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap }) 
-
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+  const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+  const { setManager, manager, setPicks: setPicksData, picks } = useMgrAndPicks();
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);
   // const [fixtures, setFixtures] = useState<any>([]);
-  const [picks, setPicks] = useState<any>(null);
+  // const [picks, setPicks] = useState<any>(null);
   // const [optimizedPicks, setOptimizedPicks] = useState<any>([]);
-  const [manager, setManager] = useState<any>(null);
+  // const [manager, setManager] = useState<any>(null);
 
   const [isOptimize, setIsOptimize] = useState<boolean>(false);
   const [dataView, setDataView] = useState<any>([]);
   const [transferPlan, setTransferPlan] = useState<any[]>([]);
+  const [totalXp, setTotalXp] = useState<number>(0);
+  const [totalSurplusXpPrev, setTotalSurplusXpPrev] = useState<number>(0);
 
   const [chip, setChip] = useState<string>('');
 
@@ -81,58 +74,59 @@ const AppMyTeamContent = () => {
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
   const setDataPicks = () => {
-    getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
-      (value: any) => {
-        setManager(value);
-        if (!picks || !dataView) {
-          if (value) {
-            
-            getPicksData(value.id, currentEvent.id).then((pickData) => {
-              setChip(pickData.active_chip);
+    setPicksData(currentEvent.id)
+    // getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
+    //   (value: any) => {
+    //     setManager(value);
+    //     if (!picks || !dataView) {
+    //       if (value) {
 
-              if (pickData.active_chip == 'freehit') {
-                getPicksData(value.id, currentEvent.id - 1).then((pickDataPrev) => {
-                  const picks = pickDataPrev.picks.map((pick: any) => {
-                    return {
-                      ...pick,
-                      surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
-                      xp: getXPByElement(pick.element, 1),
-                    };
-                  })
-                  setDataView(picks);
-                  setPicks({
-                    ...pickDataPrev,
-                    picks,
-                  });
-                  setIsOptimize(false);
-                })
-              } else {
-                const picks = pickData.picks.map((pick: any) => {
-                  return {
-                    ...pick,
-                    surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
-                    xp: getXPByElement(pick.element, 1),
-                  };
-                })
-                setDataView(picks);
-                setPicks({
-                  ...pickData,
-                  picks,
-                });
-                setIsOptimize(false);
+    //         getPicksData(value.id, currentEvent.id).then((pickData) => {
+    //           setChip(pickData.active_chip);
 
-              }
-              
-            });
-              
+    //           if (pickData.active_chip == 'freehit') {
+    //             getPicksData(value.id, currentEvent.id - 1).then((pickDataPrev) => {
+    //               const picks = pickDataPrev.picks.map((pick: any) => {
+    //                 return {
+    //                   ...pick,
+    //                   surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+    //                   xp: getXPByElement(pick.element, 1),
+    //                 };
+    //               })
+    //               setDataView(picks);
+    //               setPicks({
+    //                 ...pickDataPrev,
+    //                 picks,
+    //               });
+    //               setIsOptimize(false);
+    //             })
+    //           } else {
+    //             const picks = pickData.picks.map((pick: any) => {
+    //               return {
+    //                 ...pick,
+    //                 surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+    //                 xp: getXPByElement(pick.element, 1),
+    //               };
+    //             })
 
-          }
-        }
-      },
-    );
+    //             setPicks({
+    //               ...pickData,
+    //               picks,
+    //             });
+    //             setIsOptimize(false);
+
+    //           }
+
+    //         });
+
+
+    //       }
+    //     }
+    //   },
+    // );
   };
 
-  const totalXp = (picksData: any) => {
+  const calculateTotalXp = (picksData: any) => {
     if (!picksData || picksData.length == 0) {
       return 0;
     }
@@ -145,12 +139,12 @@ const AppMyTeamContent = () => {
     return total;
   };
 
-  const totalSurplusXpPrev = (picksData: any) => {
+  const calculateTotalSurplusXpPrev = (picksData: any) => {
     if (!picksData) {
       return 0;
     }
     let total = 0;
-    for (let pick of picksData.picks) {
+    for (let pick of picksData) {
       total += pick.surplus_xp_prev;
     }
 
@@ -158,18 +152,35 @@ const AppMyTeamContent = () => {
   };
 
   useEffect(() => {
-    
-    if (bootstrap) { 
 
-      if (
-        currentEvent &&
-        localStorage.getItem("manager_id_stored") &&
-        (!picks || !dataView)
-      ) {
-        setDataPicks();
-      }
+    setManager();
+    if (currentEvent) {
+      setPicksData(currentEvent.id);
     }
-  }, [bootstrap, bootstrapHist, currentEvent, fixtures, manager, picks, last5]);
+  }, [localStorage.getItem('manager_id_stored'), bootstrap, bootstrapHist, currentEvent, last5]);
+
+  useEffect(() => {
+    if (!picks || !bootstrap || !bootstrapHist || !currentEvent || !fixtures || !last5) {
+      return;
+    }
+    setDataView(picks.picks.map((pick: any) => {
+      return {
+        ...pick,
+        surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+        xp: getXPByElement(pick.element, 1),
+      };
+    }));
+    setIsOptimize(false);
+    calculateTotalXp(picks.picks);
+  }, [picks, bootstrap, bootstrapHist, currentEvent, fixtures, last5]);
+
+  useEffect(() => {
+    if (dataView.length > 0) {
+      setTotalXp(calculateTotalXp(dataView));
+      setTotalSurplusXpPrev(calculateTotalSurplusXpPrev(dataView));
+    }
+  }, [dataView, picks]);
+
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
@@ -197,13 +208,12 @@ const AppMyTeamContent = () => {
   const handleFindMyTeam = (event: any) => {
     localStorage.setItem(`manager_id_stored`, event);
     setTimeout(() => {
-      setDataPicks();
+      setManager();
     }, 300);
   };
 
   const handleRemoveMyTeam = (event: any) => {
-    setManager(null);
-    setPicks(null);
+    // setPicks(null);
     setDataView([]);
   };
 
@@ -221,41 +231,41 @@ const AppMyTeamContent = () => {
         (element.team == fix.team_h || element.team == fix.team_a),
     );
 
-  const onHitTransfer = ({element_out, element, transfer, bank}: any) => {
-    setTransferPlan([...transferPlan, {element_out, element, transfer, bank}])
+  const onHitTransfer = ({ element_out, element, transfer, bank }: any) => {
+    setTransferPlan([...transferPlan, { element_out, element, transfer, bank }])
     // setDataPicks()
-    setPicks({...picks, picks: picks.picks.map((dv: any) => {
-      if (dv.element === element_out) {
-        return {...dv, element_out, element, transfer, bank}
-      }
-      return dv;
-    })})
+    // setPicks({...picks, picks: picks.picks.map((dv: any) => {
+    //   if (dv.element === element_out) {
+    //     return {...dv, element_out, element, transfer, bank}
+    //   }
+    //   return dv;
+    // })})
     setDataView(dataView.map((dv: any) => {
       if (dv.element === element_out) {
-        return {...dv, element_out, element, transfer, bank}
+        return { ...dv, element_out, element, transfer, bank }
       }
       return dv;
     }))
-    
-  } 
+
+  }
 
   const onClearTransfer = (player: any) => {
     setTransferPlan(transferPlan.filter((tp: any) => tp.element !== player.element))
     // setDataPicks()
-    setPicks({...picks, picks: picks.picks.map((dv: any) => {
-      if (dv.element === player.element) {
-        return {...dv, element: player.element_out, element_out: undefined, transfer: false}
-      }
-      return dv;
-    })})
+    // setPicks({...picks, picks: picks.picks.map((dv: any) => {
+    //   if (dv.element === player.element) {
+    //     return {...dv, element: player.element_out, element_out: undefined, transfer: false}
+    //   }
+    //   return dv;
+    // })})
     setDataView(dataView.map((dv: any) => {
       if (dv.element === player.element) {
-        return {...dv, element: player.element_out, element_out: undefined, transfer: false}
+        return { ...dv, element: player.element_out, element_out: undefined, transfer: false }
       }
       return dv;
     }))
 
-  } 
+  }
 
   const setValueTempBank = () => {
     let manBank = manager.last_deadline_bank;
@@ -291,7 +301,7 @@ const AppMyTeamContent = () => {
                     last5
                   ).map((dv: any) => {
                     const transfer = transferPlan.find((tp: any) => tp.element == dv.element);
-                    return {...dv, ...transfer}
+                    return { ...dv, ...transfer }
                   })
                 );
                 setIsOptimize(true);
@@ -315,19 +325,18 @@ const AppMyTeamContent = () => {
           <div className="w-full flex justify-end my-3">
             <StatItem
               label={`P${currentEvent.id} - xP${currentEvent.id}`}
-              value={totalSurplusXpPrev(picks).toFixed(2)}
+              value={totalSurplusXpPrev.toFixed(2)}
               className={`
-              ${
-                totalSurplusXpPrev(picks) > 0 ? "bg-green-200 text-green-700" : ""
-              }
-              ${totalSurplusXpPrev(picks) < 0 ? "bg-red-200 text-red-700" : ""}
+              ${totalSurplusXpPrev > 0 ? "bg-green-200 text-green-700" : ""
+                }
+              ${totalSurplusXpPrev < 0 ? "bg-red-200 text-red-700" : ""}
             `}
             />
             <StatItem
               label={isOptimize
                 ? `ΣxP${currentEvent.id + 1}*`
                 : `ΣxP${currentEvent.id + 1}`}
-              value={dataView.length > 0 ? totalXp(dataView).toFixed(2) : 0}
+              value={totalXp.toFixed(2)}
             />
           </div>
 
@@ -335,18 +344,18 @@ const AppMyTeamContent = () => {
       )}
 
       <div className="w-full mb-2">
-        {chip && chip.length > 0 && 
-        <div className="flex justify-center">
-          <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"> {chip} </Badge>
+        {chip && chip.length > 0 &&
+          <div className="flex justify-center">
+            <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800"> {chip} </Badge>
 
-        </div>
+          </div>
         }
-        
+
       </div>
       {dataView.length > 0 &&
         dataView.map((player: any, index: number) => (
           <div className="w-full" key={index}>
-            
+
             {player.position == 12 && (
               <div className="w-full flex justify-center items-center my-2">
                 <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
@@ -359,12 +368,12 @@ const AppMyTeamContent = () => {
                 className={`w-full h-14 md:w-full md:h-24 py-1 px-3 md:py-3 md:px-5 flex justify-start items-center bg-slate-200 space-x-2`}
               >
                 <div>
-                  { !player.transfer ?
+                  {/* { !player.transfer ?
                     <AppTransferDialog player={elementMapping(player.element)} currentFixtures={currentFixtures(player)} picks={dataView} onHitTransfer={onHitTransfer} tempBank={setValueTempBank()} last5={last5}/> :
                     <Button className="bg-red-600 text-white text-xs w-6 h-6 p-0" onClick={() => { onClearTransfer(player) }}>
                       <X className="w-4 h-4" />
                     </Button>
-                  }
+                  } */}
                 </div>
                 <div className="relative w-6 h-6 md:w-12 md:h-12">
                   <Image
@@ -383,8 +392,8 @@ const AppMyTeamContent = () => {
                     {
                       player.transfer &&
                       <div className="flex items-center space-x-1 text-xs md:text-sm text-red-400">
-                        <ArrowRightLeft  className="w-3 h-3" />
-                        <p className="text-ellipsis">{ elementMapping(player.element_out).web_name }</p>
+                        <ArrowRightLeft className="w-3 h-3" />
+                        <p className="text-ellipsis">{elementMapping(player.element_out).web_name}</p>
                       </div>
                     }
                   </div>
@@ -414,7 +423,7 @@ const AppMyTeamContent = () => {
                     V
                   </div>
                 )}
-                
+
               </div>
               <div className="flex justify-end">
                 {/* {currentFixtures(elementMapping(player.element))[0].started
@@ -438,60 +447,58 @@ const AppMyTeamContent = () => {
                       last5={last5 as any}
                     />
                   )} */}
-                  {/* GW onprogress */}
-                  {currentFixtures(elementMapping(player.element)).length === 0 ? 
-                    <StatItem
+                {/* GW onprogress */}
+                {currentFixtures(elementMapping(player.element)).length === 0 ?
+                  <StatItem
                     label={`P${currentEvent.id}-xP${currentEvent.id}`}
                     value="-"
-                    />
+                  />
                   :
                   <>
-                  {currentFixtures(elementMapping(player.element))[0].started
-                  ? (
-                    <StatItem
-                      label={`P${currentEvent.id}-xP${currentEvent.id}`}
-                      value={(
-                        (elementMapping(player.element)?.event_points || 0) -
-                        getXPByElement(player.element, 0)
-                      ).toFixed(2)}
-                      className={`
-                  ${
-                        (elementMapping(player.element)?.event_points || 0) -
-                        getXPByElement(player.element, 0) >
-                            0
-                          ? "bg-green-200 text-green-700"
-                          : ""
-                      }
-                  ${
-                        elementMapping(player.element).event_points == 0 ||
-                          (elementMapping(player.element)?.event_points || 0) -
-                          getXPByElement(player.element, 1) <
-                            0
-                          ? "bg-red-200 text-red-700"
-                          : ""
-                      }
+                    {currentFixtures(elementMapping(player.element))[0].started
+                      ? (
+                        <StatItem
+                          label={`P${currentEvent.id}-xP${currentEvent.id}`}
+                          value={(
+                            (elementMapping(player.element)?.event_points || 0) -
+                            getXPByElement(player.element, 0)
+                          ).toFixed(2)}
+                          className={`
+                  ${(elementMapping(player.element)?.event_points || 0) -
+                              getXPByElement(player.element, 0) >
+                              0
+                              ? "bg-green-200 text-green-700"
+                              : ""
+                            }
+                  ${elementMapping(player.element).event_points == 0 ||
+                              (elementMapping(player.element)?.event_points || 0) -
+                              getXPByElement(player.element, 1) <
+                              0
+                              ? "bg-red-200 text-red-700"
+                              : ""
+                            }
                   `}
-                    />
-                  )
-                  : (
-                    <AppCurrentFixtures
-                      teams={bootstrap?.teams}
-                      element={elementMapping(player.element)}
-                      currentFixtures={currentFixtures(
-                        elementMapping(player.element),
+                        />
+                      )
+                      : (
+                        <AppCurrentFixtures
+                          teams={bootstrap?.teams}
+                          element={elementMapping(player.element)}
+                          currentFixtures={currentFixtures(
+                            elementMapping(player.element),
+                          )}
+                        />
                       )}
-                    />
-                  )}
                   </>
-                  }
-                
-                <AppNextFixtures
+                }
+
+                {currentEvent.id < 38 && <AppNextFixtures
                   teams={bootstrap?.teams}
                   element={elementMapping(player.element)}
                   nextFixtures={nextFixtures(elementMapping(player.element))}
-                />
+                />}
 
-                <AppExpectedPts
+                {currentEvent.id < 38 && <AppExpectedPts
                   element={elementMapping(player.element)}
                   elementHist={bootstrapHist?.elements.find((elh: any) =>
                     elh.code == elementMapping(player.element).code
@@ -503,6 +510,7 @@ const AppMyTeamContent = () => {
                   multiplier={player.multiplier}
                   last5={last5 as any}
                 />
+                }
               </div>
             </div>
           </div>
@@ -517,9 +525,8 @@ const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
     <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${
-        className || ""
-      } bg-slate-200`}
+      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${className || ""
+        } bg-slate-200`}
     >
       <p className="text-[0.6em] md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>
