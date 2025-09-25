@@ -42,15 +42,15 @@ const AppMyTeamContent = () => {
   const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap })
 
   const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
-  const { 
-    manager, 
-    isLoadingManager, 
-    errorManager, 
-    picks, 
-    isLoadingPicks, 
-    errorPicks, 
-    refetchManager: _refetchManager, 
-    refetchPicks: _refetchPicks 
+  const {
+    manager,
+    isLoadingManager,
+    errorManager,
+    picks,
+    isLoadingPicks,
+    errorPicks,
+    refetchManager: _refetchManager,
+    refetchPicks: _refetchPicks
   } = useMgrAndPicks(currentEvent);
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
