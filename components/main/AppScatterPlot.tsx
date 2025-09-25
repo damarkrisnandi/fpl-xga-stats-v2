@@ -80,8 +80,8 @@ function AppScatterPlot({ dataSeparation, dataX, dataY }: any) {
 
   const PpGs = getElementsWithXP().map((el: Element) => Number(el.points_per_game)).filter((val: number) => !isNaN(val) && val !== null && val !== undefined)
   const xpo5s = getElementsWithXP().map((el: Element) => (el.xp ?? 0)).filter((val: number) => !isNaN(val) && val !== null && val !== undefined);
-  const maxPpG = PpGs.length > 0 ? Math.max(...PpGs.map(ppg => Number(ppg))) : 0
-  const maxXpo5 = xpo5s.length > 0 ? Math.max(...xpo5s.map(ppg => Number(ppg))) : 0
+  const maxPpG = PpGs.length > 0 ? Math.max(...PpGs.map((ppg: number | string) => Number(ppg))) : 0
+  const maxXpo5 = xpo5s.length > 0 ? Math.max(...xpo5s.map((ppg: number | string) => Number(ppg))) : 0
 
   const bound = Math.ceil(Math.max(maxPpG, maxXpo5));
 
