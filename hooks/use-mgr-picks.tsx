@@ -1,3 +1,5 @@
+'use client'
+
 import type { PickData } from '@/models/picks';
 import { useCallback, useState } from 'react';
 
