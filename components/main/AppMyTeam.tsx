@@ -42,7 +42,16 @@ const AppMyTeamContent = () => {
   const { currentEvent, isLoadingCurrentEvent, errorCurrentEvent } = useCurrentEvent({ bootstrap })
 
   const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
-  const { setManager, manager, setPicks: setPicksData, picks } = useMgrAndPicks();
+  const { 
+    manager, 
+    isLoadingManager, 
+    errorManager, 
+    picks, 
+    isLoadingPicks, 
+    errorPicks, 
+    refetchManager: _refetchManager, 
+    refetchPicks: _refetchPicks 
+  } = useMgrAndPicks(currentEvent);
   // const [bootstrap, setBootstrap] = useState<any>(null);
   // const [bootstrapHist, setBootstrapHist] = useState<any>(null);
   // const [currentEvent, setCurrentEvent] = useState<any>(null);
@@ -73,16 +82,9 @@ const AppMyTeamContent = () => {
   // const [tempBank, setTempBank] = useState<number>(0);
   const elementMapping = (id: number) =>
     bootstrap.elements.find((el: any) => el.id == id);
+  // Data fetching is now handled by React Query in useMgrAndPicks hook
   const _setDataPicks = () => {
-    setPicksData(currentEvent.id)
-    // getManagerData(localStorage.getItem("manager_id_stored") || 0).then(
-    //   (value: any) => {
-    //     setManager(value);
-    //     if (!picks || !dataView) {
-    //       if (value) {
-
-    //         getPicksData(value.id, currentEvent.id).then((pickData) => {
-    //           setChip(pickData.active_chip);
+    // This function is no longer needed as data fetching is automated
 
     //           if (pickData.active_chip == 'freehit') {
     //             getPicksData(value.id, currentEvent.id - 1).then((pickDataPrev) => {
@@ -151,13 +153,7 @@ const AppMyTeamContent = () => {
     return total;
   };
 
-  useEffect(() => {
-
-    setManager(null);
-    if (currentEvent) {
-      setPicksData(currentEvent.id);
-    }
-  }, [localStorage.getItem('manager_id_stored'), bootstrap, bootstrapHist, currentEvent, last5]);
+  // Manager and picks data are now automatically fetched by React Query in useMgrAndPicks hook
 
   useEffect(() => {
     if (!picks || !bootstrap || !bootstrapHist || !currentEvent || !fixtures || !last5) {
@@ -181,7 +177,7 @@ const AppMyTeamContent = () => {
     }
   }, [dataView, picks]);
 
-  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5) {
+  if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5 || isLoadingManager || isLoadingPicks) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppSpinner />
@@ -190,7 +186,7 @@ const AppMyTeamContent = () => {
   }
 
 
-  if (errorBootstrap || errorBootstrapHist || errorCurrentEvent || errorFixtures || errorLast5) {
+  if (errorBootstrap || errorBootstrapHist || errorCurrentEvent || errorFixtures || errorLast5 || errorManager || errorPicks) {
     return (
       <div className="w-full flex justify-center items-center h-screen">
         <AppFailedToFetch />
@@ -201,14 +197,14 @@ const AppMyTeamContent = () => {
 
   const handleFindMyTeam = (event: any) => {
     localStorage.setItem(`manager_id_stored`, event);
-    setTimeout(() => {
-      setManager(null);
-    }, 300);
+    // React Query will automatically refetch when managerId changes
+    window.location.reload(); // Simple refresh to trigger the hook with new managerId
   };
 
   const handleRemoveMyTeam = (_event: any) => {
-    // setPicks(null);
+    localStorage.removeItem('manager_id_stored');
     setDataView([]);
+    window.location.reload(); // Refresh to clear the data
   };
 
   const nextFixtures = (element: any) =>

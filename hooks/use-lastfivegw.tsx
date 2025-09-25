@@ -1,6 +1,5 @@
 
-import { getLiveEventData, getArchivedLiveEventData } from "@/services";
-import { currentSeason } from "@/utils";
+import { getLiveEventData } from "@/services";
 import { useQuery } from "@tanstack/react-query";
 
 interface Stat {
@@ -71,26 +70,17 @@ const useLastFiveGw = ({ bootstrap, event, n }: any) => {
     error: errorLast5,
   } = useQuery({
     queryKey: ["last5"],
-    queryFn: async () => await Promise.all(Array.from({ length: n ? n : 5 }, (_, i: number) => {
-      return getLiveEventData(event.id - i);
+    queryFn: async () => await Promise.all(Array.from({ length: n ? n : (!event.id || event.id < 5 ? event.id : 5) }, (_, i: number) => {
+      if (n === 0) {
+        return []
+      }
+      return getLiveEventData(event.id - (i - 1));
       // return i == 0 ? getLiveEventData(event.id - i) : getArchivedLiveEventData(currentSeason, event.id - i)
     })),
-    
-    // {
-    //     let liveData;
-    //     if (event.id < 5) {
-    //         liveData = await Promise.all(Array.from({length: event.id}, (_, i: number) => getLiveEventData(event.id - i)));
-    //     } else {
-    //         liveData = await Promise.all([getLiveEventData(event.id), getLiveEventData(event.id - 1), getLiveEventData(event.id - 2), getLiveEventData(event.id - 3), getLiveEventData(event.id - 4)]);
-    //     }
-
-    //     return liveData
-        
-    // },
     enabled: !!bootstrap && !!event
   });
 
-  return { last5, isLoadingLast5, errorLast5}
-} 
+  return { last5, isLoadingLast5, errorLast5 }
+}
 
 export default useLastFiveGw;
