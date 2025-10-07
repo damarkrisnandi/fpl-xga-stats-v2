@@ -356,6 +356,7 @@ const AppMyTeamContent = () => {
 
 
       {/* pitch view */}
+{manager &&
       <div className="bg-green-400 p-5 flex flex-col gap-3">
         <ul className="flex gap-1 md:gap-2 justify-center">
           {gkp_played.length > 0 && (
@@ -510,6 +511,7 @@ const AppMyTeamContent = () => {
           )}
         </ul>
       </div>
+}
 
       {/* list view */}
       {/* sengaja disabled, tapi masih perlu */}
