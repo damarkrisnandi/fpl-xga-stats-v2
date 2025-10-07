@@ -184,7 +184,7 @@ const calculateBaseExpectedLast5 = (
   if (!stat5) return 0;
 
   for (const live of stat5.filter((el: LiveEvent) =>
-    el.elements?.find((e) => e.id === baseEl.id) ?? null
+    el.elements.find((e) => e.id === baseEl.id)
   )) {
     match++;
     let xP = 0;
