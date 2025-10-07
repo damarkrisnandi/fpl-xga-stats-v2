@@ -454,7 +454,7 @@ const PlayerCardStats = (props: any) => {
   // const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
-      <div className="w-full p-2 flex justify-start items-center">
+      <div className="w-full p-2 flex flex-col md:flex-row justify-start items-center">
         <div className="flex flex-col justify-stretch  w-full items-center mb-1">
           {/* NAME, LOGO, POSITION */}
           <div className="flex items-center">
