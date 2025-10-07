@@ -511,6 +511,7 @@ const AppMyTeamContent = () => {
           )}
         </ul>
       </div>
+     </div>
 }
 
       {/* list view */}
