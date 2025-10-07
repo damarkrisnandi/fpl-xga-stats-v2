@@ -17,6 +17,8 @@ import {
 } from "@tanstack/react-query";
 import {
   Check,
+  ChevronLeft,
+  ChevronRight,
   TriangleAlert
 } from "lucide-react";
 import Image from "next/image";
@@ -201,7 +203,7 @@ const AppElements = (_props: any) => {
         />
         {/* Items per page selector */}
         <div className="flex justify-end mb-2">
-          <Select 
+          <Select
             value={itemsPerPage.toString()}
             onValueChange={(value) => {
               setItemsPerPage(Number(value));
@@ -222,7 +224,7 @@ const AppElements = (_props: any) => {
             </SelectContent>
           </Select>
         </div>
-        
+
         <ScrollArea className="h-[500px] w-full rounded-md border p-4">
           {(() => {
             // Filter and sort elements
@@ -233,47 +235,47 @@ const AppElements = (_props: any) => {
               )
               .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
               .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
-            
+
             // Calculate pagination
             const indexOfLastItem = currentPage * itemsPerPage;
             const indexOfFirstItem = indexOfLastItem - itemsPerPage;
             const currentItems = filteredElements.slice(indexOfFirstItem, indexOfLastItem);
-            
+
             // Display message if no elements match the filter criteria
             if (filteredElements.length === 0) {
               return <p className="text-center p-4">No players match the selected filters.</p>;
             }
-            
+
             return (
               <>
                 {currentItems.map((el: any) => (
-                  <PlayerCardStats 
-                    key={el.id} 
-                    element={el} 
-                    currentEvent={currentEvent} 
-                    fixtures={fixtures} 
-                    teams={bootstrap.teams} 
-                    elementHist={bootstrapHist?.elements?.find((elh: any) => elh.code === el.code)} 
-                    last5={last5} 
+                  <PlayerCardStats
+                    key={el.id}
+                    element={el}
+                    currentEvent={currentEvent}
+                    fixtures={fixtures}
+                    teams={bootstrap.teams}
+                    elementHist={bootstrapHist?.elements?.find((elh: any) => elh.code === el.code)}
+                    last5={last5}
                   />
                 ))}
               </>
             );
           })()}
         </ScrollArea>
-        
+
         {/* Pagination controls */}
-        <div className="flex justify-between items-center mt-4">
+        <div className="flex flex-col md:flex-row  justify-between items-center mt-4">
           <div className="text-sm text-muted-foreground">
             {(() => {
               const filteredElements = bootstrap.elements
                 .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
                 .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
-                
+
               const totalItems = filteredElements.length;
               const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
               const indexOfFirstItem = Math.min((currentPage - 1) * itemsPerPage + 1, indexOfLastItem);
-              
+
               return (
                 <>
                   Showing {indexOfFirstItem}-{indexOfLastItem} of {totalItems} players
@@ -281,54 +283,54 @@ const AppElements = (_props: any) => {
               );
             })()}
           </div>
-          
+
           <div className="flex items-center gap-2">
             {(() => {
               // Calculate pagination numbers
               const filteredElements = bootstrap.elements
                 .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
                 .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
-                
+
               const totalPages = Math.ceil(filteredElements.length / itemsPerPage);
-              
+
               return (
                 <>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage(1)} 
+                    onClick={() => setCurrentPage(1)}
                     disabled={currentPage === 1}
                   >
-                    First
+                    1
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                   >
-                    Previous
+                    <ChevronLeft className="w-4 h-4" />
                   </Button>
-                  
+
                   <div className="flex items-center mx-2">
-                    <span className="text-sm">Page {currentPage} of {totalPages}</span>
+                    <span className="text-sm">{currentPage} / {totalPages}</span>
                   </div>
-                  
-                  <Button 
-                    variant="outline" 
+
+                  <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages || totalPages === 0}
                   >
-                    Next
+                    <ChevronRight className="w-4 h-4" />
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
-                    onClick={() => setCurrentPage(totalPages)} 
+                    onClick={() => setCurrentPage(totalPages)}
                     disabled={currentPage === totalPages || totalPages === 0}
                   >
-                    Last
+                    {totalPages}
                   </Button>
                 </>
               );
@@ -452,17 +454,11 @@ const PlayerCardStats = (props: any) => {
   // const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
-      <div className="w-full p-2">
-        <div className="flex justify-stretch w-full items-center mb-1">
+      <div className="w-full p-2 flex justify-start items-center">
+        <div className="flex flex-col justify-stretch  w-full items-center mb-1">
+          {/* NAME, LOGO, POSITION */}
           <div className="flex items-center">
-            {
-              /* <Avatar>
-              <AvatarImage
-                src={getPlayerPhotoUrl(element.photo)}
-                alt={element.web_name}
-              />
-            </Avatar> */
-            }
+
             <div className="relative w-8 h-8 md:w-20 md:h-20">
               <Image
                 src={getTeamLogoUrl(element.team_code)}
@@ -482,6 +478,13 @@ const PlayerCardStats = (props: any) => {
               </p>
             </div>
           </div>
+
+          <Button asChild variant={"outline"} className="w-full">
+            <Link href={`player/${element.id}`} className="font-semibold">
+              Show Player Details
+            </Link>
+          </Button>
+
         </div>
         <div className="flex justify-center flex-col mb-2">
           {element.news && element.news.length && (
@@ -584,69 +587,7 @@ const PlayerCardStats = (props: any) => {
               <StatItem label={`CS90`} value={element.clean_sheets_per_90} />
             </div>
           )}
-          {currentEvent?.id > 1 && (
-            <div className="w-full flex justify-center">
-              <StatItem
-                label={`GW${currentEvent?.id}`}
-                value={element.event_points}
-              />
-              <AppExpectedPts
-                element={element}
-                elementHist={elementHist}
-                currentEvent={currentEvent}
-                deltaEvent={0}
-                fixtures={fixtures}
-                teams={teams}
-                multiplier={1}
-                last5={last5}
-              />
-
-              <StatItem label={" "} value={" "} />
-              <StatItem
-                label={`P${currentEvent?.id}-xP${currentEvent?.id}`}
-                value={(element.event_points -
-                  getExpectedPoints(
-                    element,
-                    currentEvent?.id,
-                    0,
-                    fixtures,
-                    teams,
-                    elementHist,
-                    last5
-                  )).toFixed(2)}
-                className={`
-            ${(element.event_points -
-                    getExpectedPoints(
-                      element,
-                      currentEvent?.id,
-                      0,
-                      fixtures,
-                      teams,
-                      elementHist,
-                      last5
-                    )) > 0
-                    ? "bg-green-200 text-green-700"
-                    : ""
-                  }
-            ${element.event_points == 0 ||
-                    (element.event_points -
-                      getExpectedPoints(
-                        element,
-                        currentEvent.id,
-                        0,
-                        fixtures,
-                        teams,
-                        elementHist,
-                        last5
-                      )) < 0
-                    ? "bg-red-200 text-red-700"
-                    : ""
-                  }
-            `}
-              />
-            </div>
-          )}
-          {currentEvent?.id < 38 && (
+          {currentEvent?.id > 1 && currentEvent?.id < 38 && (
             <div className="w-full flex justify-center">
               <AppNextFixtures
                 teams={teams}
@@ -686,11 +627,7 @@ const PlayerCardStats = (props: any) => {
             </div>
           )}
         </div>
-        <Button asChild variant={"outline"} className="w-full">
-          <Link href={`player/${element.id}`} className="font-semibold">
-            Show Player Details
-          </Link>
-        </Button>
+
       </div>
       <Separator className="w-full" />
     </div>
