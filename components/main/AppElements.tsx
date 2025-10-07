@@ -1,10 +1,28 @@
 "use client";
 
+import useBootstrap from "@/hooks/use-bootstrap";
+import useBootstrapHist from "@/hooks/use-bootstraphist";
+import useCurrentEvent from "@/hooks/use-currentevent";
+import useFixtures from "@/hooks/use-fixtures";
+import useLastFiveGw from "@/hooks/use-lastfivegw";
+import useNextEvent from "@/hooks/use-nextevent";
 import {
-  getArchivedBootstrap,
-  getBootstrapFromStorage,
-  getFixtures,
-} from "@/services";
+  getExpectedPoints,
+  getTeamLogoUrl,
+  positionMapping,
+  previousSeason
+} from "@/utils";
+import {
+  QueryClient
+} from "@tanstack/react-query";
+import {
+  Check,
+  TriangleAlert
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
@@ -12,9 +30,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { createElement, useEffect, useState } from "react";
-import AppFailedToFetch from "./AppFailedToFetch";
-import { Skeleton } from "../ui/skeleton";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -24,70 +40,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { ScrollArea } from "../ui/scroll-area";
-import {
-  CirclePercent,
-  Euro,
-  PoundSterling,
-  RefreshCw,
-  TriangleAlert,
-  Check
-} from "lucide-react";
-import { Avatar, AvatarImage } from "../ui/avatar";
-import {
-  difficultyColor,
-  getExpectedPoints,
-  getPlayerPhotoUrl,
-  getTeamLogoUrl,
-  positionMapping,
-  previousSeason,
-  xPColor,
-} from "@/utils";
 import { Separator } from "../ui/separator";
-import Image from "next/image";
-import { Button } from "../ui/button";
-import Link from "next/link";
-import AppNextFixtures from "./AppNextFixtures";
+import { Skeleton } from "../ui/skeleton";
 import AppExpectedPts from "./AppExpectedPts";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQueries,
-  useQuery,
-} from "@tanstack/react-query";
-import useBootstrap from "@/hooks/use-bootstrap";
-import useBootstrapHist from "@/hooks/use-bootstraphist";
-import useFixtures from "@/hooks/use-fixtures";
-import useCurrentEvent from "@/hooks/use-currentevent";
-import useNextEvent from "@/hooks/use-nextevent";
-import useLastFiveGw from "@/hooks/use-lastfivegw";
-
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import AppFailedToFetch from "./AppFailedToFetch";
+import AppNextFixtures from "./AppNextFixtures";
 
 
 
-const AppElements = (props: any) => {
-  const queryClient = new QueryClient();
+
+const AppElements = (_props: any) => {
+  const _queryClient = new QueryClient();
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
   const { bootstrapHist, isLoadingBootstrapHist, errorBootstrapHist } = useBootstrapHist({ season: previousSeason })
   const { fixtures, isLoadingFixtures, errorFixtures } = useFixtures();
 
-  const { currentEvent } = useCurrentEvent({ bootstrap })  
-  const { nextEvent } = useNextEvent({ bootstrap });
+  const { currentEvent } = useCurrentEvent({ bootstrap })
+  const { nextEvent: _nextEvent } = useNextEvent({ bootstrap });
 
-  const { last5, isLoadingLast5, errorLast5} = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
+  const { last5, isLoadingLast5, errorLast5 } = useLastFiveGw({ bootstrap, event: currentEvent, n: 5 });
   // const [fixtures, setFixtures] = useState<any>([]);
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
   const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
 
   const [columns, setColumns] = useState<any[]>([])
 
@@ -111,7 +87,7 @@ const AppElements = (props: any) => {
             isTransform: true,
             transform: (el: any) => el.selected_by_percent + '%',
             isRender: false,
-            render: (el: any) => null
+            render: (_el: any) => null
           },
           {
             header: 'Next',
@@ -137,7 +113,7 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el: any) => null
+            render: (_el: any) => null
           },
           {
             header: 'xP' + ((currentEvent?.id || 0) + 2),
@@ -154,7 +130,7 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el: any) => null
+            render: (_el: any) => null
           },
           {
             header: 'xP' + ((currentEvent?.id || 0) + 3),
@@ -171,7 +147,7 @@ const AppElements = (props: any) => {
               last5
             ).toFixed(2),
             isRender: false,
-            render: (el: any) => null
+            render: (_el: any) => null
           },
           {
             header: 'Action',
@@ -187,7 +163,7 @@ const AppElements = (props: any) => {
     }
   }, [bootstrap, bootstrapHist, currentEvent, fixtures, last5])
 
-  
+
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingFixtures || isLoadingLast5) {
     return (
       <Card className="w-11/12 md:w-10/12 lg:w-7/12">
@@ -223,72 +199,142 @@ const AppElements = (props: any) => {
           }}
           className="mb-2"
         />
-        <ScrollArea className="h-[600px] w-full rounded-md border p-4">
-        <Table>
-        <TableHeader>
-          <TableRow>
-            {
-              columns.map((col: any) => (
-                <TableHead key={col.header} className="">{col.header}</TableHead>
-              ))
-            }
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-        {bootstrap.elements
-            .toSorted(
-              (a: any, b: any) =>
-                b.total_points -
-                a.total_points,
-            )
-            .filter((el: any) => filterByTeam ? el.team == filterByTeam : el)
-            .filter((el: any) =>
-              filterByPosition ? el.element_type == filterByPosition : el
-            )
-            .map((el: any) => (
-            <TableRow key={el.id}>
-              {
-              columns.map((col: any) => {
-                return (
-                <TableCell key={col.header} className={col.class_td}>
-                  {
-                    col.isRender ? <ColsRenderer {...col} el={el} teams={bootstrap.teams} fixtures={fixtures} currentEvent={currentEvent}/> : col.transform(el) 
-                  }
-                </TableCell>
-              )}
+        {/* Items per page selector */}
+        <div className="flex justify-end mb-2">
+          <Select 
+            value={itemsPerPage.toString()}
+            onValueChange={(value) => {
+              setItemsPerPage(Number(value));
+              setCurrentPage(1); // Reset to first page when changing items per page
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Items per page" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Items per page</SelectLabel>
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <ScrollArea className="h-[500px] w-full rounded-md border p-4">
+          {(() => {
+            // Filter and sort elements
+            const filteredElements = bootstrap.elements
+              .toSorted(
+                (a: any, b: any) =>
+                  b.total_points - a.total_points
               )
-              }
-              {/* <TableCell className="font-medium">
-                <div className="flex gap-2 items-center">
-                  <div className="relative w-6 h-6 md:w-8 md:h-8">
-                    <Image
-                      src={getTeamLogoUrl(el.team_code)}
-                      fill={true}
-                      className="w-6 h-6 md:w-8 md:h-8"
-                      sizes="20"
-                      alt={`t${el.team_code}`}
-                    />`
-
-                  </div>
-                {el.web_name}
-                </div>
-              </TableCell>
-              <TableCell>{el.event_points}</TableCell>
-              <TableCell>{el.total_points}</TableCell>
-              <TableCell className="text-right">{el.selected_by_percent}</TableCell> */}
-            </TableRow>
-            ))}
-          
-        </TableBody>
-        {/* <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter> */}
-      </Table>
-
+              .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
+              .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
+            
+            // Calculate pagination
+            const indexOfLastItem = currentPage * itemsPerPage;
+            const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+            const currentItems = filteredElements.slice(indexOfFirstItem, indexOfLastItem);
+            
+            // Display message if no elements match the filter criteria
+            if (filteredElements.length === 0) {
+              return <p className="text-center p-4">No players match the selected filters.</p>;
+            }
+            
+            return (
+              <>
+                {currentItems.map((el: any) => (
+                  <PlayerCardStats 
+                    key={el.id} 
+                    element={el} 
+                    currentEvent={currentEvent} 
+                    fixtures={fixtures} 
+                    teams={bootstrap.teams} 
+                    elementHist={bootstrapHist?.elements?.find((elh: any) => elh.code === el.code)} 
+                    last5={last5} 
+                  />
+                ))}
+              </>
+            );
+          })()}
         </ScrollArea>
+        
+        {/* Pagination controls */}
+        <div className="flex justify-between items-center mt-4">
+          <div className="text-sm text-muted-foreground">
+            {(() => {
+              const filteredElements = bootstrap.elements
+                .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
+                .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
+                
+              const totalItems = filteredElements.length;
+              const indexOfLastItem = Math.min(currentPage * itemsPerPage, totalItems);
+              const indexOfFirstItem = Math.min((currentPage - 1) * itemsPerPage + 1, indexOfLastItem);
+              
+              return (
+                <>
+                  Showing {indexOfFirstItem}-{indexOfLastItem} of {totalItems} players
+                </>
+              );
+            })()}
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {(() => {
+              // Calculate pagination numbers
+              const filteredElements = bootstrap.elements
+                .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
+                .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
+                
+              const totalPages = Math.ceil(filteredElements.length / itemsPerPage);
+              
+              return (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(1)} 
+                    disabled={currentPage === 1}
+                  >
+                    First
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} 
+                    disabled={currentPage === 1}
+                  >
+                    Previous
+                  </Button>
+                  
+                  <div className="flex items-center mx-2">
+                    <span className="text-sm">Page {currentPage} of {totalPages}</span>
+                  </div>
+                  
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} 
+                    disabled={currentPage === totalPages || totalPages === 0}
+                  >
+                    Next
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentPage(totalPages)} 
+                    disabled={currentPage === totalPages || totalPages === 0}
+                  >
+                    Last
+                  </Button>
+                </>
+              );
+            })()}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
@@ -296,33 +342,33 @@ const AppElements = (props: any) => {
 
 export default AppElements;
 
-const ColsRenderer = (props: any) => {
+const _ColsRenderer = (props: any) => {
   switch (props.type) {
     case 'name':
       return (
-      <div className="flex gap-2 items-center">
-        <div className="relative w-6 h-6 md:w-8 md:h-8">
-          <Image
-            src={getTeamLogoUrl(props.el.team_code)}
-            fill={true}
-            className="w-6 h-6 md:w-8 md:h-8"
-            sizes="20"
-            alt={`t${props.el.team_code}`}
-          />`
+        <div className="flex gap-2 items-center">
+          <div className="relative w-6 h-6 md:w-8 md:h-8">
+            <Image
+              src={getTeamLogoUrl(props.el.team_code)}
+              fill={true}
+              className="w-6 h-6 md:w-8 md:h-8"
+              sizes="20"
+              alt={`t${props.el.team_code}`}
+            />`
+          </div>
+          {props.el.web_name}
+          <div>
+            {
+              props.el.status == 'a' ? <Check className="w-4 h-4" /> : <TriangleAlert className="w-4 h-4 text-orange-500" />
+            }
+          </div>
         </div>
-        {props.el.web_name}
-        <div>
-          {
-            props.el.status == 'a' ? <Check className="w-4 h-4" /> : <TriangleAlert className="w-4 h-4 text-orange-500" />
-          }
-        </div>
-      </div>
       );
     case 'nextFixtures':
-      const getTeamShort = (code: number) => {
+      const _getTeamShort = (code: number) => {
         return props.teams.find((team: any) => team.id === code)?.short_name || "";
       };
-    
+
       const nextFixtures = () =>
         props.fixtures.filter((fix: any) =>
           fix.event == props.currentEvent.id + 1 &&
@@ -338,10 +384,10 @@ const ColsRenderer = (props: any) => {
       return <></>
     case 'action':
       return <Button asChild variant={"outline"}>
-      <Link href={`player/${props.el.id}`} className="font-semibold">
-        Show Player Details
-      </Link>
-    </Button>
+        <Link href={`player/${props.el.id}`} className="font-semibold">
+          Show Player Details
+        </Link>
+      </Button>
 
     default:
       break;
@@ -397,10 +443,6 @@ const SelectPosition = (props: any) => {
 const PlayerCardStats = (props: any) => {
   const { className, element, currentEvent, fixtures, teams, elementHist, last5 } =
     props;
-
-  const getTeamShort = (code: number) => {
-    return teams.find((team: any) => team.id === code)?.short_name || "";
-  };
 
   const nextFixtures = () =>
     fixtures.filter((fix: any) =>
@@ -473,16 +515,14 @@ const PlayerCardStats = (props: any) => {
                   2,
                 )}
                 className={`
-            ${
-                  element.goals_scored - element.expected_goals > 0
+            ${element.goals_scored - element.expected_goals > 0
                     ? "bg-green-200 text-green-700"
                     : ""
-                }
-            ${
-                  element.goals_scored - element.expected_goals < 0
+                  }
+            ${element.goals_scored - element.expected_goals < 0
                     ? "bg-red-200 text-red-700"
                     : ""
-                }
+                  }
 
             `}
               />
@@ -500,16 +540,14 @@ const PlayerCardStats = (props: any) => {
                 label={"A-xA"}
                 value={(element.assists - element.expected_assists).toFixed(2)}
                 className={`
-            ${
-                  element.assists - element.expected_assists > 0
+            ${element.assists - element.expected_assists > 0
                     ? "bg-green-200 text-green-700"
                     : ""
-                }
-            ${
-                  element.assists - element.expected_assists < 0
+                  }
+            ${element.assists - element.expected_assists < 0
                     ? "bg-red-200 text-red-700"
                     : ""
-                }
+                  }
             `}
               />
             </div>
@@ -528,16 +566,14 @@ const PlayerCardStats = (props: any) => {
                   element.expected_goals_conceded - element.goals_conceded
                 ).toFixed(2)}
                 className={`
-            ${
-                  element.expected_goals_conceded - element.goals_conceded > 0
+            ${element.expected_goals_conceded - element.goals_conceded > 0
                     ? "bg-green-200 text-green-700"
                     : ""
-                }
-            ${
-                  element.expected_goals_conceded - element.goals_conceded < 0
+                  }
+            ${element.expected_goals_conceded - element.goals_conceded < 0
                     ? "bg-red-200 text-red-700"
                     : ""
-                }
+                  }
             `}
               />
             </div>
@@ -579,35 +615,33 @@ const PlayerCardStats = (props: any) => {
                     last5
                   )).toFixed(2)}
                 className={`
-            ${
-                  (element.event_points -
+            ${(element.event_points -
+                    getExpectedPoints(
+                      element,
+                      currentEvent?.id,
+                      0,
+                      fixtures,
+                      teams,
+                      elementHist,
+                      last5
+                    )) > 0
+                    ? "bg-green-200 text-green-700"
+                    : ""
+                  }
+            ${element.event_points == 0 ||
+                    (element.event_points -
                       getExpectedPoints(
                         element,
-                        currentEvent?.id,
+                        currentEvent.id,
                         0,
                         fixtures,
                         teams,
                         elementHist,
                         last5
-                      )) > 0
-                    ? "bg-green-200 text-green-700"
-                    : ""
-                }
-            ${
-                  element.event_points == 0 ||
-                    (element.event_points -
-                        getExpectedPoints(
-                          element,
-                          currentEvent.id,
-                          0,
-                          fixtures,
-                          teams,
-                          elementHist,
-                          last5
-                        )) < 0
+                      )) < 0
                     ? "bg-red-200 text-red-700"
                     : ""
-                }
+                  }
             `}
               />
             </div>
@@ -667,9 +701,8 @@ const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
     <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${
-        className || ""
-      } bg-slate-200`}
+      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${className || ""
+        } bg-slate-200`}
     >
       <p className="text-[0.6em] md:text-sm">{label}</p>
       <p className="text-sm md:text-xl font-semibold">{value}</p>

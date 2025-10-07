@@ -34,7 +34,7 @@ const StatItemExtraLow = (props: any) => {
 const StatItemLow = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <SquareCard className={cn("bg-amber-200 text-amber-200", className)}>
+    <SquareCard className={cn("bg-amber-200 text-amber-700", className)}>
       <SquareCardLabel>{label}</SquareCardLabel>
       <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
       <SquareCardFooter>
