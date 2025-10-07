@@ -1,0 +1,14 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "square-card",
+  "type": "registry:ui",
+  "title": "Square Card",
+  "description": "A versatile card component for displaying content in a square format with optional footer",
+  "files": [
+    {
+      "path": "components/ui/square-card.tsx",
+      "content": "import * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\n\nconst _StatItem = (props: any) => {\n    const { className, label, value } = props;\n    return (\n        <div\n            className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${className || \"\"\n                } bg-slate-200`}\n        >\n            <p className=\"text-[0.6em] md:text-sm\">{label}</p>\n            <p className=\"text-sm md:text-xl font-semibold\">{value}</p>\n        </div>\n    );\n};\n\nconst SquareCard = React.forwardRef<\n    HTMLDivElement,\n    React.HTMLAttributes<HTMLDivElement>\n>(({ className, ...props }, ref) => (\n    <div\n        ref={ref}\n        className={cn(\n            \"bg-card text-card-foreground\",\n            \"w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center\",\n            className,\n        )}\n        {...props}\n    />\n));\nSquareCard.displayName = \"SquareCard\";\n\nconst SquareCardHeader = React.forwardRef<\n    HTMLDivElement,\n    React.HTMLAttributes<HTMLDivElement>\n>(({ className, ...props }, ref) => (\n    <div\n        ref={ref}\n        className={cn(\"flex flex-col justify-center items-center\", className)}\n        {...props}\n    />\n));\nSquareCardHeader.displayName = \"SquareCardHeader\";\n\nconst SquareCardLabel = React.forwardRef<\n    HTMLParagraphElement,\n    React.HTMLAttributes<HTMLParagraphElement>\n>(({ className, ...props }, ref) => (\n    <p\n        ref={ref}\n        className={cn(\n            \"text-[0.6em] md:text-sm\",\n            className\n        )}\n        {...props}\n    />\n));\nSquareCardLabel.displayName = \"SquareCardLabel\";\n\nconst SquareCardContent = React.forwardRef<\n    HTMLDivElement,\n    React.HTMLAttributes<HTMLDivElement>\n>(({ className, ...props }, ref) => (\n    <div ref={ref} className={cn(\"\", className)} {...props} />\n));\nSquareCardContent.displayName = \"SquareCardContent\";\n\nconst SquareCardFooter = React.forwardRef<\n    HTMLDivElement,\n    React.HTMLAttributes<HTMLDivElement>\n>(({ className, ...props }, ref) => (\n    <div\n        ref={ref}\n        className={cn(\"flex items-center justify-center\", className)}\n        {...props}\n    />\n));\nSquareCardFooter.displayName = \"SquareCardFooter\";\n\nexport {\n    SquareCard,\n    SquareCardContent, SquareCardFooter,\n    SquareCardHeader, SquareCardLabel\n};\n",
+      "type": "registry:ui"
+    }
+  ]
+}

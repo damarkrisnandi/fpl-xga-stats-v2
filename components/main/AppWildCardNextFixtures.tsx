@@ -24,7 +24,6 @@ import {
 } from "@tanstack/react-query";
 import Image from 'next/image';
 import { cn } from "../../lib/utils";
-import { SquareCard, SquareCardLabel } from "../constructs/SquareCard";
 import {
   Card,
   CardContent,
@@ -32,6 +31,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { SquareCard, SquareCardLabel } from "../ui/square-card";
 
 const AppWildCardNextFixtures = () => {
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();

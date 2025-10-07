@@ -4,7 +4,7 @@ import {
 } from "@/utils";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
-import { SquareCard, SquareCardFooter, SquareCardLabel } from "../constructs/SquareCard";
+import { SquareCard, SquareCardFooter, SquareCardLabel } from "../ui/square-card";
 
 const Changes = (props: any) => {
   const { changes } = props;

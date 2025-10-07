@@ -1,0 +1,19 @@
+{
+    "$schema": "https://ui.shadcn.com/schema.json",
+    "name": "enhanced-component",
+    "homepage": "https://fpl-xga-v2.vercel.app",
+    "items": [
+        {
+            "name": "square-card",
+            "type": "registry:ui",
+            "title": "Square Card",
+            "description": "A versatile card component for displaying content in a square format with optional footer",
+            "files": [
+                {
+                    "path": "components/ui/square-card.tsx",
+                    "type": "registry:ui"
+                }
+            ]
+        }
+    ]
+}
