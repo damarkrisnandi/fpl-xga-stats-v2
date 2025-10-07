@@ -44,6 +44,7 @@ import {
 } from "../ui/select";
 import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
+import { SquareExtendCard } from "../ui/square-extend-card";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppNextFixtures from "./AppNextFixtures";
@@ -454,32 +455,34 @@ const PlayerCardStats = (props: any) => {
   // const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
-      <div className="w-full p-2 flex flex-col md:flex-row justify-start items-center">
+      <div className="w-full p-2 flex flex-col md:flex-row justify-start">
         <div className="flex flex-col justify-stretch  w-full items-center mb-1">
           {/* NAME, LOGO, POSITION */}
-          <div className="flex items-center">
+          <SquareExtendCard className="bg-fuchsia-300 w-56 xl:w-full">
+            <div className="flex items-center gap-2 w-full">
 
-            <div className="relative w-8 h-8 md:w-20 md:h-20">
-              <Image
-                src={getTeamLogoUrl(element.team_code)}
-                fill={true}
-                className="w-8 h-8 md:w-20 md:h-20"
-                sizes="20"
-                alt={`t${element.team_code}`}
-              />
+              <div className="relative w-8 h-8 xl:w-20 xl:h-20">
+                <Image
+                  src={getTeamLogoUrl(element.team_code)}
+                  fill={true}
+                  className="w-8 h-8 md:w-20 md:h-20"
+                  sizes="20"
+                  alt={`t${element.team_code}`}
+                />
+              </div>
+
+              <div className="p-2">
+                <p className="text-sm md:text-xl font-semibold">
+                  {element.web_name} | {positionMapping(element.element_type)}
+                </p>
+                <p className="text-xs md:text-md text-gray-500">
+                  {element.first_name} {element.second_name}
+                </p>
+              </div>
             </div>
+          </SquareExtendCard>
 
-            <div className="p-2">
-              <p className="text-sm md:text-xl font-semibold">
-                {element.web_name} | {positionMapping(element.element_type)}
-              </p>
-              <p className="text-xs md:text-md text-gray-500">
-                {element.first_name} {element.second_name}
-              </p>
-            </div>
-          </div>
-
-          <Button asChild variant={"outline"} className="w-full">
+          <Button asChild className="w-56 xl:w-full rounded-none">
             <Link href={`player/${element.id}`} className="font-semibold">
               Show Player Details
             </Link>

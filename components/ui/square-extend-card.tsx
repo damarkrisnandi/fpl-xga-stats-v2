@@ -16,7 +16,7 @@ const _StatItem = (props: any) => {
     );
 };
 
-const SquareCard = React.forwardRef<
+const SquareExtendCard = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -24,15 +24,15 @@ const SquareCard = React.forwardRef<
         ref={ref}
         className={cn(
             "bg-card text-card-foreground",
-            "w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center",
+            "h-14 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center",
             className,
         )}
         {...props}
     />
 ));
-SquareCard.displayName = "SquareCard";
+SquareExtendCard.displayName = "SquareExtendCard";
 
-const SquareCardHeader = React.forwardRef<
+const SquareExtendCardHeader = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -42,32 +42,32 @@ const SquareCardHeader = React.forwardRef<
         {...props}
     />
 ));
-SquareCardHeader.displayName = "SquareCardHeader";
+SquareExtendCardHeader.displayName = "SquareExtendCardHeader";
 
-const SquareCardLabel = React.forwardRef<
+const SquareExtendCardLabel = React.forwardRef<
     HTMLParagraphElement,
     React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
     <p
         ref={ref}
         className={cn(
-            "text-[0.6em] md:text-sm whitespace-nowrap text-ellipsis overflow-hidden",
+            "text-[0.6em] md:text-sm",
             className
         )}
         {...props}
     />
 ));
-SquareCardLabel.displayName = "SquareCardLabel";
+SquareExtendCardLabel.displayName = "SquareExtendCardLabel";
 
-const SquareCardContent = React.forwardRef<
+const SquareExtendCardContent = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
     <div ref={ref} className={cn("", className)} {...props} />
 ));
-SquareCardContent.displayName = "SquareCardContent";
+SquareExtendCardContent.displayName = "SquareExtendCardContent";
 
-const SquareCardFooter = React.forwardRef<
+const SquareExtendCardFooter = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -77,10 +77,10 @@ const SquareCardFooter = React.forwardRef<
         {...props}
     />
 ));
-SquareCardFooter.displayName = "SquareCardFooter";
+SquareExtendCardFooter.displayName = "SquareExtendCardFooter";
 
 export {
-    SquareCard,
-    SquareCardContent, SquareCardFooter,
-    SquareCardHeader, SquareCardLabel
+    SquareExtendCard,
+    SquareExtendCardContent, SquareExtendCardFooter,
+    SquareExtendCardHeader, SquareExtendCardLabel
 };

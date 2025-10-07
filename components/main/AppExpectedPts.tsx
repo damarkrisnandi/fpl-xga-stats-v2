@@ -93,7 +93,8 @@ const AppExpectedPts = (props: any) => {
     fixtures,
     teams,
     multiplier,
-    last5
+    last5,
+    customLabel // label override
   } = props;
   const [xPoints, setXPoints] = useState<number>(0);
   const [xPointsOvr, setXPointsOvr] = useState<number>(0);
@@ -132,7 +133,7 @@ const AppExpectedPts = (props: any) => {
   if (xPoints < 2) {
     return (
       <StatItemExtraLow
-        label={`xP${currentEvent.id + deltaEvent}`}
+        label={customLabel ?? `xP${currentEvent.id + deltaEvent}`}
         value={xPoints.toFixed(2)}
         changes={changes.toFixed(2)}
       />
@@ -140,7 +141,7 @@ const AppExpectedPts = (props: any) => {
   } else if (xPoints < 3) {
     return (
       <StatItemLow
-        label={`xP${currentEvent.id + deltaEvent}`}
+        label={customLabel ?? `xP${currentEvent.id + deltaEvent}`}
         value={xPoints.toFixed(2)}
         changes={changes.toFixed(2)}
       />
@@ -148,7 +149,7 @@ const AppExpectedPts = (props: any) => {
   } else if (xPoints < 5) {
     return (
       <StatItemMid
-        label={`xP${currentEvent.id + deltaEvent}`}
+        label={customLabel ?? `xP${currentEvent.id + deltaEvent}`}
         value={xPoints.toFixed(2)}
         changes={changes.toFixed(2)}
       />
@@ -156,7 +157,7 @@ const AppExpectedPts = (props: any) => {
   } else if (xPoints < 10) {
     return (
       <StatItemHigh
-        label={`xP${currentEvent.id + deltaEvent}`}
+        label={customLabel ?? `xP${currentEvent.id + deltaEvent}`}
         value={xPoints.toFixed(2)}
         changes={changes.toFixed(2)}
       />
@@ -165,7 +166,7 @@ const AppExpectedPts = (props: any) => {
 
   return (
     <StatItemExtraHigh
-      label={`xP${currentEvent.id + deltaEvent}`}
+      label={customLabel ?? `xP${currentEvent.id + deltaEvent}`}
       value={xPoints.toFixed(2)}
       changes={changes.toFixed(2)}
     />

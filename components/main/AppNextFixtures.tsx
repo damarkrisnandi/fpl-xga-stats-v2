@@ -1,12 +1,3 @@
-import { useEffect, useState } from "react";
-import {
-  difficultyColor,
-  getExpectedPoints,
-  getPlayerPhotoUrl,
-  getTeamLogoUrl,
-  positionMapping,
-  xPColor,
-} from "@/utils";
 
 const AppNextFixtures = (props: any) => {
   const { teams, element, nextFixtures, isSimplify } = props;
@@ -155,7 +146,7 @@ const Difficulty2 = (props: any) => {
 const Difficulty3 = (props: any) => {
   const { team } = props;
   return (
-    <div className={`text-center text-xs md:text-lg font-semibold border-1 border-black`}>
+    <div className={`text-center text-xs md:text-lg font-semibold border-1 bg-gray-200 border-black`}>
       {team}
     </div>
   );
