@@ -23,6 +23,8 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import Image from 'next/image';
+import { cn } from "../../lib/utils";
+import { SquareCard, SquareCardLabel } from "../constructs/SquareCard";
 import {
   Card,
   CardContent,
@@ -266,12 +268,9 @@ export default AppWildCardNextFixtures;
 const StatItem = (props: any) => {
   const { className, label, value } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center ${className || ""
-        } bg-slate-200`}
-    >
-      <p className="text-[0.6em] md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-    </div>
+    <SquareCard className={cn("bg-slate-200", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+    </SquareCard>
   );
 };

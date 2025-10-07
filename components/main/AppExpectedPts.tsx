@@ -1,19 +1,16 @@
 "use client";
-import { useEffect, useState } from "react";
 import {
-  difficultyColor,
-  getExpectedPoints,
-  getPlayerPhotoUrl,
-  getTeamLogoUrl,
-  positionMapping,
-  xPColor,
+  getExpectedPoints
 } from "@/utils";
+import { useEffect, useState } from "react";
+import { cn } from "../../lib/utils";
+import { SquareCard, SquareCardFooter, SquareCardLabel } from "../constructs/SquareCard";
 
 const Changes = (props: any) => {
   const { changes } = props;
-  if ( changes > 0 ) {
+  if (changes > 0) {
     return (<p className="text-[0.6rem] md:text-[0.7rem] bg-green-400 text-white py-[0.1em] px-[0.2em]">{changes > 0 ? '+' + changes : changes}&#37;</p>)
-  } else if ( changes < 0 ) {
+  } else if (changes < 0) {
     return (<p className="text-[0.6rem] md:text-[0.7rem] bg-red-400 text-white py-[0.1em] px-[0.2em]">{changes > 0 ? '+' + changes : changes}&#37;</p>)
   }
 
@@ -24,65 +21,66 @@ const Changes = (props: any) => {
 const StatItemExtraLow = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center  bg-red-200 text-red-700`}
-    >
-      <p className="text-xs md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-      <Changes changes={changes} />
-    </div>
+    <SquareCard className={cn("bg-red-200 text-red-700", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+      <SquareCardFooter>
+        <Changes changes={changes} />
+      </SquareCardFooter>
+    </SquareCard>
   );
 };
 
 const StatItemLow = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center bg-amber-200 text-amber-700`}
-    >
-      <p className="text-xs md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-      <Changes changes={changes} />
-    </div>
+    <SquareCard className={cn("bg-amber-200 text-amber-200", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+      <SquareCardFooter>
+        <Changes changes={changes} />
+      </SquareCardFooter>
+    </SquareCard>
+
   );
 };
 
 const StatItemMid = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center bg-yellow-200 text-yellow-700`}
-    >
-      <p className="text-xs md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-      <Changes changes={changes} />
-    </div>
+    <SquareCard className={cn("bg-yellow-200 text-yellow-700", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+      <SquareCardFooter>
+        <Changes changes={changes} />
+      </SquareCardFooter>
+    </SquareCard>
   );
 };
 
 const StatItemHigh = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center bg-lime-200 text-lime-700`}
-    >
-      <p className="text-xs md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-      <Changes changes={changes} />
-    </div>
+    <SquareCard className={cn("bg-lime-200 text-lime-700", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+      <SquareCardFooter>
+        <Changes changes={changes} />
+      </SquareCardFooter>
+    </SquareCard>
   );
 };
 
 const StatItemExtraHigh = (props: any) => {
   const { className, label, value, changes } = props;
   return (
-    <div
-      className={`w-14 h-14 md:w-24 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center bg-green-200 text-green-700`}
-    >
-      <p className="text-xs md:text-sm">{label}</p>
-      <p className="text-sm md:text-xl font-semibold">{value}</p>
-      <Changes changes={changes} />
-    </div>
+    <SquareCard className={cn("bg-lime-200 text-lime-700", className)}>
+      <SquareCardLabel>{label}</SquareCardLabel>
+      <SquareCardLabel className="text-sm md:text-xl font-semibold">{value}</SquareCardLabel>
+      <SquareCardFooter>
+        <Changes changes={changes} />
+      </SquareCardFooter>
+    </SquareCard>
   );
 };
 
@@ -128,7 +126,8 @@ const AppExpectedPts = (props: any) => {
   }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist, last5]);
 
   useEffect(() => {
-     xPointsOvr ? setChanges((xPoints - xPointsOvr) * 100 / xPointsOvr) : setChanges(0); }, [xPoints, xPointsOvr]);
+    xPointsOvr ? setChanges((xPoints - xPointsOvr) * 100 / xPointsOvr) : setChanges(0);
+  }, [xPoints, xPointsOvr]);
 
   if (xPoints < 2) {
     return (
