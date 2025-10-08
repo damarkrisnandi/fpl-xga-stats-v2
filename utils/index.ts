@@ -123,6 +123,7 @@ const calculateBaseExpected = (element: Element, fixturesLen: number): number =>
     red_cards,
     goals_scored,
     assists,
+    defensive_contribution
   } = element;
   const indexPer90 = minutes > 0 ? (90 / minutes) : 0;
   const xYC = (yellow_cards * indexPer90) * -1;
@@ -131,17 +132,20 @@ const calculateBaseExpected = (element: Element, fixturesLen: number): number =>
   const xOG = (own_goals * indexPer90) * -1;
   const goalp90 = goals_scored * indexPer90;
   const assistp90 = assists * indexPer90;
+  const defcon90 = defensive_contribution * indexPer90;
   if (element_type === 4) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 4;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
-    xP = xPG + xPA;
+    const defcon = defcon90 > 12 ? 2 : 0;
+    xP = xPG + xPA + defcon;
   }
   if (element_type === 3) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 5;
     const xPA = ((expected_assists_per_90 + assistp90) / 2) * 3;
     const xCS = clean_sheets_per_90 >= 0.67 ? clean_sheets_per_90 : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC + xCS;
+    const defcon = defcon90 > 12 ? 2 : 0;
+    xP = xPG + xPA + xGC + xCS + defcon;
   }
   if (element_type === 2) {
     const xPG = ((expected_goals_per_90 + goalp90) / 2) * 6;
@@ -150,7 +154,8 @@ const calculateBaseExpected = (element: Element, fixturesLen: number): number =>
       ? (clean_sheets_per_90 >= 0.67 ? (4 * clean_sheets_per_90) : 0)
       : 0;
     const xGC = Math.floor(expected_goals_conceded_per_90 / 2) * -1;
-    xP = xPG + xPA + xGC + xCS;
+    const defcon = defcon90 > 10 ? 2 : 0;
+    xP = xPG + xPA + xGC + xCS + defcon;
   }
 
   if (element_type === 1) {
@@ -206,6 +211,7 @@ const calculateBaseExpectedLast5 = (
       expected_assists,
       expected_goals_conceded,
       clean_sheets,
+      defensive_contribution
     } = stats;
 
     const indexPer90 = minutes / 90 //minutes > 0 ? (90 / minutes) : 0;
@@ -218,14 +224,16 @@ const calculateBaseExpectedLast5 = (
     if (element_type === 4) {
       const xPG = ((Number(expected_goals) + goalp90) / 2) * 4;
       const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
-      xP = xPG + xPA;
+      const defcon = defensive_contribution > 12 ? 2 : 0;
+      xP = xPG + xPA + defcon;
     }
     if (element_type === 3) {
       const xPG = ((Number(expected_goals) + goalp90) / 2) * 5;
       const xPA = ((Number(expected_assists) + assistp90) / 2) * 3;
       const xCS = clean_sheets >= 0.67 ? clean_sheets : 0;
       const xGC = Math.floor(Number(expected_goals_conceded) / 2) * -1;
-      xP = xPG + xPA + xGC + xCS;
+      const defcon = defensive_contribution > 12 ? 2 : 0;
+      xP = xPG + xPA + xGC + xCS + defcon;
     }
     if (element_type === 2) {
       const xPG = ((Number(expected_goals) + goalp90) / 2) * 6;
@@ -234,7 +242,8 @@ const calculateBaseExpectedLast5 = (
         ? (clean_sheets >= 0.67 ? (4 * clean_sheets) : 0)
         : 0;
       const xGC = Math.floor(Number(expected_goals_conceded) / 2) * -1;
-      xP = xPG + xPA + xGC + xCS;
+      const defcon = defensive_contribution > 10 ? 2 : 0;
+      xP = xPG + xPA + xGC + xCS + defcon;
     }
 
     if (element_type === 1) {

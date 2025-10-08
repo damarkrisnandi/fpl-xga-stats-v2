@@ -313,4 +313,5 @@ export type Element = {
     selected_rank_type: number;
     starts_per_90: number;
     clean_sheets_per_90: number;
+    defensive_contribution: number;
 } & XPoint;

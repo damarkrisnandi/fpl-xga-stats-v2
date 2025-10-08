@@ -50,4 +50,5 @@ export type LiveEventStat = {
     mng_goals_scored: number;
     total_points: number;
     in_dreamteam: boolean;
+    defensive_contribution: number;
 } & XPoint
