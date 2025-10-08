@@ -258,7 +258,7 @@ const AppElementSummaryContent = (props: any) => {
                     gw <= currentEvent.id ? (
                       <div className={cn(
                         "w-4 h-4 md:w-6 md:h-6 flex flex-col justify-center items-center bg-slate-400 text-slate-700 border-1 border-slate-700 mr-0",
-                        elementSummary.history.find((eh: any) => eh.round == gw)?.total_points >=
+                        elementSummary?.history?.find((eh: any) => eh.round == gw)?.total_points >=
                           getExpectedPoints(
                             elementMapping(),
                             currentEvent.id,
@@ -272,7 +272,7 @@ const AppElementSummaryContent = (props: any) => {
                       }>
                         <p className="text-[0.6em] md:text-sm">{
                           elementSummary?.history?.find((eh: any) => eh.round == gw) ?
-                            elementSummary.history.find((eh: any) => eh.round == gw)?.total_points : 0
+                            elementSummary?.history?.find((eh: any) => eh.round == gw)?.total_points : 0
                         }</p>
                       </div>
                     ) : null

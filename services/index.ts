@@ -14,7 +14,7 @@ export function getBootstrapFromStorage() {
 }
 
 export function getElementSummaryFromStorage(id: number | string) {
-  return fromStorage("element-summary", `${API_URL}/element-summary/${id}`, 15);
+  return fromStorage(`/element-summary/${id}`, `${API_URL}/element-summary/${id}`, 15);
 }
 
 export function getFixtures() {
