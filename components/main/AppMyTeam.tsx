@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
 import AppInputMyTeam from "./AppInputMyTeam";
@@ -69,20 +69,35 @@ const AppMyTeamContent = () => {
 
   const [chip, _setChip] = useState<string>('');
 
-  const getXPByElement = (element: any, delta: number) => getExpectedPoints(
-    elementMapping(element),
-    currentEvent.id,
-    delta,
-    fixtures,
-    bootstrap?.teams,
-    bootstrapHist?.elements.find((elh: any) =>
-      elh.code == elementMapping(element).code
-    ),
-    last5 as any
-  )
-  // const [tempBank, setTempBank] = useState<number>(0);
-  const elementMapping = (id: number) =>
-    bootstrap.elements.find((el: any) => el.id == id);
+  // Memoize the elementMapping function to avoid recreating it on every render
+  const elementMapping = useCallback((id: number) => {
+    if (!bootstrap?.elements) return null;
+    return bootstrap.elements.find((el: any) => el.id == id);
+  }, [bootstrap?.elements]);
+
+  // Memoize the getXPByElement function to avoid recreating it on every render
+  const getXPByElement = useCallback((element: any, delta: number) => {
+    if (!currentEvent || !fixtures || !bootstrap?.teams || !bootstrap?.elements) {
+      return 0;
+    }
+
+    const mappedElement = elementMapping(element);
+    if (!mappedElement) return 0;
+
+    const elementHist = bootstrapHist?.elements?.find((elh: any) =>
+      elh.code == mappedElement.code
+    );
+
+    return getExpectedPoints(
+      mappedElement,
+      currentEvent?.id || 0,
+      delta,
+      fixtures,
+      bootstrap.teams,
+      elementHist,
+      last5 as any
+    );
+  }, [bootstrap, bootstrapHist, currentEvent, elementMapping, fixtures, last5]);
   // Data fetching is now handled by React Query in useMgrAndPicks hook
   const _setDataPicks = () => {
     // This function is no longer needed as data fetching is automated
@@ -129,30 +144,33 @@ const AppMyTeamContent = () => {
     // );
   };
 
-  const calculateTotalXp = (picksData: any) => {
-    if (!picksData || picksData.length == 0) {
+  const calculateTotalXp = useCallback((picksData: any) => {
+    if (!picksData || picksData.length === 0) {
       return 0;
     }
     let total = 0;
     for (let pick of picksData) {
-      total += pick.xp * pick.multiplier;
+      if (pick.xp && pick.multiplier) {
+        total += pick.xp * pick.multiplier;
+      }
     }
 
-
     return total;
-  };
+  }, []);
 
-  const calculateTotalSurplusXpPrev = (picksData: any) => {
+  const calculateTotalSurplusXpPrev = useCallback((picksData: any) => {
     if (!picksData) {
       return 0;
     }
     let total = 0;
     for (let pick of picksData) {
-      total += pick.surplus_xp_prev;
+      if (pick.surplus_xp_prev) {
+        total += pick.surplus_xp_prev;
+      }
     }
 
     return total;
-  };
+  }, []);
 
   // Manager and picks data are now automatically fetched by React Query in useMgrAndPicks hook
 
@@ -160,15 +178,19 @@ const AppMyTeamContent = () => {
     if (!picks || !bootstrap || !bootstrapHist || !currentEvent || !fixtures || !last5) {
       return;
     }
-    setDataView(picks.picks.map((pick: any) => {
-      return {
-        ...pick,
-        surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
-        xp: getXPByElement(pick.element, 1),
-      };
-    }));
-    setIsOptimize(false);
-    calculateTotalXp(picks.picks);
+
+    // Only update dataView if we have actual picks data and necessary functions
+    if (picks.picks && elementMapping && getXPByElement) {
+      const updatedPicksData = picks.picks.map((pick: any) => {
+        return {
+          ...pick,
+          surplus_xp_prev: (elementMapping(pick.element)?.event_points || 0) - getXPByElement(pick.element, 0),
+          xp: getXPByElement(pick.element, 1),
+        };
+      });
+      setDataView(updatedPicksData);
+      setIsOptimize(false);
+    }
   }, [picks, bootstrap, bootstrapHist, currentEvent, fixtures, last5, elementMapping, getXPByElement]);
 
   useEffect(() => {
@@ -176,7 +198,7 @@ const AppMyTeamContent = () => {
       setTotalXp(calculateTotalXp(dataView));
       setTotalSurplusXpPrev(calculateTotalSurplusXpPrev(dataView));
     }
-  }, [dataView, picks]);
+  }, [dataView, calculateTotalXp, calculateTotalSurplusXpPrev]);
 
   if (isLoadingBootstrap || isLoadingBootstrapHist || isLoadingCurrentEvent || isLoadingFixtures || isLoadingLast5 || isLoadingManager || isLoadingPicks) {
     return (
@@ -356,163 +378,170 @@ const AppMyTeamContent = () => {
 
 
       {/* pitch view */}
-{manager &&
-      <div className="bg-green-400 p-5 flex flex-col gap-3">
-        <ul className="flex gap-1 md:gap-2 justify-center">
-          {gkp_played.length > 0 && (
-            gkp_played.map((pick: PlayerPicked) => (
-              <li key={pick.element}>
-                {currentEvent.id < 38 && <AppExpectedPts
-                  element={elementMapping(pick.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == elementMapping(pick.element).code
-                  )}
-                  currentEvent={currentEvent}
-                  deltaEvent={1}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  multiplier={pick.multiplier}
-                  last5={last5 as any}
-                  customLabel={elementMapping(pick.element).web_name}
-                />
-                }
-                {currentEvent.id < 38 && <AppNextFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(pick.element)}
-                  nextFixtures={nextFixtures(elementMapping(pick.element))}
-                  isSimplify={true}
-                />}
-              </li>
-            ))
-          )}
-        </ul>
+      {manager &&
+        <div>
+          <div className="bg-green-400 p-5 flex flex-col gap-3">
+            <ul className="flex gap-1 md:gap-2 justify-center">
+              {gkp_played.length > 0 && (
+                gkp_played.map((pick: PlayerPicked) => (
+                  <li key={pick.element}>
+                    <CaptaincyBadge player={pick} />
+                    {currentEvent.id < 38 &&
+                      <AppExpectedPts
+                        element={elementMapping(pick.element)}
+                        elementHist={bootstrapHist?.elements.find((elh: any) =>
+                          elh.code == elementMapping(pick.element).code
+                        )}
+                        currentEvent={currentEvent}
+                        deltaEvent={1}
+                        fixtures={fixtures}
+                        teams={bootstrap?.teams}
+                        multiplier={pick.multiplier}
+                        last5={last5 as any}
+                        customLabel={elementMapping(pick.element).web_name}
+                      />
+                    }
+                    {currentEvent.id < 38 && <AppNextFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(pick.element)}
+                      nextFixtures={nextFixtures(elementMapping(pick.element))}
+                      isSimplify={true}
+                    />}
+                  </li>
+                ))
+              )}
+            </ul>
 
-        <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
-          {def_played.length > 0 && (
-            def_played.map((pick: PlayerPicked) => (
-              <li key={pick.element}>
-                {currentEvent.id < 38 && <AppExpectedPts
-                  element={elementMapping(pick.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == elementMapping(pick.element).code
-                  )}
-                  currentEvent={currentEvent}
-                  deltaEvent={1}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  multiplier={pick.multiplier}
-                  last5={last5 as any}
-                  customLabel={elementMapping(pick.element).web_name}
-                />
-                }
-                {currentEvent.id < 38 && <AppNextFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(pick.element)}
-                  nextFixtures={nextFixtures(elementMapping(pick.element))}
-                  isSimplify={true}
-                />}
-              </li>
-            ))
-          )}
-        </ul>
+            <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
+              {def_played.length > 0 && (
+                def_played.map((pick: PlayerPicked) => (
+                  <li key={pick.element}>
+                    <CaptaincyBadge player={pick} />
+                    {currentEvent.id < 38 && <AppExpectedPts
+                      element={elementMapping(pick.element)}
+                      elementHist={bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      )}
+                      currentEvent={currentEvent}
+                      deltaEvent={1}
+                      fixtures={fixtures}
+                      teams={bootstrap?.teams}
+                      multiplier={pick.multiplier}
+                      last5={last5 as any}
+                      customLabel={elementMapping(pick.element).web_name}
+                    />
+                    }
+                    {currentEvent.id < 38 && <AppNextFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(pick.element)}
+                      nextFixtures={nextFixtures(elementMapping(pick.element))}
+                      isSimplify={true}
+                    />}
+                  </li>
+                ))
+              )}
+            </ul>
 
-        <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
-          {mid_played.length > 0 && (
-            mid_played.map((pick: PlayerPicked) => (
-              <li key={pick.element}>
-                {currentEvent.id < 38 && <AppExpectedPts
-                  element={elementMapping(pick.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == elementMapping(pick.element).code
-                  )}
-                  currentEvent={currentEvent}
-                  deltaEvent={1}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  multiplier={pick.multiplier}
-                  last5={last5 as any}
-                  customLabel={elementMapping(pick.element).web_name}
-                />
-                }
-                {currentEvent.id < 38 && <AppNextFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(pick.element)}
-                  nextFixtures={nextFixtures(elementMapping(pick.element))}
-                  isSimplify={true}
-                />}
-              </li>
-            ))
-          )}
-        </ul>
+            <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
+              {mid_played.length > 0 && (
+                mid_played.map((pick: PlayerPicked) => (
+                  <li key={pick.element}>
+                    <CaptaincyBadge player={pick} />
+                    {currentEvent.id < 38 && <AppExpectedPts
+                      element={elementMapping(pick.element)}
+                      elementHist={bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      )}
+                      currentEvent={currentEvent}
+                      deltaEvent={1}
+                      fixtures={fixtures}
+                      teams={bootstrap?.teams}
+                      multiplier={pick.multiplier}
+                      last5={last5 as any}
+                      customLabel={elementMapping(pick.element).web_name}
+                    />
+                    }
+                    {currentEvent.id < 38 && <AppNextFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(pick.element)}
+                      nextFixtures={nextFixtures(elementMapping(pick.element))}
+                      isSimplify={true}
+                    />}
+                  </li>
+                ))
+              )}
+            </ul>
 
-        <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
-          {fwd_played.length > 0 && (
-            fwd_played.map((pick: PlayerPicked) => (
-              <li key={pick.element}>
-                {currentEvent.id < 38 && <AppExpectedPts
-                  element={elementMapping(pick.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == elementMapping(pick.element).code
-                  )}
-                  currentEvent={currentEvent}
-                  deltaEvent={1}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  multiplier={pick.multiplier}
-                  last5={last5 as any}
-                  customLabel={elementMapping(pick.element).web_name}
-                />
-                }
-                {currentEvent.id < 38 && <AppNextFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(pick.element)}
-                  nextFixtures={nextFixtures(elementMapping(pick.element))}
-                  isSimplify={true}
-                />}
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
+            <ul className="flex gap-1 md:gap-2 justify-evenly items-center mb-2">
+              {fwd_played.length > 0 && (
+                fwd_played.map((pick: PlayerPicked) => (
+                  <li key={pick.element}>
+                    <CaptaincyBadge player={pick} />
+                    {currentEvent.id < 38 && <AppExpectedPts
+                      element={elementMapping(pick.element)}
+                      elementHist={bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      )}
+                      currentEvent={currentEvent}
+                      deltaEvent={1}
+                      fixtures={fixtures}
+                      teams={bootstrap?.teams}
+                      multiplier={pick.multiplier}
+                      last5={last5 as any}
+                      customLabel={elementMapping(pick.element).web_name}
+                    />
+                    }
+                    {currentEvent.id < 38 && <AppNextFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(pick.element)}
+                      nextFixtures={nextFixtures(elementMapping(pick.element))}
+                      isSimplify={true}
+                    />}
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
 
-      <div className="bg-green-700 -mt-5 p-5">
-        <div className="w-full flex justify-center items-center my-2">
-          <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
-            <Armchair className="w-3 h-3 md:m-2" /> Bench
-          </Badge>
+          <div className="bg-green-700 -mt-5 p-5">
+            <div className="w-full flex justify-center items-center my-2">
+              <Badge className="flex justify-center items-center text-xs w-3/12 font-semibold bg-slate-800">
+                <Armchair className="w-3 h-3 md:m-2" /> Bench
+              </Badge>
+            </div>
+
+            <ul className="flex gap-1 md:gap-2 justify-evenly items-center">
+              {benched.length > 0 && (
+                benched.map((pick: PlayerPicked) => (
+                  <li key={pick.element}>
+                    <CaptaincyBadge player={pick} />
+                    {currentEvent.id < 38 && <AppExpectedPts
+                      element={elementMapping(pick.element)}
+                      elementHist={bootstrapHist?.elements.find((elh: any) =>
+                        elh.code == elementMapping(pick.element).code
+                      )}
+                      currentEvent={currentEvent}
+                      deltaEvent={1}
+                      fixtures={fixtures}
+                      teams={bootstrap?.teams}
+                      multiplier={pick.multiplier}
+                      last5={last5 as any}
+                      customLabel={elementMapping(pick.element).web_name}
+                    />
+                    }
+                    {currentEvent.id < 38 && <AppNextFixtures
+                      teams={bootstrap?.teams}
+                      element={elementMapping(pick.element)}
+                      nextFixtures={nextFixtures(elementMapping(pick.element))}
+                      isSimplify={true}
+                    />}
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
         </div>
-
-        <ul className="flex gap-1 md:gap-2 justify-evenly items-center">
-          {benched.length > 0 && (
-            benched.map((pick: PlayerPicked) => (
-              <li key={pick.element}>
-                {currentEvent.id < 38 && <AppExpectedPts
-                  element={elementMapping(pick.element)}
-                  elementHist={bootstrapHist?.elements.find((elh: any) =>
-                    elh.code == elementMapping(pick.element).code
-                  )}
-                  currentEvent={currentEvent}
-                  deltaEvent={1}
-                  fixtures={fixtures}
-                  teams={bootstrap?.teams}
-                  multiplier={pick.multiplier}
-                  last5={last5 as any}
-                  customLabel={elementMapping(pick.element).web_name}
-                />
-                }
-                {currentEvent.id < 38 && <AppNextFixtures
-                  teams={bootstrap?.teams}
-                  element={elementMapping(pick.element)}
-                  nextFixtures={nextFixtures(elementMapping(pick.element))}
-                  isSimplify={true}
-                />}
-              </li>
-            ))
-          )}
-        </ul>
-      </div>
-     </div>
-}
+      }
 
       {/* list view */}
       {/* sengaja disabled, tapi masih perlu */}
@@ -685,6 +714,35 @@ const AppMyTeamContent = () => {
 };
 
 export default AppMyTeam;
+
+const CaptaincyBadge = (props: any) => {
+  const { player } = props;
+
+  return (
+    <div className="absolute -mt-3 -ml-3">
+      {player.is_captain
+        ? (
+          player.multiplier == 2
+            ? (
+              <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                C
+              </div>
+            )
+            : (
+              <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-white flex justify-center items-center font-semibold text-xs md:text-sm">
+                C
+              </div>
+            )
+        )
+        : null}
+      {player.is_vice_captain && (
+        <div className="h-4 w-4 md:h-6 md:w-6 shadow-lg rounded-full bg-slate-800 text-white flex justify-center items-center font-semibold text-xs md:text-sm">
+          V
+        </div>
+      )}
+    </div>
+  )
+}
 
 const StatItem = (props: any) => {
   const { className, label, value } = props;
