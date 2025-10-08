@@ -1,5 +1,10 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import useBootstrap from "@/hooks/use-bootstrap";
+import useDeadline from "@/hooks/use-deadline";
+import {
+  QueryClient
+} from "@tanstack/react-query";
+import { Hourglass } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,33 +13,23 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
-import { Hourglass } from "lucide-react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
-import { getBootstrapFromStorage } from "@/services";
-import useBootstrap from "@/hooks/use-bootstrap";
-import useDeadline from "@/hooks/use-deadline";
+import { SquareCard, SquareCardLabel } from "../ui/square-card";
 
 const TimerContainer = (props: any) => {
   return (
-    <div className="bg-slate-600 w-16 h-16 flex justify-center items-center rounded">
-      <div className="flex justify-center items-center flex-col">
-        <p className="text-3xl font-bold text-white">{props.time}</p>
-        <p className="text-xs text-white">{props.unit}</p>
-      </div>
-    </div>
+    <SquareCard className="bg-slate-600 text-white">
+      <SquareCardLabel className="text-md md:text-3xl font-semibold">{props.time}</SquareCardLabel>
+      <SquareCardLabel className="text-xs">{props.unit}</SquareCardLabel>
+    </SquareCard>
   );
-};
+}
 
 const AppTransferDeadline = (props: any) => {
   // const { bootstrap } = props;
   const queryClient = new QueryClient();
 
   const { bootstrap, isLoadingBootstrap, errorBootstrap } = useBootstrap();
- 
+
   const { event, deadline } = useDeadline({ bootstrap });
 
   if (!event || !deadline) {

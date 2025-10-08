@@ -10,14 +10,14 @@ const THEMES = { light: "", dark: ".dark" } as const;
 
 export type ChartConfig = {
   [k in string]:
-    & {
-      label?: React.ReactNode;
-      icon?: React.ComponentType;
-    }
-    & (
-      | { color?: string; theme?: never }
-      | { color?: never; theme: Record<keyof typeof THEMES, string> }
-    );
+  & {
+    label?: React.ReactNode;
+    icon?: React.ComponentType;
+  }
+  & (
+    | { color?: string; theme?: never }
+    | { color?: never; theme: Record<keyof typeof THEMES, string> }
+  );
 };
 
 type ChartContextProps = {
@@ -85,8 +85,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
           .map(
             ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
-${
-              colorConfig
+${colorConfig
                 .map(([key, itemConfig]) => {
                   const color = itemConfig.theme
                     ?.[theme as keyof typeof itemConfig.theme] ||
@@ -94,7 +93,7 @@ ${
                   return color ? `  --color-${key}: ${color};` : null;
                 })
                 .join("\n")
-            }
+              }
 }
 `,
           )
@@ -183,7 +182,7 @@ const ChartTooltipContent = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
+          "grid min-w-[8rem] items-start gap-1.5  border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl",
           className,
         )}
       >
@@ -328,8 +327,8 @@ function getPayloadConfigFromPayload(
   }
 
   const payloadPayload = "payload" in payload &&
-      typeof payload.payload === "object" &&
-      payload.payload !== null
+    typeof payload.payload === "object" &&
+    payload.payload !== null
     ? payload.payload
     : undefined;
 
@@ -361,5 +360,5 @@ export {
   ChartLegendContent,
   ChartStyle,
   ChartTooltip,
-  ChartTooltipContent,
+  ChartTooltipContent
 };

@@ -42,7 +42,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Separator } from "../ui/separator";
 import { Skeleton } from "../ui/skeleton";
 import { SquareExtendCard } from "../ui/square-extend-card";
 import AppExpectedPts from "./AppExpectedPts";
@@ -66,10 +65,26 @@ const AppElements = (_props: any) => {
   const [filterByTeam, setFilterByTeam] = useState<number | null>(null);
   const [filterByPosition, setFilterByPosition] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [itemsPerPage, setItemsPerPage] = useState<number>(10);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(20);
 
   const [columns, setColumns] = useState<any[]>([])
 
+  const getCumulativeNextXp = (element: any) => {
+    let xpt = 0;
+    const xps = [1, 2, 3].map((n: number) => {
+      return getExpectedPoints(
+        element,
+        (currentEvent?.id || 0),
+        n,
+        fixtures,
+        bootstrap?.teams,
+        bootstrapHist?.elements?.find((elh: any) => elh.code == element.code),
+        last5
+      )
+    })
+    xpt = xps.reduce((a, b) => a + b, 0);
+    return xpt;
+  }
   useEffect(() => {
     if (columns.length == 0 && fixtures && fixtures.length > 0 && last5 && last5.length > 0) {
       setColumns(
@@ -182,6 +197,7 @@ const AppElements = (_props: any) => {
   if (errorBootstrap || errorBootstrapHist || errorFixtures || errorLast5) {
     return <AppFailedToFetch />;
   }
+
   return (
     <Card className="w-full mb-2">
       <CardHeader>
@@ -232,7 +248,8 @@ const AppElements = (_props: any) => {
             const filteredElements = bootstrap.elements
               .toSorted(
                 (a: any, b: any) =>
-                  b.total_points - a.total_points
+                  currentEvent.id < 38 ? (getCumulativeNextXp(b) - getCumulativeNextXp(a)) :
+                    (b.total_points - a.total_points)
               )
               .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
               .filter((el: any) => filterByPosition ? el.element_type === filterByPosition : true);
@@ -455,10 +472,10 @@ const PlayerCardStats = (props: any) => {
   // const mappingFixtures = nextFixtures.map((nextf: any) => element.team == nextf.team_h ? `${getTeamShort(nextf.team_a)} (H)` : `${getTeamShort(nextf.team_h)} (A)`).join('\n')
   return (
     <div className={`w-full ${className}`}>
-      <div className="w-full p-2 flex flex-col md:flex-row justify-start">
-        <div className="flex flex-col justify-stretch  w-full items-center mb-1">
+      <div className="w-full flex flex-col md:flex-row justify-start">
+        <div className="flex flex-col w-full items-center">
           {/* NAME, LOGO, POSITION */}
-          <SquareExtendCard className="bg-fuchsia-300 w-56 xl:w-full">
+          <SquareExtendCard className="bg-fuchsia-300 w-56 md:w-full">
             <div className="flex items-center gap-2 w-full">
 
               <div className="relative w-8 h-8 xl:w-20 xl:h-20">
@@ -475,27 +492,35 @@ const PlayerCardStats = (props: any) => {
                 <p className="text-sm md:text-xl font-semibold">
                   {element.web_name} | {positionMapping(element.element_type)}
                 </p>
-                <p className="text-xs md:text-md text-gray-500">
-                  {element.first_name} {element.second_name}
-                </p>
+                <div className="flex gap-2">
+                  <p className="text-[0.6rem] md:text-sm text-gray-800">
+                    Σ: {element.total_points}pts
+                  </p>
+                  <p className="text-[0.6rem] md:text-sm text-gray-800">
+                    {`£${(element.now_cost / 10).toFixed(1)}m`}
+                  </p>
+                  <p className="text-[0.6rem] md:text-sm text-gray-800">
+                    sel: {element.selected_by_percent}%
+                  </p>
+                </div>
+                {/* <Button size={"sm"} asChild className="w-56 md:w-full rounded-none">
+                  <Link href={`player/${element.id}`} className="font-semibold">
+                    Show Player Details
+                  </Link>
+                </Button> */}
               </div>
             </div>
           </SquareExtendCard>
 
-          <Button asChild className="w-56 xl:w-full rounded-none">
-            <Link href={`player/${element.id}`} className="font-semibold">
-              Show Player Details
-            </Link>
-          </Button>
 
         </div>
         <div className="flex justify-center flex-col mb-2">
-          {element.news && element.news.length && (
+          {/* {element.news && element.news.length && (
             <div className="w-full flex justify-center">
               <NewsContainer news={element.news} />
             </div>
-          )}
-          <div className="w-full flex justify-center">
+          )} */}
+          {/* <div className="w-full flex justify-center">
             <StatItem
               label={`Total`}
               value={element.total_points}
@@ -509,7 +534,7 @@ const PlayerCardStats = (props: any) => {
               value={`${element.selected_by_percent}%`}
             />
             <StatItem label={"Mins"} value={element.minutes} />
-          </div>
+          </div> */}
           {showExpected("xG", element.element_type) && (
             <div className="w-full flex justify-center">
               <StatItem label={`xG`} value={element.expected_goals} />
@@ -632,7 +657,6 @@ const PlayerCardStats = (props: any) => {
         </div>
 
       </div>
-      <Separator className="w-full" />
     </div>
   );
 };
