@@ -19,6 +19,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Eye,
   TriangleAlert
 } from "lucide-react";
 import Image from "next/image";
@@ -242,7 +243,7 @@ const AppElements = (_props: any) => {
           </Select>
         </div>
 
-        <ScrollArea className="h-[500px] w-full rounded-md border p-4">
+        <ScrollArea className="h-[500px] w-full rounded-md border pr-4">
           {(() => {
             // Filter and sort elements
             const filteredElements = bootstrap.elements
@@ -475,7 +476,7 @@ const PlayerCardStats = (props: any) => {
       <div className="w-full flex flex-col md:flex-row justify-start">
         <div className="flex flex-col w-full items-center">
           {/* NAME, LOGO, POSITION */}
-          <SquareExtendCard className="bg-fuchsia-300 w-56 md:w-full">
+          <SquareExtendCard className="bg-fuchsia-300 w-72 md:w-full">
             <div className="flex items-center gap-2 w-full">
 
               <div className="relative w-8 h-8 xl:w-20 xl:h-20">
@@ -652,6 +653,12 @@ const PlayerCardStats = (props: any) => {
                 multiplier={1}
                 last5={last5}
               />
+              <Button asChild className="h-14 w-16 md:w-32 md:h-28">
+                <Link href={`player/${element.id}`} className="font-semibold">
+                  <Eye className="h-4 w-4 md:h-6 md:w-6" />
+                </Link>
+              </Button>
+
             </div>
           )}
         </div>
