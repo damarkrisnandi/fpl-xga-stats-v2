@@ -13,6 +13,10 @@ export function getBootstrapFromStorage() {
   // return fromStorage("boostrap-static", `${API_URL}/bootstrap-static`, 7);
 }
 
+export function getElementSummaryFromStorage(id: number | string) {
+  return fromStorage("element-summary", `${API_URL}/element-summary/${id}`, 15);
+}
+
 export function getFixtures() {
   return fromStorage("fixtures", `${API_URL}/fixtures`);
   //   return fetch(`${API_URL}/fixtures`).then((res) => res.json());
