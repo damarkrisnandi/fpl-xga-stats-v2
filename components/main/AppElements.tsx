@@ -476,8 +476,8 @@ const PlayerCardStats = (props: any) => {
       <div className="w-full flex flex-col md:flex-row justify-start">
         <div className="flex flex-col w-full items-center">
           {/* NAME, LOGO, POSITION */}
-          <SquareExtendCard className="bg-fuchsia-300 w-72 md:w-full">
-            <div className="flex items-center gap-2 w-full">
+          <SquareExtendCard className="bg-gray-200 w-72 md:w-full">
+            <div className="flex items-center gap-2 w-full p-1">
 
               <div className="relative w-8 h-8 xl:w-20 xl:h-20">
                 <Image
@@ -515,7 +515,7 @@ const PlayerCardStats = (props: any) => {
 
 
         </div>
-        <div className="flex justify-center flex-col mb-2">
+        <div className="flex justify-center flex-col">
           {/* {element.news && element.news.length && (
             <div className="w-full flex justify-center">
               <NewsContainer news={element.news} />
