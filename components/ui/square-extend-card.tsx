@@ -24,7 +24,7 @@ const SquareExtendCard = React.forwardRef<
         ref={ref}
         className={cn(
             "bg-card text-card-foreground",
-            "h-14 md:h-24 p-1 md:p-3 flex flex-col justify-center items-center",
+            "h-14 md:h-24 p-1 md:p-3 flex flex-col justify-center items-start",
             className,
         )}
         {...props}

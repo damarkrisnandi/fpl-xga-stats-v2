@@ -44,6 +44,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Skeleton } from "../ui/skeleton";
+import { SquareCard } from "../ui/square-card";
 import { SquareExtendCard } from "../ui/square-extend-card";
 import AppExpectedPts from "./AppExpectedPts";
 import AppFailedToFetch from "./AppFailedToFetch";
@@ -249,7 +250,7 @@ const AppElements = (_props: any) => {
             const filteredElements = bootstrap.elements
               .toSorted(
                 (a: any, b: any) =>
-                  currentEvent.id < 38 ? (getCumulativeNextXp(b) - getCumulativeNextXp(a)) :
+                  currentEvent?.id < 38 ? (getCumulativeNextXp(b) - getCumulativeNextXp(a)) :
                     (b.total_points - a.total_points)
               )
               .filter((el: any) => filterByTeam ? el.team === filterByTeam : true)
@@ -476,10 +477,10 @@ const PlayerCardStats = (props: any) => {
       <div className="w-full flex flex-col md:flex-row justify-start">
         <div className="flex flex-col w-full items-center">
           {/* NAME, LOGO, POSITION */}
-          <SquareExtendCard className="bg-gray-200 w-72 md:w-full">
-            <div className="flex items-center gap-2 w-full p-1">
-
-              <div className="relative w-8 h-8 xl:w-20 xl:h-20">
+          <div className="flex items-center md:w-full">
+            <SquareCard className="bg-gray-200">
+              {/* image */}
+              <div className="relative w-8 h-8 xl:w-16 xl:h-16">
                 <Image
                   src={getTeamLogoUrl(element.team_code)}
                   fill={true}
@@ -488,11 +489,21 @@ const PlayerCardStats = (props: any) => {
                   alt={`t${element.team_code}`}
                 />
               </div>
+            </SquareCard>
 
-              <div className="p-2">
+            <SquareExtendCard className="bg-gray-200 w-56 md:w-full justify-start">
+              <div>
                 <p className="text-sm md:text-xl font-semibold">
                   {element.web_name} | {positionMapping(element.element_type)}
                 </p>
+                {element.status !== 'a' && element.news && (
+                  <div className="flex gap-2 items-center">
+                    <TriangleAlert className="w-4 h-4 text-amber-700" />
+                    <p className="text-[0.6rem] md:text-sm text-amber-700 text-ellipsis whitespace-nowrap overflow-hidden max-w-48">
+                      {element.news}
+                    </p>
+                  </div>
+                )}
                 <div className="flex gap-2">
                   <p className="text-[0.6rem] md:text-sm text-gray-800">
                     Σ: {element.total_points}pts
@@ -510,8 +521,8 @@ const PlayerCardStats = (props: any) => {
                   </Link>
                 </Button> */}
               </div>
-            </div>
-          </SquareExtendCard>
+            </SquareExtendCard>
+          </div>
 
 
         </div>
@@ -653,7 +664,7 @@ const PlayerCardStats = (props: any) => {
                 multiplier={1}
                 last5={last5}
               />
-              <Button asChild className="h-14 w-16 md:w-32 md:h-24">
+              <Button asChild className="h-14 w-14 md:w-24 md:h-24">
                 <Link href={`player/${element.id}`} className="font-semibold">
                   <Eye className="h-4 w-4 md:h-6 md:w-6" />
                 </Link>
