@@ -653,7 +653,7 @@ const PlayerCardStats = (props: any) => {
                 multiplier={1}
                 last5={last5}
               />
-              <Button asChild className="h-14 w-16 md:w-32 md:h-28">
+              <Button asChild className="h-14 w-16 md:w-32 md:h-24">
                 <Link href={`player/${element.id}`} className="font-semibold">
                   <Eye className="h-4 w-4 md:h-6 md:w-6" />
                 </Link>
