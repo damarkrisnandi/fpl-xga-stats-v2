@@ -111,7 +111,7 @@ const AppExpectedPts = (props: any) => {
         teams,
         elementHist,
         last5
-      ),
+      ) * multiplier,
     );
     setXPointsOvr(
       getExpectedPoints(
@@ -121,7 +121,7 @@ const AppExpectedPts = (props: any) => {
         fixtures,
         teams,
         elementHist
-      ),
+      ) * multiplier,
     );
 
   }, [element, currentEvent.id, deltaEvent, fixtures, teams, elementHist, last5]);
